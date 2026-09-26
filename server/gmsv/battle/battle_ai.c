@@ -144,7 +144,7 @@ int BATTLE_ai_one(int char_index, int battleindex, int side, int turn) {
   return TRUE;
 }
 
-#define B_AI_NORMAL_ATTACKOPTION "at" 
+#define B_AI_NORMAL_ATTACKOPTION "at"
 #define B_AI_NORMAL_GUARDOPTION "gu"
 #define B_AI_NORMAL_MAGICOPTION "ma"
 #define B_AI_NORMAL_ESCAPEOPTION "es"

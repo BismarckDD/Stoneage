@@ -8,7 +8,7 @@
 #include "npc_airplane.h"
 #include "handletime.h"
 
-/* 
+/*
  * 加美航空 (Made from Bus)
  */
 enum {
@@ -17,7 +17,7 @@ enum {
 	NPC_WORK_ROUTEPOINT = CHAR_NPCWORKINT3,		/* 漆窒    井 */
 	NPC_WORK_ROUNDTRIP = CHAR_NPCWORKINT4,		/* 垫五井窖曰井  ㄟ“垫五 ㄠ“窖曰  */
 	NPC_WORK_MODE = CHAR_NPCWORKINT5,
-	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6, 
+	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6,
 	NPC_WORK_ROUTEMAX = CHAR_NPCWORKINT7,
 	NPC_WORK_WAITTIME = CHAR_NPCWORKINT8,
 	NPC_WORK_CURRENTTIME = CHAR_NPCWORKINT9,
@@ -83,9 +83,9 @@ BOOL npc_ShipInit( int meindex )
 	int	waittime;
 	int	seflg;
 	int	onewayflg;
-	
+
 	NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
-	
+
 	/* 卅仃木壬中仃卅中娄醒及民尼永弁 */
 	routenum = NPC_Util_GetNumFromStrWithDelim( argstr, "routenum");
 	if( routenum == -1 ) {
@@ -93,12 +93,12 @@ BOOL npc_ShipInit( int meindex )
 		return FALSE;
 	}
 	CHAR_setWorkInt( meindex, NPC_WORK_ROUTEMAX, routenum);
-	
+
 	for( i = 1; i <= routenum; i ++ ) {
 		char routetostring[64];
 		snprintf( routetostring, sizeof( routetostring), "routeto%d", i);
 		if( NPC_Util_GetStrFromStrWithDelim( argstr, routetostring,buf, sizeof(buf))
-			== NULL ) 
+			== NULL )
 		{
 			print( "npcair:nothing route to \n");
 			return FALSE;
@@ -117,28 +117,28 @@ BOOL npc_ShipInit( int meindex )
 	seflg = NPC_Util_GetNumFromStrWithDelim( argstr, "seflg");
 	if( seflg == -1 ) seflg = TRUE;
 	CHAR_setWorkInt( meindex, NPC_WORK_SEFLG, seflg);
-	
+
 	onewayflg = NPC_Util_GetNumFromStrWithDelim( argstr, "oneway");
 	if( onewayflg == -1 ) onewayflg = FALSE;	// default
 	CHAR_setWorkInt( meindex, NPC_WORK_ONEWAYFLG, onewayflg);
-	
+
 	CHAR_setInt( meindex , CHAR_WHICHTYPE , CHAR_TYPEBUS );
-	
+
 	CHAR_setWorkInt( meindex, NPC_WORK_MODE, 0);
 	CHAR_setWorkInt( meindex, NPC_WORK_ROUTEPOINT, 2);
 	CHAR_setWorkInt( meindex, NPC_WORK_ROUNDTRIP, 0);
 	CHAR_setWorkInt( meindex, NPC_WORK_CURRENTROUTE, 0);
-			
-	CHAR_setInt( meindex, CHAR_LOOPINTERVAL, 
+
+	CHAR_setInt( meindex, CHAR_LOOPINTERVAL,
 		NPC_AIR_WAITINGMODE_WAITTIME);
-    
+
     /* 蜇箕及凛棉毛本永玄 */
     CHAR_setWorkInt( meindex, NPC_WORK_CURRENTTIME, NowTime.tv_sec);
 
     for( i = 0; i < getPartyNum(meindex); i ++) {
-    	CHAR_setWorkInt( meindex, CHAR_WORKPARTYINDEX1 + i, -1);
+	CHAR_setWorkInt( meindex, CHAR_WORKPARTYINDEX1 + i, -1);
     }
-	
+
 	/* 伙□玄瑁烂允月 */
 {
 	int rev;
@@ -166,7 +166,6 @@ BOOL npc_ShipInit( int meindex )
     return TRUE;
 }
 
-
 /*********************************
 *   仄井仃日木凶凛及质
 *********************************/
@@ -176,10 +175,10 @@ void npc_ShipTalked( int meindex , int talkerindex , char *szMes ,
     int i;
     int	partyflg = FALSE;
 	int npc_wave = CHAR_getWorkInt( meindex, NPC_WORK_RUNWAVE);
-	
+
     /* 皿伊奶乩□卞覆仄化分仃  杀允月 */
     if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    	return;
+	return;
     }
     /* 愤坌及由□  奴  昙菸  井升丹井譬屯月 */
     for( i = 0; i < getPartyNum(meindex); i ++ ) {
@@ -202,11 +201,11 @@ void npc_ShipTalked( int meindex , int talkerindex , char *szMes ,
 				strstr( szMes, "go" ))
 			{
 				CHAR_setWorkInt( meindex, NPC_WORK_MODE,1);
-				
-	 			CHAR_setInt( meindex, CHAR_LOOPINTERVAL, NPC_AIR_LOOPTIME);
-				
+
+				CHAR_setInt( meindex, CHAR_LOOPINTERVAL, NPC_AIR_LOOPTIME);
+
 				if( CHAR_getWorkInt( meindex, NPC_WORK_SEFLG )) {
-					CHAR_sendSEoArroundCharacter( 
+					CHAR_sendSEoArroundCharacter(
 									CHAR_getInt( meindex, CHAR_FLOOR),
 									CHAR_getInt( meindex, CHAR_X),
 									CHAR_getInt( meindex, CHAR_Y),
@@ -235,14 +234,14 @@ void npc_ShipLoop( int meindex)
 	  case 0:
 	    /* 谨切乒□玉及凛］凛棉毛民尼永弁允月 */
 		/* 凛棉互烦匀凶及匹］请  允月 */
-		if( CHAR_getWorkInt( meindex, NPC_WORK_CURRENTTIME) 
-			+ CHAR_getWorkInt( meindex, NPC_WORK_WAITTIME) 
+		if( CHAR_getWorkInt( meindex, NPC_WORK_CURRENTTIME)
+			+ CHAR_getWorkInt( meindex, NPC_WORK_WAITTIME)
 			< NowTime.tv_sec)
 		{
 			/* SE   日允  穴件乒旦及陲太   */
 			if( CHAR_getWorkInt( meindex, NPC_WORK_SEFLG )) {
 				//ANDY_reEdit
-				CHAR_sendSEoArroundCharacter( 
+				CHAR_sendSEoArroundCharacter(
 								CHAR_getInt( meindex, CHAR_FLOOR),
 								CHAR_getInt( meindex, CHAR_X),
 								CHAR_getInt( meindex, CHAR_Y),
@@ -256,26 +255,26 @@ void npc_ShipLoop( int meindex)
 					npc_ShipSendMsg( meindex, partyindex, NPC_AIR_MSG_START);
 				}
 			}
-			
+
 			CHAR_setWorkInt( meindex, NPC_WORK_MODE,1);
 			/* 伙□皿楮醒及裟请仄毛汹仁簧蘸卞允月 */
 			CHAR_setInt( meindex, CHAR_LOOPINTERVAL, NPC_AIR_LOOPTIME);
 		}
 		return;
 	  case 1:
-	  	/* 汹仁 */
-	  	npc_Ship_walk( meindex);
+		/* 汹仁 */
+		npc_Ship_walk( meindex);
 	  case 2:
 		/* 鞅引匀化中月乒□玉 */
 		/* 凛棉互烦匀凶及匹］请  允月 */
-		if( CHAR_getWorkInt( meindex, NPC_WORK_CURRENTTIME) 
+		if( CHAR_getWorkInt( meindex, NPC_WORK_CURRENTTIME)
 			+ (CHAR_getWorkInt( meindex, NPC_WORK_WAITTIME) /3)
 			< NowTime.tv_sec)
 		{
 			CHAR_setWorkInt( meindex, NPC_WORK_MODE,1);
 			/* 伙□皿楮醒及裟请仄毛汹仁簧蘸卞允月 */
 			CHAR_setInt( meindex, CHAR_LOOPINTERVAL, NPC_AIR_LOOPTIME);
-		
+
 		}
 		return;
 	  case 3:
@@ -290,13 +289,13 @@ void npc_ShipLoop( int meindex)
 				int r = CHAR_getWorkInt( meindex, NPC_WORK_ROUTEMAX);
 				CHAR_setWorkInt( meindex, NPC_WORK_CURRENTROUTE, RAND( 1, r));
 			}
-			CHAR_setWorkInt( meindex, NPC_WORK_ROUNDTRIP, 
+			CHAR_setWorkInt( meindex, NPC_WORK_ROUNDTRIP,
 				CHAR_getWorkInt( meindex, NPC_WORK_ROUNDTRIP)^1);
 			if( CHAR_getWorkInt( meindex, NPC_WORK_ROUNDTRIP) == 1)  {
 				int num = npc_ShipGetRoutePointNum( meindex, argstr);
 				CHAR_setWorkInt( meindex, NPC_WORK_ROUTEPOINT, num-1);
 			}else {
-				CHAR_setWorkInt( meindex, NPC_WORK_ROUTEPOINT, 
+				CHAR_setWorkInt( meindex, NPC_WORK_ROUTEPOINT,
 					CHAR_getWorkInt( meindex, NPC_WORK_ROUTEPOINT) +1);
 			}
 			npc_ShipSetPoint( meindex, argstr);
@@ -343,17 +342,17 @@ static void npc_Ship_walk( int meindex)
 		if( CHAR_getWorkInt( meindex, NPC_WORK_ROUNDTRIP ) == 1 ) {
 			add *= -1;
 		}
-		CHAR_setWorkInt( meindex, NPC_WORK_ROUTEPOINT, 
+		CHAR_setWorkInt( meindex, NPC_WORK_ROUTEPOINT,
 			CHAR_getWorkInt( meindex, NPC_WORK_ROUTEPOINT) +add);
 		if( npc_ShipSetPoint( meindex, argstr) == FALSE ) {
 			/*     卞谗邋*/
 			/* 谨切乒□玉卞允月 */
 			CHAR_setWorkInt( meindex, NPC_WORK_MODE,3);
-			
+
 			/* SE   日允  穴件乒旦及陲太   */
 			if( CHAR_getWorkInt( meindex, NPC_WORK_SEFLG )) {
 				//ANDY_reEdit
-				CHAR_sendSEoArroundCharacter( 
+				CHAR_sendSEoArroundCharacter(
 					CHAR_getInt( meindex, CHAR_FLOOR),
 					CHAR_getInt( meindex, CHAR_X),
 					CHAR_getInt( meindex, CHAR_Y),
@@ -377,14 +376,14 @@ static void npc_Ship_walk( int meindex)
 	}
 	/*-------------------------------------------------------*/
 	/* 汹井六月质   */
-	
+
 	/*   轾毛菲户月 */
 	dir = NPC_Util_getDirFromTwoPoint( &start,&end );
 
 	/* 漆中月桦赭及谨    由□  奴汹五匹银丹   */
 	end.x = CHAR_getInt( meindex, CHAR_X);
 	end.y = CHAR_getInt( meindex, CHAR_Y);
-	
+
 	if( dir >= 0 && dir <= 7 ) {
 		/* 汹仁 */
 		ret = CHAR_walk( meindex, dir, 0);
@@ -430,24 +429,24 @@ static int npc_ShipSetPoint( int meindex, char *argstr)
 	int floor,warpx,warpy;
 	int ret;
 	char routetostring[64];
-	
-	snprintf( routetostring, sizeof( routetostring), "routeto%d", 
+
+	snprintf( routetostring, sizeof( routetostring), "routeto%d",
 				CHAR_getWorkInt( meindex, NPC_WORK_CURRENTROUTE));
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, routetostring,buf, sizeof(buf))
-		== NULL ) 
+		== NULL )
 	{
 		print( "npcair:nothing route \n");
 		return FALSE;
 	}
 
-	ret = getDelimitedField( buf, ";", 
+	ret = getDelimitedField( buf, ";",
 		CHAR_getWorkInt( meindex, NPC_WORK_ROUTEPOINT),
 		buf2, sizeof(buf2));
 	if( ret == FALSE ) return FALSE;
 
 	// Arminius: add floor
-	
+
 	ret = getDelimitedField( buf2, ",", 1,
 		buf3, sizeof(buf3));
 	if( ret == FALSE) return FALSE;
@@ -458,7 +457,7 @@ static int npc_ShipSetPoint( int meindex, char *argstr)
 	if( ret == FALSE) return FALSE;
 	CHAR_setWorkInt( meindex, NPC_WORK_ROUTETOX, atoi( buf3));
 	warpx = atoi(buf3);
-	
+
 	ret = getDelimitedField( buf2, ",", 3,
 		buf3, sizeof(buf3));
 	if( ret == FALSE) return FALSE;
@@ -490,11 +489,11 @@ static void npc_ShipSetDestPoint( int meindex, char *argstr)
 	char 	buf[256];
 	char	routename[256];
 
-	snprintf( routename, sizeof( routename), "routename%d", 
+	snprintf( routename, sizeof( routename), "routename%d",
 				CHAR_getWorkInt( meindex, NPC_WORK_CURRENTROUTE));
 
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, routename, buf, sizeof( buf))
-		!= NULL ) 
+		!= NULL )
 	{
 		CHAR_setChar( meindex, CHAR_OWNTITLE, buf);
 		CHAR_sendCToArroundCharacter( CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX));
@@ -510,7 +509,7 @@ static BOOL npc_ShipCheckDeniedItem( int meindex, int char_index, char *argstr)
 	BOOL	found = TRUE;
 
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "denieditem", buf, sizeof( buf))
-		!= NULL ) 
+		!= NULL )
 	{
 		int	i;
 		int ret;
@@ -553,16 +552,16 @@ BOOL npc_ShipCheckAllowItem( int meindex, int char_index, BOOL pickupmode)
 	BOOL	found = TRUE;
 	BOOL	pickup = FALSE;
 	char	argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
-	
+
 	NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "pickupitem", buf, sizeof( buf))
-		!= NULL ) 
+		!= NULL )
 	{
 		pickup = TRUE;
 	}
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "allowitem", buf, sizeof( buf))
-		!= NULL ) 
+		!= NULL )
 	{
 		int	i;
 		int ret;
@@ -613,14 +612,14 @@ BOOL npc_ShipCheckAllowItem( int meindex, int char_index, BOOL pickupmode)
 static BOOL npc_ShipCheckLevel( int meindex, int char_index, char *argstr)
 {
 	int		level;
-	
+
 	/* 卅仃木壬中仃卅中娄醒及民尼永弁 */
 	level = NPC_Util_GetNumFromStrWithDelim( argstr, "needlevel");
 	if( level == -1 ) {
 		return TRUE;
 	}
 	if( CHAR_getInt( char_index, CHAR_LV) >= level ) return TRUE;
-	
+
 	return FALSE;
 }
 
@@ -631,14 +630,14 @@ static BOOL npc_ShipCheckLevel( int meindex, int char_index, char *argstr)
 static int npc_ShipCheckStone( int meindex, int char_index, char *argstr)
 {
 	int		gold;
-	
+
 	/* 卅仃木壬中仃卅中娄醒及民尼永弁 */
 	gold = NPC_Util_GetNumFromStrWithDelim( argstr, "needstone");
 	if( gold == -1 ) {
 		return 0;
 	}
 	if( CHAR_getInt( char_index, CHAR_GOLD) >= gold ) return gold;
-	
+
 	return -1;
 }
 /**************************************
@@ -651,11 +650,11 @@ static void npc_ShipSendMsg( int meindex, int talkerindex, int tablenum)
 	char	buf[256];
 	char	msg[256];
 	if( tablenum < 0 || tablenum >= arraysizeof( airmsg)) return;
-	
+
 	NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, airmsg[tablenum].option, buf, sizeof( buf))
-		!= NULL ) 
+		!= NULL )
 	{
 		strcpy( msg, buf);
 	}
@@ -674,12 +673,12 @@ static int npc_ShipGetRoutePointNum( int meindex, char *argstr )
 	char	buf2[256];
 	int ret;
 	char routetostring[64];
-	
-	snprintf( routetostring, sizeof( routetostring), "routeto%d", 
+
+	snprintf( routetostring, sizeof( routetostring), "routeto%d",
 				CHAR_getWorkInt( meindex, NPC_WORK_CURRENTROUTE));
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, routetostring,buf, sizeof(buf))
-		== NULL ) 
+		== NULL )
 	{
 		print( "npcair:nothing route \n");
 		return -1;
@@ -696,9 +695,9 @@ BOOL npc_ShipCheckJoinParty( int meindex, int char_index, BOOL msgflg)
 	char	argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
 	int		ret;
 	NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
-	
+
 	/* ㄠ弘伉永玉动  及心 */
-	if( !NPC_Util_charIsInFrontOfChar( char_index, meindex, 1 )) return FALSE; 
+	if( !NPC_Util_charIsInFrontOfChar( char_index, meindex, 1 )) return FALSE;
 	/*     昙乐反蛐  允月 */
 	if( CHAR_getWorkInt( meindex, NPC_WORK_MODE) != 0 ) {
 		if( msgflg) npc_ShipSendMsg( meindex, char_index, NPC_AIR_MSG_GETTINGON);
@@ -753,7 +752,7 @@ BOOL npc_ShipCheckJoinParty( int meindex, int char_index, BOOL msgflg)
 	if( ret != 0 ) {
 		char msgbuf[128];
 		/* 豢嗯毛午月 */
-		CHAR_setInt( char_index, CHAR_GOLD, 
+		CHAR_setInt( char_index, CHAR_GOLD,
 					CHAR_getInt( char_index, CHAR_GOLD) - ret);
 		/* 霜耨 */
 		CHAR_send_P_StatusString( char_index, CHAR_P_STRING_GOLD);
@@ -762,10 +761,10 @@ BOOL npc_ShipCheckJoinParty( int meindex, int char_index, BOOL msgflg)
 	}
 	/* 由□  奴卞  月 */
 	//CHAR_JoinParty_Main( char_index, meindex);
-	
+
 	//fd = getfdFromCharaIndex( char_index );
-	
+
 	//GmsvServer_PR_send( fd, 1, 1);
-	
+
 	return TRUE;
 }

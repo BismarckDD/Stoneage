@@ -19,7 +19,6 @@
 
 static void NPC_Welfare_selectWindow(int meindex, int toindex, int num, int select);
 
-
 //载入好康NPC的初始化
 BOOL NPC_WelfareInit( int meindex )
 {
@@ -32,7 +31,7 @@ BOOL NPC_WelfareInit( int meindex )
 void NPC_WelfareTalked( int meindex , int talkerindex , char *szMes ,int color )
 {
     if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    	return;
+	return;
     }
 	if(NPC_Util_isFaceToFace(talkerindex,meindex,2 )==FALSE){
 		if( NPC_Util_CharDistance( talkerindex, meindex ) > 1) return;
@@ -52,7 +51,7 @@ static void NPC_Welfare_selectWindow( int meindex, int toindex, int num,int sele
 	}
 }
 
-void NPC_WelfareWindowTalked( int meindex, int talkerindex, 
+void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 		int seqno, int select, char *data)
 {
 	int skill, i, j;
@@ -84,12 +83,11 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 	skill=atoi(buf);
 	getDelimitedField(data,"|",2,buf,sizeof(buf));
 	cost=atoi(buf);
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "profession_skill", msg, sizeof( msg)) != NULL){
 		getDelimitedField(msg,",",skill,buf,sizeof(buf));
 		skillID=atoi(buf);
 	}
-
 
 	if(skillID < 0) return ;
 
@@ -111,9 +109,9 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 		if( NPC_Util_GetStrFromStrWithDelim( argstr, "profession_class", msg, sizeof(msg) ) == NULL){
 			return ;
 		}else{
-			p_class = atoi(msg);	
+			p_class = atoi(msg);
 		}
-		
+
 		// 技能所需职业
 		need_class = PROFESSION_SKILL_getInt( skillarray, PROFESSION_SKILL_PROFESSION_CLASS );
 
@@ -135,7 +133,6 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 			CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
 			return;
 		}
-		
 
 	}
 
@@ -161,7 +158,7 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 			flag = -1;
 			limit = PROFESSION_SKILL_getInt( skillarray, PROFESSION_SKILL_LIMIT1+i*2 );
 			need_percent = PROFESSION_SKILL_getInt( skillarray, PROFESSION_SKILL_LIMIT1+i*2 + 1 );
-					
+
 			if( limit!= 0  && need_percent == 0 ) need_count++;
 
 			if( limit == 0 ){
@@ -171,7 +168,7 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 					if( CHAR_getCharSkill( talkerindex, j) > 0 ) break;
 				}
 				if( j >=  PROFESSION_MAX_LEVEL ){
-					char token[256];	
+					char token[256];
 					sprintf( token, "需先学会任１种战斗技能才能学习！");
 					CHAR_talkToCli( talkerindex, meindex, token, CHAR_COLORYELLOW);
 					CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
@@ -186,28 +183,28 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 						CHAR_HaveSkill* hskill;
 						flag = -2;
 						hskill = CHAR_getCharHaveSkill( talkerindex, j );
-						skill_level = SKILL_getInt( &hskill->skill, SKILL_LEVEL);	
-						
+						skill_level = SKILL_getInt( &hskill->skill, SKILL_LEVEL);
+
 						// 判断熟练度
 						if( skill_level >= need_percent ){
 							flag = 1;	break;
-						}					
+						}
 					}
 				}
-				
+
 				// 未达成条件
 				if( flag == -1 && need_percent == 0 ){
 						temp[count] = limit;
-						count ++;					
+						count ++;
 				}else if( flag == -1 ){
-					char token[256];	
+					char token[256];
 					memset(token, -1, sizeof(token) );
 					sprintf( token, "尚未学会%s!", PROFESSION_SKILL_getChar( limit, PROFESSION_SKILL_NAME) );
 					CHAR_talkToCli( talkerindex, -1, token, CHAR_COLORYELLOW);
 					CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
 					return;
 				}else if( flag == -2 ){
-					char token[256];	
+					char token[256];
 					memset(token, -1, sizeof(token) );
 					sprintf( token, "%s熟练度不足%d!", PROFESSION_SKILL_getChar( limit, PROFESSION_SKILL_NAME), need_percent );
 					CHAR_talkToCli( talkerindex, -1, token, CHAR_COLORYELLOW);
@@ -216,10 +213,10 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 				}
 			}
 		}
-	
+
 		if( count == need_count &&  need_count != 0 ){
 			char msg[256] = {0};
-		
+
 			sprintf( msg, "需先学会 " );
 			for( i = 0; i< count; i++ ){
 				if( temp[i] != 0 ){
@@ -237,7 +234,7 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 
 	}
 
-	// 判断金钱	
+	// 判断金钱
 	{
 		cost = PROFESSION_SKILL_getInt( skillarray, PROFESSION_SKILL_COST );
 		cost = cost * rate;
@@ -254,7 +251,7 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 		if( NPC_Util_GetStrFromStrWithDelim( argstr, "trans", msg, sizeof(msg) ) != NULL){
 		    int trans = atoi(msg);
 			print("\n转生要求:%d,%d",CHAR_getInt( talkerindex, CHAR_TRANSMIGRATION),trans);
-			if( CHAR_getInt( talkerindex, CHAR_TRANSMIGRATION) < trans){ 
+			if( CHAR_getInt( talkerindex, CHAR_TRANSMIGRATION) < trans){
 				if( NPC_Util_GetStrFromStrWithDelim( argstr, "trans_msg", msg, sizeof(msg) ) != NULL){
                     CHAR_talkToCli( talkerindex, meindex, msg, CHAR_COLORYELLOW);
 				    return;
@@ -294,19 +291,19 @@ void NPC_WelfareWindowTalked( int meindex, int talkerindex,
 	{
 		char token[256];
 		int next_profession_skill_point = profession_skill_point-1;
-		
+
 		CHAR_setInt( talkerindex, PROFESSION_SKILL_POINT, next_profession_skill_point );
-		
+
 		memset(token, -1, sizeof(token) );
 		sprintf( token, "您学习了 %s，剩余学习点数 %d"
 				,PROFESSION_SKILL_getChar( skillarray, PROFESSION_SKILL_NAME )
 				,next_profession_skill_point );
 		CHAR_talkToCli( talkerindex, -1, token, CHAR_COLORYELLOW);
-    
+
 		CHAR_sendCToArroundCharacter( CHAR_getWorkInt( talkerindex , CHAR_WORKOBJINDEX ));
 	}
 
-}             
+}
 
 void NPC_WelfareMakeStr(int meindex,int toindex,int select)
 {
@@ -319,12 +316,12 @@ void NPC_WelfareMakeStr(int meindex,int toindex,int select)
 
 	if(select==0){
 		sprintf(token,"0|0");
-		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PETSKILLSHOP, 
-			WINDOW_BUTTONTYPE_NONE, 
+		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PETSKILLSHOP,
+			WINDOW_BUTTONTYPE_NONE,
 			CHAR_WINDOWTYPE_WINDOWPETSKILLSHOP,
 			CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 			token);
-		
+
 	}
 
 	if(NPC_Util_GetArgStr( meindex, argstr, sizeof(argstr))==NULL){
@@ -338,12 +335,11 @@ void NPC_WelfareMakeStr(int meindex,int toindex,int select)
 	}
 
 	sprintf(token,"1|%s|%s", CHAR_getChar(meindex,CHAR_NAME), msg);
-		
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "skill_rate", msg, sizeof( msg)) != NULL){
 		rate=atof(msg);
 	}
 
-		
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "profession_skill", msg, sizeof( msg) ) != NULL){
 		int skillarray;
 		int skillID;
@@ -371,11 +367,11 @@ void NPC_WelfareMakeStr(int meindex,int toindex,int select)
 				PROFESSION_SKILL_getInt( skillarray, PROFESSION_SKILL_ICON )	// 图示
 			);
 			strcat(token,token2);
-		} 
+		}
 	}
 
-	GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PROFESSIONSHOP, 
-				WINDOW_BUTTONTYPE_NONE, 
+	GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PROFESSIONSHOP,
+				WINDOW_BUTTONTYPE_NONE,
 				WINDOW_MESSAGETYPE_PROFESSIONSHOP,
 				CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 				token);
@@ -383,8 +379,6 @@ void NPC_WelfareMakeStr(int meindex,int toindex,int select)
 	return;
 }
 
-
 #endif
 #endif
-
 

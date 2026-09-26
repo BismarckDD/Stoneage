@@ -1,6 +1,5 @@
 #include "version.h"
 //
-#include <errno.h>
 #include <signal.h>
 #include "gmsv_server.h"
 #include "saac_client.h"

@@ -5,14 +5,13 @@
 #include "char_base.h"
 #include "npcutil.h"
 
-
 /*
   霾滇读卅枣  ［  飓反窒匹手方仁［
   午曰丐尹内升及  轾井日匹手苇尹月方丹卞允月［
 
   init , looked 及心卞  杀
 
-  */  
+  */
 BOOL NPC_MsgInit( int meindex )
 {
     //CHAR_setInt( meindex , CHAR_HP , 0 );
@@ -32,14 +31,13 @@ BOOL NPC_MsgInit( int meindex )
     return TRUE;
 }
 
-
 /*
  * 苇日木凶［反卅允分仃［
  */
 void NPC_MsgLooked( int meindex , int lookedindex )
 {
 	char	arg[NPC_UTIL_GETARGSTR_BUFSIZE];
-    
+
 	NPC_Util_GetArgStr( meindex, arg, sizeof( arg));
     CHAR_talkToCli( lookedindex , -1 , arg , CHAR_COLORWHITE );
 

@@ -26,15 +26,9 @@
 
 #include "family.h"
 
-
-
 extern char hanzibuf[5000][8];
 
-
-
 #ifdef _JZ_NEWSCRIPT_LUA
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -66,13 +60,9 @@ int NPC_Lua_Char_ClrEvtEnd(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, TM_EveNo);
 
 }
-
-
 
 int NPC_Lua_Char_ClrEvtNow(lua_State *_NLL)
 
@@ -104,8 +94,6 @@ int NPC_Lua_Char_ClrEvtNow(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_ClrEvt(lua_State *_NLL)
 
 {
@@ -136,8 +124,6 @@ int NPC_Lua_Char_ClrEvt(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetEvtEnd(lua_State *_NLL)
 
 {
@@ -164,13 +150,9 @@ int NPC_Lua_Char_SetEvtEnd(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, TM_EveNo);
 
 }
-
-
 
 int NPC_Lua_Char_SetEvtNow(lua_State *_NLL)
 
@@ -198,13 +180,9 @@ int NPC_Lua_Char_SetEvtNow(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, TM_EveNo);
 
 }
-
-
 
 int NPC_Lua_Char_SetData(lua_State *_NLL)
 
@@ -217,8 +195,6 @@ int NPC_Lua_Char_SetData(lua_State *_NLL)
 	int TM_Index = (int)lua_tointeger(_NLL, 1);
 
 	int TM_Flg = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if(TM_Flg >= 0)
 
@@ -350,8 +326,6 @@ int NPC_Lua_Char_SetData(lua_State *_NLL)
 
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 
 //事件设置的接口
@@ -366,11 +340,7 @@ int NPC_Lua_Char_SetWalkPreEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -381,8 +351,6 @@ int NPC_Lua_Char_SetWalkPreEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -409,8 +377,6 @@ int NPC_Lua_Char_SetWalkPreEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_WALKPREFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_WALKPREFUNC] = (void *)NPC_Lua_WalkPreCallBack;
 
@@ -458,8 +424,6 @@ int NPC_Lua_Char_SetWalkPreEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetWalkPostEvent(lua_State *_NLL)
 
 {
@@ -470,11 +434,7 @@ int NPC_Lua_Char_SetWalkPostEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -485,8 +445,6 @@ int NPC_Lua_Char_SetWalkPostEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -513,8 +471,6 @@ int NPC_Lua_Char_SetWalkPostEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_WALKPOSTFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_WALKPOSTFUNC] = (void *)NPC_Lua_WalkPostCallBack;
 
@@ -562,8 +518,6 @@ int NPC_Lua_Char_SetWalkPostEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetPreOverEvent(lua_State *_NLL)
 
 {
@@ -574,11 +528,7 @@ int NPC_Lua_Char_SetPreOverEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -589,8 +539,6 @@ int NPC_Lua_Char_SetPreOverEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -617,8 +565,6 @@ int NPC_Lua_Char_SetPreOverEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_PREOVERFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_PREOVERFUNC] = (void *)NPC_Lua_PreOverCallBack;
 
@@ -666,8 +612,6 @@ int NPC_Lua_Char_SetPreOverEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetPostOverEvent(lua_State *_NLL)
 
 {
@@ -678,11 +622,7 @@ int NPC_Lua_Char_SetPostOverEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -693,8 +633,6 @@ int NPC_Lua_Char_SetPostOverEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -721,8 +659,6 @@ int NPC_Lua_Char_SetPostOverEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_POSTOVERFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_POSTOVERFUNC] = (void *)NPC_Lua_PostOverCallBack;
 
@@ -770,8 +706,6 @@ int NPC_Lua_Char_SetPostOverEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetWatchEvent(lua_State *_NLL)
 
 {
@@ -782,11 +716,7 @@ int NPC_Lua_Char_SetWatchEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -797,8 +727,6 @@ int NPC_Lua_Char_SetWatchEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -825,8 +753,6 @@ int NPC_Lua_Char_SetWatchEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_WATCHFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_WATCHFUNC] = (void *)NPC_Lua_WatchCallBack;
 
@@ -874,8 +800,6 @@ int NPC_Lua_Char_SetWatchEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetLoopEvent(lua_State *_NLL)
 
 {
@@ -890,11 +814,7 @@ int NPC_Lua_Char_SetLoopEvent(lua_State *_NLL)
 
 	int TM_RetLoopInterval = -1;
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -905,8 +825,6 @@ int NPC_Lua_Char_SetLoopEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -990,8 +908,6 @@ int NPC_Lua_Char_SetLoopEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetTalkedEvent(lua_State *_NLL)
 
 {
@@ -1002,11 +918,7 @@ int NPC_Lua_Char_SetTalkedEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -1017,8 +929,6 @@ int NPC_Lua_Char_SetTalkedEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -1045,8 +955,6 @@ int NPC_Lua_Char_SetTalkedEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_TALKEDFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_TALKEDFUNC] = (void *)NPC_Lua_TalkedCallBack;
 
@@ -1094,8 +1002,6 @@ int NPC_Lua_Char_SetTalkedEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetOFFEvent(lua_State *_NLL)
 
 {
@@ -1106,11 +1012,7 @@ int NPC_Lua_Char_SetOFFEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -1121,8 +1023,6 @@ int NPC_Lua_Char_SetOFFEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -1149,8 +1049,6 @@ int NPC_Lua_Char_SetOFFEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_OFFFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_OFFFUNC] = (void *)NPC_Lua_OFFCallBack;
 
@@ -1198,8 +1096,6 @@ int NPC_Lua_Char_SetOFFEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetLookedEvent(lua_State *_NLL)
 
 {
@@ -1210,11 +1106,7 @@ int NPC_Lua_Char_SetLookedEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -1225,8 +1117,6 @@ int NPC_Lua_Char_SetLookedEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -1253,8 +1143,6 @@ int NPC_Lua_Char_SetLookedEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_LOOKEDFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_LOOKEDFUNC] = (void *)NPC_Lua_LookedCallBack;
 
@@ -1302,8 +1190,6 @@ int NPC_Lua_Char_SetLookedEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetItemPutEvent(lua_State *_NLL)
 
 {
@@ -1314,11 +1200,7 @@ int NPC_Lua_Char_SetItemPutEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -1329,8 +1211,6 @@ int NPC_Lua_Char_SetItemPutEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-	
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -1357,8 +1237,6 @@ int NPC_Lua_Char_SetItemPutEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_ITEMPUTFUNC].string[0] = '\0';
 
 			}
-
-	
 
 			TM_char->functable[CHAR_ITEMPUTFUNC] = (void *)NPC_Lua_ItemPutCallBack;
 
@@ -1406,8 +1284,6 @@ int NPC_Lua_Char_SetItemPutEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetWindowTalkedEvent(lua_State *_NLL)
 
 {
@@ -1418,11 +1294,7 @@ int NPC_Lua_Char_SetWindowTalkedEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -1433,8 +1305,6 @@ int NPC_Lua_Char_SetWindowTalkedEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -1461,8 +1331,6 @@ int NPC_Lua_Char_SetWindowTalkedEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_WINDOWTALKEDFUNC].string[0] = '\0';
 
 			}
-
-
 
 			TM_char->functable[CHAR_WINDOWTALKEDFUNC] = (void *)NPC_Lua_WindowTalkedCallBack;
 
@@ -1510,8 +1378,6 @@ int NPC_Lua_Char_SetWindowTalkedEvent(lua_State *_NLL)
 
 }
 
-
-
 #ifdef _USER_CHARLOOPS
 
 int NPC_Lua_Char_SetCharLoopsEvent(lua_State *_NLL)
@@ -1528,11 +1394,7 @@ int NPC_Lua_Char_SetCharLoopsEvent(lua_State *_NLL)
 
 	int TM_RetLoopInterval = -1;
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -1543,8 +1405,6 @@ int NPC_Lua_Char_SetCharLoopsEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -1628,8 +1488,6 @@ int NPC_Lua_Char_SetCharLoopsEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_SetBattleProPertyEvent(lua_State *_NLL)
 
 {
@@ -1640,11 +1498,7 @@ int NPC_Lua_Char_SetBattleProPertyEvent(lua_State *_NLL)
 
 	int TM_index = (int)lua_tointeger(_NLL, 3);
 
-
-
 	Char *TM_char = CHAR_getCharPointer(TM_index);
-
-
 
 	if(TM_char == NULL)
 
@@ -1655,8 +1509,6 @@ int NPC_Lua_Char_SetBattleProPertyEvent(lua_State *_NLL)
 	}
 
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -1683,8 +1535,6 @@ int NPC_Lua_Char_SetBattleProPertyEvent(lua_State *_NLL)
 				TM_char->sur_charfunctable[CHAR_BATTLEPROPERTY].string[0] = '\0';
 
 			}
-
-
 
 			TM_char->functable[CHAR_BATTLEPROPERTY] = (void *)NPC_Lua_BattleProPertyCallBack;
 
@@ -1749,8 +1599,6 @@ int NPC_Lua_Char_GetData(lua_State *_NLL)
 	int TM_Index = (int)lua_tointeger(_NLL, 1);
 
 	int TM_Flg = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if(TM_Flg >= 0)
 
@@ -1838,8 +1686,6 @@ int NPC_Lua_Char_GetData(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_IsEventEnd(lua_State *_NLL)
 
 {
@@ -1852,17 +1698,11 @@ int NPC_Lua_Char_IsEventEnd(lua_State *_NLL)
 
 	int TM_EventNo = (int)lua_tointeger(_NLL, 2);
 
-	
-
 	BOOL TM_Ret = NPC_EventCheckFlg(TM_Index, TM_EventNo);
-
-
 
 	LRetBool(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Char_IsEventNow(lua_State *_NLL)
 
@@ -1876,17 +1716,11 @@ int NPC_Lua_Char_IsEventNow(lua_State *_NLL)
 
 	int TM_EventNo = (int)lua_tointeger(_NLL, 2);
 
-	
-
 	BOOL TM_Ret = NPC_NowEventCheckFlg(TM_Index, TM_EventNo);
-
-
 
 	LRetBool(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Char_FindItemId(lua_State *_NLL)
 
@@ -1940,8 +1774,6 @@ int NPC_Lua_Char_FindItemId(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_VipPoint(lua_State *_NLL)
 
 {
@@ -1966,15 +1798,9 @@ int NPC_Lua_Char_VipPoint(lua_State *_NLL)
 
 	}
 
-	
-
 	TM_Cdkey = CHAR_getChar(TM_Index,CHAR_CDKEY);
 
-
-
 	int TM_MyPoint = sasql_vippoint(TM_Cdkey,TM_Point,TM_Flag);
-
-	
 
 	if(TM_MyPoint<0){
 
@@ -1985,8 +1811,6 @@ int NPC_Lua_Char_VipPoint(lua_State *_NLL)
 	LRetInt(_NLL, TM_MyPoint);
 
 }
-
-
 
 int NPC_Lua_Char_FindPetEnemyId(lua_State *_NLL)
 
@@ -2004,8 +1828,6 @@ int NPC_Lua_Char_FindPetEnemyId(lua_State *_NLL)
 
 	int i = 0;
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2013,8 +1835,6 @@ int NPC_Lua_Char_FindPetEnemyId(lua_State *_NLL)
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
 	}
-
-
 
 	for( i = 0 ; i<CHAR_MAXPETHAVE ; i++ )
 
@@ -2036,8 +1856,6 @@ int NPC_Lua_Char_FindPetEnemyId(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetItemId(lua_State *_NLL)
 
 {
@@ -2049,8 +1867,6 @@ int NPC_Lua_Char_GetItemId(lua_State *_NLL)
 	int TM_Index = (int)lua_tointeger(_NLL, 1);
 
 	int TM_Pos = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if(!CHAR_CHECKINDEX(TM_Index))
 
@@ -2068,8 +1884,6 @@ int NPC_Lua_Char_GetItemId(lua_State *_NLL)
 
 		int TM_ItemIndex = CHAR_getItemIndex(TM_Index, TM_Pos);
 
-		
-
 		if( ITEM_CHECKINDEX(TM_ItemIndex) == FALSE ) LRetErrInt(_NLL, -2, "该道具栏没有道具。");
 
 		LRetInt(_NLL, ITEM_getInt(TM_ItemIndex, ITEM_ID));
@@ -2079,8 +1893,6 @@ int NPC_Lua_Char_GetItemId(lua_State *_NLL)
 	LRetErrInt(_NLL, -3, "传入的位置超出道具栏范围。");
 
 }
-
-
 
 int NPC_Lua_Char_GetItemIndex(lua_State *_NLL)
 
@@ -2094,8 +1906,6 @@ int NPC_Lua_Char_GetItemIndex(lua_State *_NLL)
 
 	int TM_Pos = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2112,8 +1922,6 @@ int NPC_Lua_Char_GetItemIndex(lua_State *_NLL)
 
 		int TM_ItemIndex = CHAR_getItemIndex(TM_Index, TM_Pos);
 
-		
-
 		if( ITEM_CHECKINDEX(TM_ItemIndex) == FALSE ) LRetErrInt(_NLL, -2, "该道具栏没有道具。");
 
 		LRetInt(_NLL, TM_ItemIndex);
@@ -2123,8 +1931,6 @@ int NPC_Lua_Char_GetItemIndex(lua_State *_NLL)
 	LRetErrInt(_NLL, -3, "传入的位置超出道具栏范围。");
 
 }
-
-
 
 int NPC_Lua_Char_GetPetEnemyId(lua_State *_NLL)
 
@@ -2138,8 +1944,6 @@ int NPC_Lua_Char_GetPetEnemyId(lua_State *_NLL)
 
 	int TM_Pos = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2148,15 +1952,11 @@ int NPC_Lua_Char_GetPetEnemyId(lua_State *_NLL)
 
 	}
 
-
-
 	if(TM_Pos >= 0 && TM_Pos < CHAR_MAXPETHAVE)
 
 	{
 
 		int TM_PetIndex = CHAR_getCharPet(TM_Index, TM_Pos);
-
-		
 
 		if( CHAR_CHECKINDEX(TM_PetIndex) == FALSE ) LRetErrInt(_NLL, -2, "该宠物栏没有宠物。");
 
@@ -2167,8 +1967,6 @@ int NPC_Lua_Char_GetPetEnemyId(lua_State *_NLL)
 	LRetErrInt(_NLL, -3, "传入的位置超出宠物栏范围。");
 
 }
-
-
 
 int NPC_Lua_Char_GetPetIndex(lua_State *_NLL)
 
@@ -2182,8 +1980,6 @@ int NPC_Lua_Char_GetPetIndex(lua_State *_NLL)
 
 	int TM_Pos = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2192,15 +1988,11 @@ int NPC_Lua_Char_GetPetIndex(lua_State *_NLL)
 
 	}
 
-
-
 	if(TM_Pos >= 0 && TM_Pos < CHAR_MAXPETHAVE)
 
 	{
 
 		int TM_PetIndex = CHAR_getCharPet(TM_Index, TM_Pos);
-
-		
 
 		if( CHAR_CHECKINDEX(TM_PetIndex) == FALSE ) LRetErrInt(_NLL, -2, "该宠物栏没有宠物。");
 
@@ -2211,8 +2003,6 @@ int NPC_Lua_Char_GetPetIndex(lua_State *_NLL)
 	LRetErrInt(_NLL, -3, "传入的位置超出宠物栏范围。");
 
 }
-
-
 
 int NPC_Lua_Char_GetTeamIndex(lua_State *_NLL)
 
@@ -2226,8 +2016,6 @@ int NPC_Lua_Char_GetTeamIndex(lua_State *_NLL)
 
 	int TM_Pos = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2236,15 +2024,11 @@ int NPC_Lua_Char_GetTeamIndex(lua_State *_NLL)
 
 	}
 
-
-
 	if(TM_Pos >= 1 && TM_Pos < getPartyNum(TM_Index))
 
 	{
 
 		int TM_ParIndex = CHAR_getWorkInt( TM_Index, TM_Pos + CHAR_WORKPARTYINDEX1);
-
-
 
 		if( CHAR_CHECKINDEX(TM_ParIndex) == FALSE ) LRetErrInt(_NLL, -2, "该位置没有队员。");
 
@@ -2256,8 +2040,6 @@ int NPC_Lua_Char_GetTeamIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_HealAll(lua_State *_NLL)
 
 {
@@ -2268,8 +2050,6 @@ int NPC_Lua_Char_HealAll(lua_State *_NLL)
 
 	int TM_Index = (int)lua_tointeger(_NLL, 1);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2278,17 +2058,11 @@ int NPC_Lua_Char_HealAll(lua_State *_NLL)
 
 	}
 
-
-
 	NPC_HealerAllHeal(TM_Index);
 
 	LRetInt(_NLL, 1);
 
 }
-
-
-
-
 
 int NPC_Lua_Char_GetPetSkillId(lua_State *_NLL)
 
@@ -2302,8 +2076,6 @@ int NPC_Lua_Char_GetPetSkillId(lua_State *_NLL)
 
 	int TM_SkillIndex = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2312,23 +2084,17 @@ int NPC_Lua_Char_GetPetSkillId(lua_State *_NLL)
 
 	}
 
-
-
 	if( !CHAR_CHECKPETSKILLINDEX( TM_SkillIndex)){
 
-	 	LRetErrInt(_NLL, -1, "传入的索引是无效的。");
+		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
 	}
-
-	
 
 	int TM_SkillId=CHAR_getPetSkill( TM_Index, TM_SkillIndex);
 
 	LRetInt(_NLL, TM_SkillId);
 
 }
-
-
 
 int NPC_Lua_Char_GetPetSkillName(lua_State *_NLL)
 
@@ -2352,8 +2118,6 @@ int NPC_Lua_Char_GetPetSkillName(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetPetSkillMsg(lua_State *_NLL)
 
 {
@@ -2375,8 +2139,6 @@ int NPC_Lua_Char_GetPetSkillMsg(lua_State *_NLL)
 	LRetMsg(_NLL, PETSKILL_getChar( skillarray, PETSKILL_COMMENT));
 
 }
-
-
 
 int NPC_Lua_Char_SetPetSkill(lua_State *_NLL)
 
@@ -2400,11 +2162,9 @@ int NPC_Lua_Char_SetPetSkill(lua_State *_NLL)
 
 	}
 
-
-
 	if( !CHAR_CHECKPETSKILLINDEX( TM_Slod)){
 
-	 	LRetErrInt(_NLL, -1, "传入的索引是无效的。");
+		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
 	}
 
@@ -2544,8 +2304,6 @@ int NPC_Lua_Char_RandMsg(lua_State *_NLL)
 
 		flag = atoi(buftest);
 
-		
-
 		if(TM_NpcIndex!=MyNpcIndex || TM_TalkIndex!=MyTalkIndex){
 
 			CHAR_setWorkChar(TM_TalkIndex,CHAR_WORKRANDMSG,"");
@@ -2553,8 +2311,6 @@ int NPC_Lua_Char_RandMsg(lua_State *_NLL)
 			LRetInt(_NLL, 0);
 
 		}
-
-		
 
 		if(flag == 0){
 
@@ -2634,8 +2390,6 @@ int NPC_Lua_Char_RandMsg(lua_State *_NLL)
 
 					sprintf(randwronganswer4,"%s",str_hanzi_ganrao(randtmpbuf[2],randtmpbuf[3],randtmpbuf[0],randtmpbuf[1],1,newrand1,newrand2,newrand3,newrand4,newrand5));
 
-					
-
 		}else{
 
 			int tii;
@@ -2665,8 +2419,6 @@ int NPC_Lua_Char_RandMsg(lua_State *_NLL)
 					strcat(tempbuf,timubuf[timunum]);
 
 				}
-
-
 
 			}
 
@@ -2828,7 +2580,7 @@ int NPC_Lua_Char_RandMsg(lua_State *_NLL)
 
 		sprintf(buf,"%s\n%s\n%s\n%s\n%s\n%s\n输入正确答案括号内的5位数字或者点选答案",randquestion,tempret[0],tempret[1],tempret[2],tempret[3],tempret[4]);
 
-		GmsvServer_WN_send( fd, windowtype, 
+		GmsvServer_WN_send( fd, windowtype,
 
 			WINDOW_BUTTONTYPE_OK,
 
@@ -2870,8 +2622,6 @@ int NPC_Lua_Char_GetBeatitudeNum(lua_State *_NLL)
 
 	int TM_Index = (int)lua_tointeger(_NLL, 1);
 
-	
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -2879,8 +2629,6 @@ int NPC_Lua_Char_GetBeatitudeNum(lua_State *_NLL)
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
 	}
-
-
 
 	int petbeatitude = CHAR_getInt( TM_Index, CHAR_BEATITUDE);
 
@@ -2906,8 +2654,6 @@ int NPC_Lua_Char_GetBeatitudeNum(lua_State *_NLL)
 
 }
 
-
-
 //通过帐号查询人物索引
 
 int NPC_Lua_Char_GetPlayerIndexByCdkey(lua_State *_NLL)
@@ -2919,8 +2665,6 @@ int NPC_Lua_Char_GetPlayerIndexByCdkey(lua_State *_NLL)
 	CheckIndexNull(_NLL, 1);
 
 	char *TM_Cdkey = (char *)lua_tostring(_NLL, 1);
-
-
 
 	int TM_playernum = CHAR_getPlayerMaxNum();
 
@@ -2946,13 +2690,9 @@ int NPC_Lua_Char_GetPlayerIndexByCdkey(lua_State *_NLL)
 
 	}
 
-
-
 	LRetErrInt(_NLL, -3, "该帐号不存在或者未上线！");
 
 }
-
-
 
 int NPC_Lua_Char_getVipPoint(lua_State *_NLL)
 
@@ -2968,7 +2708,7 @@ int NPC_Lua_Char_getVipPoint(lua_State *_NLL)
 
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
-	}  
+	}
 
    int TM_point = sasql_getVipPoint(TM_Index);
 
@@ -2981,8 +2721,6 @@ int NPC_Lua_Char_getVipPoint(lua_State *_NLL)
   LRetInt(_NLL, TM_point);
 
 }
-
-
 
 /*
 
@@ -3000,7 +2738,7 @@ int NPC_Lua_Char_getjfPoint(lua_State *_NLL)
 
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
-	}  
+	}
 
    int TM_point = sasql_jifenPoint(TM_Index);
 
@@ -3013,8 +2751,6 @@ int NPC_Lua_Char_getjfPoint(lua_State *_NLL)
   LRetInt(_NLL, TM_point);
 
 }
-
-
 
 int NPC_Lua_Char_getxjPoint(lua_State *_NLL)
 
@@ -3030,7 +2766,7 @@ int NPC_Lua_Char_getxjPoint(lua_State *_NLL)
 
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
-	}  
+	}
 
    int TM_point = sasql_xjPoint(TM_Index);
 
@@ -3045,8 +2781,6 @@ int NPC_Lua_Char_getxjPoint(lua_State *_NLL)
 }
 
 */
-
-
 
 int NPC_Lua_Char_setVipPoint(lua_State *_NLL)
 
@@ -3064,7 +2798,7 @@ int NPC_Lua_Char_setVipPoint(lua_State *_NLL)
 
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
-	}  
+	}
 
    int TM_kouj = sasql_setVipPoint(TM_Index,TM_point);
 
@@ -3096,7 +2830,7 @@ int NPC_Lua_Char_setjfPoint(lua_State *_NLL)
 
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
-	}  
+	}
 
    int TM_kouj = sasql_setJfPoint(TM_Index,TM_point);
 
@@ -3109,8 +2843,6 @@ int NPC_Lua_Char_setjfPoint(lua_State *_NLL)
   LRetInt(_NLL, TM_kouj);
 
 }
-
-
 
 int NPC_Lua_Char_setxjPoint(lua_State *_NLL)
 
@@ -3128,7 +2860,7 @@ int NPC_Lua_Char_setxjPoint(lua_State *_NLL)
 
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
-	}  
+	}
 
    int TM_kouj = sasql_setxjPoint(TM_Index,TM_point);
 
@@ -3202,8 +2934,6 @@ int NPC_Lua_Char_GetAllocPoint(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetDataFromEnemyBase(lua_State *_NLL)
 
 {
@@ -3244,7 +2974,7 @@ int NPC_Lua_Char_GetDataFromEnemyBase(lua_State *_NLL)
 
 		}
 
-		else 
+		else
 
 		{
 
@@ -3256,7 +2986,7 @@ int NPC_Lua_Char_GetDataFromEnemyBase(lua_State *_NLL)
 
 	}
 
-	else 
+	else
 
 	{
 
@@ -3266,8 +2996,6 @@ int NPC_Lua_Char_GetDataFromEnemyBase(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetPlayerIndex(lua_State *_NLL)
 
 {
@@ -3276,8 +3004,6 @@ int NPC_Lua_Char_GetPlayerIndex(lua_State *_NLL)
 
 	char *TM_PlayerID = lua_tostring(_NLL, 1);
 
-
-
 		if(TM_PlayerID == NULL )
 
 	{
@@ -3285,8 +3011,6 @@ int NPC_Lua_Char_GetPlayerIndex(lua_State *_NLL)
 		LRetErrInt(_NLL, -1, "传入的索引是无效的。");
 
 	}
-
-	
 
 	int TM_playernum = CHAR_getPlayerMaxNum();
 
@@ -3314,8 +3038,6 @@ int NPC_Lua_Char_GetPlayerIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_FindItemIndex(lua_State *_NLL)
 
 {
@@ -3326,15 +3048,11 @@ int NPC_Lua_Char_FindItemIndex(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 2);
 
-
-
 	int TM_CharaIndex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_ItemIndex = (int)lua_tointeger(_NLL, 2);
 
 	int tmpTM_ItemIndex = 0;
-
-	
 
 	if(!CHAR_CHECKINDEX(TM_CharaIndex))
 
@@ -3374,15 +3092,9 @@ int NPC_Lua_Char_FindItemIndex(lua_State *_NLL)
 
 	}
 
- 
-
 	LRetErrInt(_NLL, -1, "没有找到对应 ItemIndex 的道具");
 
-	
-
 }
-
-
 
 int NPC_Lua_Char_FindPetIndex(lua_State *_NLL)
 
@@ -3394,15 +3106,11 @@ int NPC_Lua_Char_FindPetIndex(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 2);
 
-
-
 	int TM_CharaIndex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_PetIndex = (int)lua_tointeger(_NLL, 2);
 
 	int tmpTM_PetIndex = 0;
-
-	
 
 	if(!CHAR_CHECKINDEX(TM_CharaIndex))
 
@@ -3419,8 +3127,6 @@ int NPC_Lua_Char_FindPetIndex(lua_State *_NLL)
 		LRetErrInt(_NLL, -1, "传入宠物的索引是无效的。");
 
 	}
-
-	
 
 	int i = 0;
 
@@ -3442,13 +3148,9 @@ int NPC_Lua_Char_FindPetIndex(lua_State *_NLL)
 
 	}
 
- 
-
 	LRetErrInt(_NLL, -1, "没有找到对应 PetIndex 的宠物");
 
 }
-
-
 
 int NPC_Lua_CHAR_CHECKINDEX(lua_State *_NLL)
 
@@ -3472,8 +3174,6 @@ int NPC_Lua_CHAR_CHECKINDEX(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetPetSkill(lua_State *_NLL)
 
 {
@@ -3484,15 +3184,11 @@ int NPC_Lua_Char_GetPetSkill(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 2);
 
-	
-
 	int TM_PetIndex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_PetSkillIndex = (int)lua_tointeger(_NLL, 2);
 
-
-
-	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){	
+	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){
 
 		LRetInt(_NLL, CHAR_getPetSkill(TM_PetIndex,TM_PetSkillIndex));
 
@@ -3503,8 +3199,6 @@ int NPC_Lua_Char_GetPetSkill(lua_State *_NLL)
 	}
 
 }
-
-
 
 int NPC_Lua_Char_GetPetSkillNo(lua_State *_NLL)
 
@@ -3516,15 +3210,11 @@ int NPC_Lua_Char_GetPetSkillNo(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 2);
 
-	
-
 	int TM_PetIndex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_PetSkillIndex = (int)lua_tointeger(_NLL, 2);
 
-
-
-	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){	
+	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){
 
 		LRetInt(_NLL, CHAR_getPetSkill(TM_PetIndex,TM_PetSkillIndex));
 
@@ -3536,8 +3226,6 @@ int NPC_Lua_Char_GetPetSkillNo(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetEmptyItemBoxNum(lua_State *_NLL)
 
 {
@@ -3546,11 +3234,7 @@ int NPC_Lua_Char_GetEmptyItemBoxNum(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 1);
 
-
-
 	int TM_CharIndex = (int)lua_tointeger(_NLL, 1);
-
-
 
 	if(!CHAR_CHECKINDEX(TM_CharIndex))
 
@@ -3560,13 +3244,9 @@ int NPC_Lua_Char_GetEmptyItemBoxNum(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, CHAR_getEmptyItemBoxNum(TM_CharIndex));
 
 }
-
-
 
 int NPC_Lua_Char_GetEmptyPetBoxNum(lua_State *_NLL)
 
@@ -3576,11 +3256,7 @@ int NPC_Lua_Char_GetEmptyPetBoxNum(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 1);
 
-
-
 	int TM_CharIndex = (int)lua_tointeger(_NLL, 1);
-
-
 
 	if(!CHAR_CHECKINDEX(TM_CharIndex))
 
@@ -3590,13 +3266,9 @@ int NPC_Lua_Char_GetEmptyPetBoxNum(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, CHAR_getEmptyPetBoxNum(TM_CharIndex));
 
 }
-
-
 
 int NPC_Lua_Char_GetPlayerPetNum(lua_State *_NLL)
 
@@ -3608,13 +3280,9 @@ int NPC_Lua_Char_GetPlayerPetNum(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 2);
 
-
-
 	int TM_CharaIndex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_Petid = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if(!CHAR_CHECKINDEX(TM_CharaIndex))
 
@@ -3624,17 +3292,9 @@ int NPC_Lua_Char_GetPlayerPetNum(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, CHAR_getPlayerPetNum(TM_CharaIndex,TM_Petid));
 
-	
-
-	
-
 }
-
-
 
 int NPC_Lua_Char_GetPlayerItemNum(lua_State *_NLL)
 
@@ -3672,8 +3332,6 @@ int NPC_Lua_Char_GetPlayerItemNum(lua_State *_NLL)
 
 	}
 
-	
-
 	if(!CHAR_CHECKINDEX(TM_CharaIndex))
 
 	{
@@ -3682,17 +3340,9 @@ int NPC_Lua_Char_GetPlayerItemNum(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, CHAR_getPlayerItemNum(TM_CharaIndex,TM_ItemID,TM_IsContainEquip,TM_IsContainPile));
 
-	
-
-	
-
 }
-
-
 
 int NPC_Lua_Char_RidNo(lua_State *_NLL)
 
@@ -3707,8 +3357,6 @@ int NPC_Lua_Char_RidNo(lua_State *_NLL)
 	int TM_Index = (int)lua_tointeger(_NLL, 1);
 
 	int TM_RidNo = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if( CHAR_CHECKINDEX( TM_Index ) == FALSE ){
 
@@ -3736,8 +3384,6 @@ int NPC_Lua_Char_RidNo(lua_State *_NLL)
 
 }
 
-
-
 int NPC_ABLua_char_getPlayerMaxNum(lua_State *_NLL)
 
 {
@@ -3745,8 +3391,6 @@ int NPC_ABLua_char_getPlayerMaxNum(lua_State *_NLL)
 	LRetInt(_NLL, getFdnum());
 
 }
-
-
 
 int NPC_ABLua_char_getBattleexp(lua_State *_NLL)
 
@@ -3770,17 +3414,13 @@ int NPC_Lua_Char_SetPetSkill(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 3);
 
-	
-
 	int TM_PetIndex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_PetSkillIndex = (int)lua_tointeger(_NLL, 2);
 
 	int TM_PetSkillNo = (int)lua_tointeger(_NLL, 3);
 
-
-
-	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){	
+	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){
 
 		LRetInt(_NLL, CHAR_setPetSkill(TM_PetIndex,TM_PetSkillIndex,TM_PetSkillNo));
 
@@ -3794,8 +3434,6 @@ int NPC_Lua_Char_SetPetSkill(lua_State *_NLL)
 
 */
 
-
-
 int NPC_Lua_Char_SetPetSkillNo(lua_State *_NLL)
 
 {
@@ -3808,17 +3446,13 @@ int NPC_Lua_Char_SetPetSkillNo(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 3);
 
-	
-
 	int TM_PetIndex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_PetSkillIndex = (int)lua_tointeger(_NLL, 2);
 
 	int TM_PetSkillNo = (int)lua_tointeger(_NLL, 3);
 
-
-
-	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){	
+	if(CHAR_CHECKPETSKILLINDEX(TM_PetSkillIndex)){
 
 		LRetInt(_NLL, CHAR_setPetSkill(TM_PetIndex,TM_PetSkillIndex,TM_PetSkillNo));
 
@@ -3830,8 +3464,6 @@ int NPC_Lua_Char_SetPetSkillNo(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_ComplianceParameter(lua_State *_NLL)
 
 {
@@ -3840,11 +3472,7 @@ int NPC_Lua_Char_ComplianceParameter(lua_State *_NLL)
 
 	CheckIndexNull(_NLL, 1);
 
-
-
 	int TM_CharaIndex = (int)lua_tointeger(_NLL, 1);
-
-	
 
 	if(!CHAR_CHECKINDEX(TM_CharaIndex))
 
@@ -3854,15 +3482,9 @@ int NPC_Lua_Char_ComplianceParameter(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, CHAR_complianceParameter(TM_CharaIndex));
 
-	
-
 }
-
-
 
 int NPC_Lua_Char_HcItemId(lua_State *_NLL)
 
@@ -3914,8 +3536,6 @@ int NPC_Lua_Char_HcItemId(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_DelHcItem(lua_State *_NLL)
 
 {
@@ -3928,8 +3548,6 @@ int NPC_Lua_Char_DelHcItem(lua_State *_NLL)
 
 	int TM_ItemId = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -3938,9 +3556,7 @@ int NPC_Lua_Char_DelHcItem(lua_State *_NLL)
 
 	}
 
-
-
-	if( TM_ItemId < 9 || TM_ItemId > 23){ 
+	if( TM_ItemId < 9 || TM_ItemId > 23){
 
 		LRetErrInt(_NLL, -2, "找不到指定的道具位置。");
 
@@ -3955,8 +3571,6 @@ int NPC_Lua_Char_DelHcItem(lua_State *_NLL)
 	}
 
 }
-
-
 
 int NPC_Lua_Char_GETFM(lua_State *_NLL)
 
@@ -3973,8 +3587,6 @@ int NPC_Lua_Char_GETFM(lua_State *_NLL)
 	LRetInt(_NLL, Char_GetFm( TM_ID, TM_X));
 
 }
-
-
 
 int NPC_Lua_Char_FindPetEnemyBaseId(lua_State *_NLL)
 
@@ -4004,7 +3616,7 @@ int NPC_Lua_Char_FindPetEnemyBaseId(lua_State *_NLL)
 
 	int enemynum = ENEMY_getEnemyNum();
 
-	for( i = 0; i < enemynum; i ++ ) 
+	for( i = 0; i < enemynum; i ++ )
 
 	{
 
@@ -4018,8 +3630,6 @@ int NPC_Lua_Char_FindPetEnemyBaseId(lua_State *_NLL)
 
 	}
 
-
-
 	for( i = 0 ; i<CHAR_MAXPETHAVE ; i++ )
 
 	{
@@ -4027,8 +3637,6 @@ int NPC_Lua_Char_FindPetEnemyBaseId(lua_State *_NLL)
 		TM_PetIndex = CHAR_getCharPet( TM_Index, i);
 
 		if( CHAR_CHECKINDEX(TM_PetIndex))continue;
-
-
 
 		if( CHAR_getInt(TM_PetIndex, CHAR_PETID) == petid) {
 
@@ -4044,8 +3652,6 @@ int NPC_Lua_Char_FindPetEnemyBaseId(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_ITEMID_NAME(lua_State *_NLL)
 
 {
@@ -4059,8 +3665,6 @@ int NPC_Lua_Char_ITEMID_NAME(lua_State *_NLL)
 	LRetMsg(_NLL, ITEM_getNameFromNumber(TM_ID));
 
 }
-
-
 
 int NPC_Lua_Char_ITEMID_NAME2(lua_State *_NLL)
 
@@ -4076,8 +3680,6 @@ int NPC_Lua_Char_ITEMID_NAME2(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_ITEMID_LEVEL(lua_State *_NLL)
 
 {
@@ -4092,8 +3694,6 @@ int NPC_Lua_Char_ITEMID_LEVEL(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_ITEMID_GOLD(lua_State *_NLL)
 
 {
@@ -4107,8 +3707,6 @@ int NPC_Lua_Char_ITEMID_GOLD(lua_State *_NLL)
 	LRetInt(_NLL, ITEM_getcostFromITEMtabl(TM_ID));
 
 }
-
-
 
 int NPC_Lua_Char_ITEMID_RANO(lua_State *_NLL)
 
@@ -4138,8 +3736,6 @@ int NPC_Lua_Char_CharRidNo(lua_State *_NLL)
 
 	int RidNo = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -4148,11 +3744,7 @@ int NPC_Lua_Char_CharRidNo(lua_State *_NLL)
 
 	}
 
-
-
 	if (RidNo < 0 || RidNo > 63) LRetErrInt(_NLL, -1, "传入的骑宠编号是无效的。");
-
-
 
 	if (RIDEPET_getPETID( TM_Index, RidNo) >= 0)
 
@@ -4196,8 +3788,6 @@ int NPC_Lua_Char_GetPetOwner(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetEnemyBaseIdFromEnemyId(lua_State *_NLL)
 
 {
@@ -4214,7 +3804,7 @@ int NPC_Lua_Char_GetEnemyBaseIdFromEnemyId(lua_State *_NLL)
 
 	int i;
 
-	for( i = 0; i < enemynum; i ++ ) 
+	for( i = 0; i < enemynum; i ++ )
 
 	{
 
@@ -4230,13 +3820,9 @@ int NPC_Lua_Char_GetEnemyBaseIdFromEnemyId(lua_State *_NLL)
 
 	if (i == enemynum) LRetErrInt(_NLL, -1, "传入的enemyID没有找到！");
 
-
-
 	LRetInt(_NLL, petid);
 
 }
-
-
 
 int NPC_Lua_Char_GetEnemyIdFromEnemyBaseId(lua_State *_NLL)
 
@@ -4254,7 +3840,7 @@ int NPC_Lua_Char_GetEnemyIdFromEnemyBaseId(lua_State *_NLL)
 
 	int i;
 
-	for( i = 0; i < enemynum; i ++ ) 
+	for( i = 0; i < enemynum; i ++ )
 
 	{
 
@@ -4270,13 +3856,9 @@ int NPC_Lua_Char_GetEnemyIdFromEnemyBaseId(lua_State *_NLL)
 
 	if (i == enemynum) LRetErrInt(_NLL, -1, "传入的enemybaseID没有找到！");
 
-
-
 	LRetInt(_NLL, EnemyId);
 
 }
-
-
 
 int NPC_Lua_Char_GetIp(lua_State *_NLL)
 
@@ -4304,7 +3886,7 @@ int NPC_Lua_Char_GetIp(lua_State *_NLL)
 
 	}
 
-	int fd = getfdFromCharaIndex( TM_Index ); 
+	int fd = getfdFromCharaIndex( TM_Index );
 
 	if( fd == -1 ){
 
@@ -4335,8 +3917,6 @@ int NPC_Lua_Char_GetIp(lua_State *_NLL)
 	LRetErrNull(_NLL, "传入的标志是错误的。");
 
 }
-
-
 
 int NPC_Lua_Char_SetAllocPoint(lua_State *_NLL)
 
@@ -4377,8 +3957,6 @@ int NPC_Lua_Char_SetAllocPoint(lua_State *_NLL)
 	int f = (int )(( LevelUpPoint >> 8 ) & 0xFF);
 
 	int m = (int )(( LevelUpPoint >> 0 ) & 0xFF);
-
-
 
 	if (type == 1) {
 
@@ -4422,8 +4000,6 @@ int NPC_Lua_Char_SetAllocPoint(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetMaxPetIndex(lua_State *_NLL)
 
 {
@@ -4440,8 +4016,6 @@ int NPC_Lua_Char_GetMaxPetIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetMaxPlayerIndex(lua_State *_NLL)
 
 {
@@ -4453,8 +4027,6 @@ int NPC_Lua_Char_GetMaxPlayerIndex(lua_State *_NLL)
 	LRetInt(_NLL, maxindex);
 
 }
-
-
 
 int NPC_Lua_Char_SavePetToString(lua_State *_NLL)
 
@@ -4488,8 +4060,6 @@ int NPC_Lua_Char_SavePetToString(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_LoadPetFromString(lua_State *_NLL)
 
 {
@@ -4521,8 +4091,6 @@ int NPC_Lua_Char_LoadPetFromString(lua_State *_NLL)
 	LRetInt(_NLL, petindex);
 
 }
-
-
 
 int NPC_Lua_Char_GetPlayerFromAccAndName(lua_State *_NLL)
 
@@ -4564,13 +4132,9 @@ int NPC_Lua_Char_GetPlayerFromAccAndName(lua_State *_NLL)
 
 	}
 
-
-
 	LRetInt(_NLL, xindex);
 
 }
-
-
 
 int NPC_Lua_Char_CheckPet(lua_State *_NLL)
 
@@ -4588,8 +4152,6 @@ int NPC_Lua_Char_CheckPet(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_CheckPlayer(lua_State *_NLL)
 
 {
@@ -4605,8 +4167,6 @@ int NPC_Lua_Char_CheckPlayer(lua_State *_NLL)
 	LRetBool(_NLL, CHECK);
 
 }
-
-
 
 BOOL NPC_Lua_Char_JoinParty(lua_State *_NLL)
 
@@ -4633,8 +4193,6 @@ BOOL NPC_Lua_Char_JoinParty(lua_State *_NLL)
 	LRetBool(_NLL, FALSE);
 
 }
-
-
 
 int NPC_Lua_Char_getFamilyPlayIndex(lua_State *_NLL)
 
@@ -4684,8 +4242,6 @@ int NPC_Lua_Char_getFamilyPlayIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_logout(lua_State *_NLL){
 
 	CheckEx(_NLL, 1);
@@ -4699,8 +4255,6 @@ int NPC_Lua_Char_logout(lua_State *_NLL){
 	LRetBool(_NLL, TRUE);
 
 }
-
-
 
 int NPC_Lua_Char_GetVipPoint(lua_State *_NLL)
 
@@ -4725,8 +4279,6 @@ int NPC_Lua_Char_GetVipPoint(lua_State *_NLL)
 	LRetInt(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Char_SetVipPoint(lua_State *_NLL)
 
@@ -4754,10 +4306,6 @@ int NPC_Lua_Char_SetVipPoint(lua_State *_NLL)
 
 }
 
-
-
-
-
 int NPC_Lua_Char_GetAmPoint(lua_State *_NLL)
 
 {
@@ -4782,8 +4330,6 @@ int NPC_Lua_Char_GetAmPoint(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetRmbPoint(lua_State *_NLL)
 
 {
@@ -4807,8 +4353,6 @@ int NPC_Lua_Char_GetRmbPoint(lua_State *_NLL)
 	LRetInt(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Char_SetRmbPoint(lua_State *_NLL)
 
@@ -4836,14 +4380,6 @@ int NPC_Lua_Char_SetRmbPoint(lua_State *_NLL)
 
 }
 
-
-
-
-
-
-
-
-
 int NPC_Lua_Char_SetAmPoint(lua_State *_NLL)
 
 {
@@ -4870,8 +4406,6 @@ int NPC_Lua_Char_SetAmPoint(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_CheckItemIndex(lua_State *_NLL)
 
 {
@@ -4888,8 +4422,6 @@ int NPC_Lua_Char_CheckItemIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_GetfdFromCharaIndex(lua_State *_NLL)
 
 {
@@ -4904,8 +4436,6 @@ int NPC_Lua_Char_GetfdFromCharaIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Char_CharRidNo(lua_State *_NLL)
 
 {
@@ -4918,8 +4448,6 @@ int NPC_Lua_Char_CharRidNo(lua_State *_NLL)
 
 	int RidNo = (int)lua_tointeger(_NLL, 2);
 
-
-
 	if(!CHAR_CHECKINDEX(TM_Index))
 
 	{
@@ -4928,11 +4456,7 @@ int NPC_Lua_Char_CharRidNo(lua_State *_NLL)
 
 	}
 
-
-
 	if (RidNo < 0 || RidNo > 95) LRetErrInt(_NLL, -1, "传入的骑宠编号是无效的。");
-
-
 
 	if (CHAR_CheckLearnCode( TM_Index, RidNo) >= 0)
 
@@ -4943,8 +4467,6 @@ int NPC_Lua_Char_CharRidNo(lua_State *_NLL)
 	}else LRetBool(_NLL, FALSE);
 
 }
-
-
 
 #endif //#ifdef _JZ_NEWSCRIPT_LUA
 

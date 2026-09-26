@@ -11,7 +11,6 @@
 #include "battle.h"
 #include "readmap.h"
 
-
 #ifdef _JZ_NEWSCRIPT_LUA
 
 int NPC_Lua_Battle_GetPlayIndex(lua_State *_NLL)
@@ -30,8 +29,6 @@ int NPC_Lua_Battle_GetPlayIndex(lua_State *_NLL)
 
 	int TM_num = (int)lua_tointeger(_NLL, 3);
 
-	
-
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
 	{
@@ -40,11 +37,7 @@ int NPC_Lua_Battle_GetPlayIndex(lua_State *_NLL)
 
 	}
 
-
-
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
-
-
 
 	if(TM_Battle == NULL)
 
@@ -55,8 +48,6 @@ int NPC_Lua_Battle_GetPlayIndex(lua_State *_NLL)
 	}
 
 	int TM_Ret = -1;
-
-
 
 	if(TM_side >= 0 && TM_side < 2 && TM_num >=0 && TM_num < BATTLE_ENTRY_MAX)
 
@@ -76,8 +67,6 @@ int NPC_Lua_Battle_GetPlayIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Battle_SetNORisk(lua_State *_NLL)
 
 {
@@ -92,8 +81,6 @@ int NPC_Lua_Battle_SetNORisk(lua_State *_NLL)
 
 	int TM_vl = (int)lua_tointeger(_NLL, 2);
 
-	
-
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
 	{
@@ -102,11 +89,7 @@ int NPC_Lua_Battle_SetNORisk(lua_State *_NLL)
 
 	}
 
-
-
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
-
-
 
 	if(TM_Battle == NULL)
 
@@ -116,19 +99,13 @@ int NPC_Lua_Battle_SetNORisk(lua_State *_NLL)
 
 	}
 
-	
-
 	int TM_Ret = TM_Battle->norisk;
 
 	TM_Battle->norisk = TM_vl;
 
-
-
 	LRetInt(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Battle_SetMod(lua_State *_NLL)
 
@@ -144,8 +121,6 @@ int NPC_Lua_Battle_SetMod(lua_State *_NLL)
 
 	int TM_vl = (int)lua_tointeger(_NLL, 2);
 
-	
-
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
 	{
@@ -154,11 +129,7 @@ int NPC_Lua_Battle_SetMod(lua_State *_NLL)
 
 	}
 
-
-
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
-
-
 
 	if(TM_Battle == NULL)
 
@@ -168,19 +139,13 @@ int NPC_Lua_Battle_SetMod(lua_State *_NLL)
 
 	}
 
-	
-
 	int TM_Ret = TM_Battle->mode;
 
 	TM_Battle->mode = TM_vl;
 
-
-
 	LRetInt(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Battle_SetType(lua_State *_NLL)
 
@@ -196,8 +161,6 @@ int NPC_Lua_Battle_SetType(lua_State *_NLL)
 
 	int TM_vl = (int)lua_tointeger(_NLL, 2);
 
-	
-
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
 	{
@@ -206,11 +169,7 @@ int NPC_Lua_Battle_SetType(lua_State *_NLL)
 
 	}
 
-
-
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
-
-
 
 	if(TM_Battle == NULL)
 
@@ -220,19 +179,13 @@ int NPC_Lua_Battle_SetType(lua_State *_NLL)
 
 	}
 
-	
-
 	int TM_Ret = TM_Battle->type;
 
 	TM_Battle->type = TM_vl;
 
-
-
 	LRetInt(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Battle_SetWinEvent(lua_State *_NLL)
 
@@ -246,8 +199,6 @@ int NPC_Lua_Battle_SetWinEvent(lua_State *_NLL)
 
 	int TM_battleindex = (int)lua_tointeger(_NLL, 3);
 
-
-
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
 	{
@@ -256,11 +207,7 @@ int NPC_Lua_Battle_SetWinEvent(lua_State *_NLL)
 
 	}
 
-
-
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
-
-
 
 	if(TM_Battle == NULL)
 
@@ -270,11 +217,7 @@ int NPC_Lua_Battle_SetWinEvent(lua_State *_NLL)
 
 	}
 
-
-
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
-
-
 
 	if(lua_tointeger(_NLL, -1) > 0)
 
@@ -314,8 +257,6 @@ int NPC_Lua_Battle_SetWinEvent(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Battle_GetData(lua_State *_NLL)
 
 {
@@ -342,11 +283,7 @@ int NPC_Lua_Battle_GetData(lua_State *_NLL)
 
 	}
 
-
-
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
-
-
 
 	if(TM_Battle == NULL)
 
@@ -355,8 +292,6 @@ int NPC_Lua_Battle_GetData(lua_State *_NLL)
 		LRetErrInt(_NLL , -2, "无法获取指针。");
 
 	}
-
-
 
 	if (TM_FLG == 0)
 
@@ -518,13 +453,9 @@ int NPC_Lua_Battle_GetData(lua_State *_NLL)
 
 	else LRetInt(_NLL, TM_Ret);
 
-
-
 	LRetErrNull(_NLL, "传入的标志是错误的。");
 
 }
-
-
 
 int NPC_Lua_Battle_IndexToNo(lua_State *_NLL)
 
@@ -537,8 +468,6 @@ int NPC_Lua_Battle_IndexToNo(lua_State *_NLL)
 	int TM_battleindex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_index = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
@@ -562,8 +491,6 @@ int NPC_Lua_Battle_IndexToNo(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Battle_NoToIndex(lua_State *_NLL)
 
 {
@@ -575,8 +502,6 @@ int NPC_Lua_Battle_NoToIndex(lua_State *_NLL)
 	int TM_battleindex = (int)lua_tointeger(_NLL, 1);
 
 	int TM_No = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
@@ -592,8 +517,6 @@ int NPC_Lua_Battle_NoToIndex(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Battle_CheckIndex(lua_State *_NLL)
 
 {
@@ -604,15 +527,11 @@ int NPC_Lua_Battle_CheckIndex(lua_State *_NLL)
 
 	int TM_battleindex = (int)lua_tointeger(_NLL, 1);
 
-
-
 	BOOL TM_Ret = BATTLE_CHECKINDEX( TM_battleindex );
 
 	LRetBool(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_Battle_SetData(lua_State *_NLL)
 
@@ -656,8 +575,6 @@ int NPC_Lua_Battle_SetData(lua_State *_NLL)
 
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
 
-
-
 	if(TM_Battle == NULL)
 
 	{
@@ -665,8 +582,6 @@ int NPC_Lua_Battle_SetData(lua_State *_NLL)
 		LRetErrInt(_NLL , -2, "无法获取指针。");
 
 	}
-
-
 
 	if (TM_FLG == 0)
 
@@ -866,13 +781,9 @@ int NPC_Lua_Battle_SetData(lua_State *_NLL)
 
 	else LRetInt(_NLL, TM_Ret);
 
-
-
 	LRetErrNull(_NLL, "传入的标志是错误的。");
 
 }
-
-
 
 int NPC_Lua_Battle_Exit(lua_State *_NLL)
 
@@ -885,8 +796,6 @@ int NPC_Lua_Battle_Exit(lua_State *_NLL)
 	int TM_index = (int)lua_tointeger(_NLL, 1);
 
 	int TM_battleindex = (int)lua_tointeger(_NLL, 2);
-
-
 
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
@@ -910,27 +819,15 @@ int NPC_Lua_Battle_Exit(lua_State *_NLL)
 
 	CHAR_DischargePartyNoMsg( TM_index );
 
-
-
 	CHAR_talkToCli( TM_index, -1,
 
 		"战斗中止。", CHAR_COLORYELLOW );
 
-
-
 	GmsvServer_B_send( getfdFromCharaIndex( TM_index ), "BU" );
-
-
-
-
 
 	LRetInt(_NLL, 0);
 
 }
-
-
-
-
 
 int NPC_Lua_Battle_SetEndEvent(lua_State *_NLL)
 
@@ -944,8 +841,6 @@ int NPC_Lua_Battle_SetEndEvent(lua_State *_NLL)
 
 	int TM_battleindex = (int)lua_tointeger(_NLL, 3);
 
-
-
 	if( BATTLE_CHECKINDEX( TM_battleindex ) == FALSE )
 
 	{
@@ -954,11 +849,7 @@ int NPC_Lua_Battle_SetEndEvent(lua_State *_NLL)
 
 	}
 
-
-
 	BATTLE *TM_Battle = &BattleArray[TM_battleindex];
-
-
 
 	if(TM_Battle == NULL)
 
@@ -968,15 +859,9 @@ int NPC_Lua_Battle_SetEndEvent(lua_State *_NLL)
 
 	}
 
-
-
 	int TM_Ret = NPC_Lua_GetFuncPoint(_NLL);
 
-
-
 	TM_Battle->EndFunc = (void *)NPC_Lua_BattleEndCallBack;
-
-
 
 	strcpy_s(TM_Battle->EndLuaFuncName, sizeof(TM_Battle->EndLuaFuncName), lua_tostring(_NLL, 2));
 
@@ -984,15 +869,7 @@ int NPC_Lua_Battle_SetEndEvent(lua_State *_NLL)
 
 }
 
-
-
-
-
 #endif //#ifdef _JZ_NEWSCRIPT_LUA
-
-
-
-
 
 int NPC_Lua_Bit_band(lua_State *_NLL)
 
@@ -1046,8 +923,6 @@ int NPC_Lua_Bit_band(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Bit_bor(lua_State *_NLL)
 
 {
@@ -1097,8 +972,6 @@ int NPC_Lua_Bit_bor(lua_State *_NLL)
 	}else LRetInt(_NLL,a|b);
 
 }
-
-
 
 int NPC_Lua_Bit_bxor(lua_State *_NLL)
 
@@ -1150,8 +1023,6 @@ int NPC_Lua_Bit_bxor(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Bit_lshift(lua_State *_NLL)
 
 {
@@ -1170,8 +1041,6 @@ int NPC_Lua_Bit_lshift(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_Bit_rshift(lua_State *_NLL)
 {
 	CheckEx2(_NLL, 2,2);
@@ -1181,6 +1050,4 @@ int NPC_Lua_Bit_rshift(lua_State *_NLL)
 	int b = (int)lua_tointeger(_NLL, 2);
 	LRetInt(_NLL,a>>b);
 }
-
-
 

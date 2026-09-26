@@ -1,7 +1,6 @@
 #include "version.h"
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 #include "object.h"
 #include "char_base.h"
 #include "char.h"
@@ -44,12 +43,12 @@ void NPC_AlldomanWindowTalked(int meindex, int talkerindex, int seqno, int selec
 	{
 	case NPC_ALLDOMAN_MAIN_WND:
 		if ( select == WINDOW_BUTTONTYPE_NEXT ) {
-			showpage ++ ; 
+			showpage ++ ;
 			NPC_Alldoman_selectWindow(meindex , talkerindex , 4 ,"");
 		}
 		if ( select == WINDOW_BUTTONTYPE_OK ) {
 			//CHAR_talkToCli(talkerindex,meindex,"看清楚了！",CHAR_COLORRED);
-			showpage = 1 ; 
+			showpage = 1 ;
 			NPC_Alldoman_selectWindow(meindex , talkerindex, 5 ,"");
 		}
 		break;
@@ -102,22 +101,22 @@ void NPC_AlldomanWindowTalked(int meindex, int talkerindex, int seqno, int selec
 				sprintf( buf2 , "%s" , "初犊勇士" ) ;
 			else
 				sprintf( buf2 , " " );
-			SaacClient_UpdataStele_send ( 				
-				acfd , 
+			SaacClient_UpdataStele_send (
+				acfd ,
 				CHAR_getChar( talkerindex , CHAR_CDKEY ),
-				CHAR_getChar( talkerindex , CHAR_NAME ) , 
-				buf2 , 
-				CHAR_getInt( talkerindex , CHAR_LV ) , 
-				CHAR_getInt( talkerindex , CHAR_TRANSMIGRATION) , 
-				10 	, 
-				CHAR_getWorkInt( talkerindex  , CHAR_WORKHEROFLOOR ) 
-				) ; 
+				CHAR_getChar( talkerindex , CHAR_NAME ) ,
+				buf2 ,
+				CHAR_getInt( talkerindex , CHAR_LV ) ,
+				CHAR_getInt( talkerindex , CHAR_TRANSMIGRATION) ,
+				10 	,
+				CHAR_getWorkInt( talkerindex  , CHAR_WORKHEROFLOOR )
+				) ;
 			//清除WorkFloor
 			CHAR_setWorkInt( talkerindex  , CHAR_WORKHEROFLOOR , 0 ) ;
 		}
 		if(atoi(data)==4) {
 			//CHAR_talkToCli(talkerindex,meindex,"２！",CHAR_COLORRED);
-			showpage = 1 ; 
+			showpage = 1 ;
 			NPC_Alldoman_selectWindow(meindex , talkerindex, 6 ,"");
 		}
 		if(atoi(data)==6) {
@@ -129,11 +128,11 @@ void NPC_AlldomanWindowTalked(int meindex, int talkerindex, int seqno, int selec
 			print("\nSyu log FloorWorkint => %d" , CHAR_getWorkInt( talkerindex  , CHAR_WORKHEROFLOOR ));
 		}
 		if( select == WINDOW_BUTTONTYPE_PREV && showpage > 1 ) {
-			showpage -- ; 
+			showpage -- ;
 			NPC_Alldoman_selectWindow(meindex , talkerindex, 6 ,"" );
 		}
 		if( select == WINDOW_BUTTONTYPE_NEXT && showpage < totalpage ) {
-			showpage ++ ; 
+			showpage ++ ;
 			NPC_Alldoman_selectWindow(meindex , talkerindex, 6 ,"");
 		}
 		break;
@@ -146,7 +145,6 @@ static void NPC_Alldoman_selectWindow( int meindex, int talker, int num, char *d
      int fd = getfdFromCharaIndex( talker);
 	 char token[1024];
 	 char token2[100 * 100];
-
 
 	 //andy_log
 	// print( "NPC_Alldoman_selectWindow( num:%d)\n", num);
@@ -183,29 +181,29 @@ static void NPC_Alldoman_selectWindow( int meindex, int talker, int num, char *d
 			 CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),token);
 		 break;
 	 case 6:
-		 if ( totalpage != 1 && showpage == 1 ) 
+		 if ( totalpage != 1 && showpage == 1 )
 			 buttontype = WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_NEXT;
 		 else if ( totalpage == 1 )
-			 buttontype = WINDOW_BUTTONTYPE_OK ; 
+			 buttontype = WINDOW_BUTTONTYPE_OK ;
 		 else if ( totalpage != 1 && showpage == totalpage )
 			 buttontype = WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_PREV;
-		 else if ( totalpage != 1 && showpage != 1 && showpage != totalpage ) 
+		 else if ( totalpage != 1 && showpage != 1 && showpage != totalpage )
 			 buttontype = WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_PREV | WINDOW_BUTTONTYPE_NEXT;
 		 windowtype = WINDOW_MESSAGETYPE_WIDEMESSAGEANDLINEINPUT;
 		 windowno = NPC_ALLDOMAN_LIST_WND;
 		 sprintf ( token2 , "　　　姓名　　　　头衔　　　　 层数　　等级　　转生\n");
 		 for ( i=0+(showpage-1 )*15; i<showpage*15; i++) {
-			 if( atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][6] ) == 0 || 
+			 if( atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][6] ) == 0 ||
 				 atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][3] ) == 0 )
-				 continue ; 
+				 continue ;
 			sprintf( token , "%16s　%13s　%7d　%7d　%7d\n" ,
-				Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][1] , 
-				Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][2] , 
-				atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][6] ), 
-				atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][3] ), 
-				atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][4] ) 
-				); 
-			strcat ( token2 , token ) ; 
+				Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][1] ,
+				Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][2] ,
+				atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][6] ),
+				atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][3] ),
+				atoi ( Herolist[sort[MAX_HERO_LIST - 1 - i ][1]][4] )
+				);
+			strcat ( token2 , token ) ;
 			if ( i + 1 == countnum )
 				break;
 		 }
@@ -231,13 +229,13 @@ void NPC_AlldomanTalked( int meindex , int talker , char *msg ,int color )
 {
      if( NPC_Util_CharDistance( talker, meindex ) > 1) return;
      if( NPC_Util_isFaceToFace( talker, meindex , 1 ) == FALSE ) return;
-	 showpage = 1 ; 
+	 showpage = 1 ;
 	 NPC_Alldoman_selectWindow(meindex, talker , 4 ,"");
 }
 void NPC_AlldomanWriteStele ( char *token )
 {
 
-	int linenum = 0 , i , flag , temp , temp1 , j  ; 
+	int linenum = 0 , i , flag , temp , temp1 , j  ;
 	int lens=0;
 	char *addr;
 	if( token == NULL || (lens = strlen( token)) <= 0 ) return;
@@ -245,19 +243,19 @@ void NPC_AlldomanWriteStele ( char *token )
 		for ( i = 0 ; i < MAX_HERO_COLUMN ; i ++ ) {
 			if( getDelimitedField( token, "|", i + 1 , Herolist[ linenum ][ i ] , sizeof( Herolist[ linenum ][ i ] ) ) == FALSE ){
 #ifdef _ALLDOMAN_DEBUG
-				countnum = 0 ; 
+				countnum = 0 ;
 	            for ( i = 0 ; i < MAX_HERO_LIST ; i ++ ) {
 		            sort[i][0] = atoi ( Herolist[i][6] ) ;
-		            sort[i][1] = i ; 
-		            if ( sort[i][0] != 0 && sort[i][0] != -1 ) 
-			            countnum ++ ; 
+		            sort[i][1] = i ;
+		            if ( sort[i][0] != 0 && sort[i][0] != -1 )
+			            countnum ++ ;
 				}
 
 	            for ( i = 0 ; i < MAX_HERO_LIST - 1 ; i ++ ) {
-		            flag = 0 ; 
+		            flag = 0 ;
 		            for ( j = 0 ; j < MAX_HERO_LIST - 1 ; j ++ ) {
 			            if ( sort[j][0] > sort[j+1][0] ){
-				            flag = 1 ; 
+				            flag = 1 ;
 				            temp = sort[j][0];
 				            temp1 = sort[j][1];
 				            sort[j][0] = sort[j + 1][0];
@@ -266,7 +264,7 @@ void NPC_AlldomanWriteStele ( char *token )
 				            sort[j+1][1] = temp1;
 						}
 					}
-		            if ( flag != 1 ) 
+		            if ( flag != 1 )
 			            break;
 				}
                 totalpage = countnum / 15 ;
@@ -281,19 +279,19 @@ void NPC_AlldomanWriteStele ( char *token )
 		if ( (addr = strstr ( token , "\n" )) == NULL ) break;
 		strcpy ( token , addr + 1 ) ;
 		if( token == NULL || (lens = strlen( token)) <= 0 ) {
-#ifdef _ALLDOMAN_DEBUG	    
-			countnum = 0 ; 
+#ifdef _ALLDOMAN_DEBUG
+			countnum = 0 ;
 	        for ( i = 0 ; i < MAX_HERO_LIST ; i ++ ) {
 		        sort[i][0] = atoi ( Herolist[i][6] ) ;
-		        sort[i][1] = i ; 
-		        if ( sort[i][0] != 0 && sort[i][0] != -1 ) 
-			        countnum ++ ; 
+		        sort[i][1] = i ;
+		        if ( sort[i][0] != 0 && sort[i][0] != -1 )
+			        countnum ++ ;
 			}
 	        for ( i = 0 ; i < MAX_HERO_LIST - 1 ; i ++ ) {
-		        flag = 0 ; 
+		        flag = 0 ;
 		        for ( j = 0 ; j < MAX_HERO_LIST - 1 ; j ++ ) {
 			        if ( sort[j][0] > sort[j+1][0] ){
-				        flag = 1 ; 
+				        flag = 1 ;
 				        temp = sort[j][0];
 				        temp1 = sort[j][1];
 				        sort[j][0] = sort[j + 1][0];
@@ -302,7 +300,7 @@ void NPC_AlldomanWriteStele ( char *token )
 				        sort[j+1][1] = temp1;
 					}
 				}
-		        if ( flag != 1 ) 
+		        if ( flag != 1 )
 			        break;
 			}
 	        totalpage = countnum / 15 ;
@@ -310,22 +308,22 @@ void NPC_AlldomanWriteStele ( char *token )
 		        totalpage ++;
 #endif
 	        return;
-		}		
+		}
 	}
 
-	countnum = 0 ; 
+	countnum = 0 ;
 	for ( i = 0 ; i < MAX_HERO_LIST ; i ++ ) {
 		sort[i][0] = atoi ( Herolist[i][6] ) ;
-		sort[i][1] = i ; 
-		if ( sort[i][0] != 0 && sort[i][0] != -1 ) 
-			countnum ++ ; 
+		sort[i][1] = i ;
+		if ( sort[i][0] != 0 && sort[i][0] != -1 )
+			countnum ++ ;
 	}
 
 	for ( i = 0 ; i < MAX_HERO_LIST - 1 ; i ++ ) {
-		flag = 0 ; 
+		flag = 0 ;
 		for ( j = 0 ; j < MAX_HERO_LIST - 1 ; j ++ ) {
 			if ( sort[j][0] > sort[j+1][0] ){
-				flag = 1 ; 
+				flag = 1 ;
 				temp = sort[j][0];
 				temp1 = sort[j][1];
 				sort[j][0] = sort[j + 1][0];
@@ -334,10 +332,9 @@ void NPC_AlldomanWriteStele ( char *token )
 				sort[j+1][1] = temp1;
 			}
 		}
-		if ( flag != 1 ) 
+		if ( flag != 1 )
 			break;
 	}
-
 
 	totalpage = countnum / 15 ;
 	if ( ( countnum % 15 ) != 0 )
@@ -345,33 +342,33 @@ void NPC_AlldomanWriteStele ( char *token )
 //#endif
 }
 
-void NPC_Alldoman_S_WriteStele( char *ocdkey , char *oname , char *ncdkey , 
-		   char *nname , char *title , int level , int trns , int floor ) 
+void NPC_Alldoman_S_WriteStele( char *ocdkey , char *oname , char *ncdkey ,
+		   char *nname , char *title , int level , int trns , int floor )
 {
-	int i , j , temp , temp1 , flag ; 
+	int i , j , temp , temp1 , flag ;
 	for ( i = 0 ; i < MAX_HERO_COLUMN ; i ++ ) {
 		if ( ( strcmp( Herolist[i][0] , ocdkey ) == 0 ) && ( strcmp( Herolist[i][1] , oname ) == 0 ) ) {
-			sprintf( Herolist[i][0] , "%s" , ncdkey ) ; 
-			sprintf( Herolist[i][1] , "%s" , nname ) ; 			
-			sprintf( Herolist[i][2] , "%s" , title ) ; 			
-			sprintf( Herolist[i][3] , "%d" , level ) ; 			
-			sprintf( Herolist[i][4] , "%d" , trns ) ; 			
-			sprintf( Herolist[i][6] , "%d" , floor ) ; 		
+			sprintf( Herolist[i][0] , "%s" , ncdkey ) ;
+			sprintf( Herolist[i][1] , "%s" , nname ) ;
+			sprintf( Herolist[i][2] , "%s" , title ) ;
+			sprintf( Herolist[i][3] , "%d" , level ) ;
+			sprintf( Herolist[i][4] , "%d" , trns ) ;
+			sprintf( Herolist[i][6] , "%d" , floor ) ;
 			break;
 		}
 	}
-	countnum = 0 ; 
+	countnum = 0 ;
 	for ( i = 0 ; i < MAX_HERO_LIST ; i ++ ) {
 		sort[i][0] = atoi ( Herolist[i][6] ) ;
-		sort[i][1] = i ; 
-		if ( sort[i][0] != 0 && sort[i][0] != -1 ) 
-			countnum ++ ; 
+		sort[i][1] = i ;
+		if ( sort[i][0] != 0 && sort[i][0] != -1 )
+			countnum ++ ;
 	}
 	for ( i = 0 ; i < MAX_HERO_LIST - 1 ; i ++ ) {
-		flag = 0 ; 
+		flag = 0 ;
 		for ( j = 0 ; j < MAX_HERO_LIST - 1 ; j ++ ) {
 			if ( sort[j][0] > sort[j+1][0] ){
-				flag = 1 ; 
+				flag = 1 ;
 				temp = sort[j][0];
 				temp1 = sort[j][1];
 				sort[j][0] = sort[j + 1][0];
@@ -380,12 +377,12 @@ void NPC_Alldoman_S_WriteStele( char *ocdkey , char *oname , char *ncdkey ,
 				sort[j+1][1] = temp1;
 			}
 		}
-		if ( flag != 1 ) 
+		if ( flag != 1 )
 			break;
 	}
 	totalpage = countnum / 15 ;
 	if ( ( countnum % 15 ) != 0 )
-		totalpage ++ ; 
+		totalpage ++ ;
 }
 
 #endif

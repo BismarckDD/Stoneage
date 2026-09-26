@@ -17,7 +17,6 @@ BOOL NPC_OldmanInit( int meindex )
 
 }
 
-
 /*
  *
  *  赢  ［
@@ -40,7 +39,7 @@ void NPC_OldmanTalked( int meindex , int talkerindex , char *msg , int color )
     /*
 
       if( title_change == 0 && strcmp( n , "苹果" ) == 0 ){
-        
+
         if( NPC_Util_HaveTitle( talkerindex , 3 ) == 0 ){
             char *ts;
             NPC_Util_AddOneTitle( talkerindex , 3 );
@@ -55,7 +54,7 @@ void NPC_OldmanTalked( int meindex , int talkerindex , char *msg , int color )
 {
 	int		addcnt,delcnt;
 	title_change = TITLE_TitleCheck_Nomsg( talkerindex, 0, &addcnt, &delcnt);
-	
+
     if( !title_change){
         snprintf( message, sizeof( message ) ,
               "来的好%s在给你称号时"
@@ -63,48 +62,48 @@ void NPC_OldmanTalked( int meindex , int talkerindex , char *msg , int color )
 	    CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
     }
     else {
-    	#define		NPC_OLDMAN_TITLE_UNIT1		"TSU"
-    	#define		NPC_OLDMAN_TITLE_UNIT2		"KO"
-    	
+	#define		NPC_OLDMAN_TITLE_UNIT1		"TSU"
+	#define		NPC_OLDMAN_TITLE_UNIT2		"KO"
+
         snprintf( message, sizeof( message ) ,"来的好%s",n );
-    	CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
+	CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
 		if( delcnt > 0 && addcnt > 0 ) {
 	        snprintf( message, sizeof( message ) ,
-	    			"你丧失了%d%s 称号的资格。"
-	    			"不是得到了%d%s 的称号资格吗？"
-	    			, delcnt,
-	    			delcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2,
-	    			addcnt,
-	    			addcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2
-	    			);
-	    	CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
+				"你丧失了%d%s 称号的资格。"
+				"不是得到了%d%s 的称号资格吗？"
+				, delcnt,
+				delcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2,
+				addcnt,
+				addcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2
+				);
+		CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
 		}
 		else if( delcnt > 0 ) {
 	        snprintf( message, sizeof( message ) ,
-	    			"你已丧失得到%d%s称号的资格。", delcnt,
-	    			delcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
-	    	CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
+				"你已丧失得到%d%s称号的资格。", delcnt,
+				delcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
+		CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
 		}
 		else if( addcnt > 0 ) {
 	        snprintf( message, sizeof( message ) ,
-	    			"给你%d%s的称号吧！", addcnt, // CoolFish: d%s -> %d%s 2001/4/18
-	    			addcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
-	    	CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
+				"给你%d%s的称号吧！", addcnt, // CoolFish: d%s -> %d%s 2001/4/18
+				addcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
+		CHAR_talkToCli( talkerindex , meindex , message , CHAR_COLORWHITE );
 		}
 	    if( delcnt > 0 ) {
-	        snprintf( message, sizeof( message), 
+	        snprintf( message, sizeof( message),
 	                    "失去%d%s 称号！", delcnt,
-	    				delcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
+					delcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
 	        CHAR_talkToCli( talkerindex, -1, message,  CHAR_COLORYELLOW);
 	    }
 	    if( addcnt > 0 ) {
-	        snprintf( message, sizeof( message), 
+	        snprintf( message, sizeof( message),
 	                    "获得%d%s 称号！", addcnt,
-	    				addcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
+					addcnt < 10 ?  NPC_OLDMAN_TITLE_UNIT1:NPC_OLDMAN_TITLE_UNIT2);
 	        CHAR_talkToCli( talkerindex, -1, message,  CHAR_COLORYELLOW);
 	    }
     }
 }
     if( title_change ) CHAR_sendStatusString( talkerindex , "T" );
-    
+
 }

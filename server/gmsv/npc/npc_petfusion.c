@@ -17,7 +17,6 @@
 #include "pet.h"
 #include "chatmagic.h"
 
-
 #ifdef _NPC_FUSION
 
 enum {
@@ -38,7 +37,7 @@ enum {
 	NPC_WORK_ROUTEPOINT = CHAR_NPCWORKINT3,
 	NPC_WORK_ROUNDTRIP = CHAR_NPCWORKINT4,
 	NPC_WORK_MODE = CHAR_NPCWORKINT5,
-	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6, 
+	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6,
 	NPC_WORK_ROUTEMAX = CHAR_NPCWORKINT7,
 	NPC_WORK_WAITTIME = CHAR_NPCWORKINT8,
 	NPC_WORK_CURRENTTIME = CHAR_NPCWORKINT9,
@@ -49,7 +48,6 @@ enum {
 static void NPC_PetFusion_selectWindow( int meindex, int toindex, int num,int select);
 BOOL NPC_DoPetFusion( int meindex, int toindex, char *data, int sizes);
 
-
 BOOL NPC_PetFusionManInit( int meindex )
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
@@ -57,7 +55,7 @@ BOOL NPC_PetFusionManInit( int meindex )
 		print("err NPC_PetFusionManInit: GetArgStrErr!!");
 		return FALSE;
 	}
-   	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_PETFUSIONMAN);
+	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_PETFUSIONMAN);
 	//CHAR_setInt( meindex, CHAR_LOOPINTERVAL, MAKEPAIR_STANDBY);
 	//CHAR_setWorkInt( meindex, NPC_WORK_CURRENTTIME, NowTime.tv_sec);
 	//CHAR_setWorkInt( meindex, NPC_WORK_PAIRTEAMS, 0);
@@ -66,7 +64,7 @@ BOOL NPC_PetFusionManInit( int meindex )
 void NPC_PetFusionManTalked( int meindex, int talkerindex, char *msg, int color )
 {
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    		return;
+		return;
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE)
 			return;
@@ -137,7 +135,7 @@ void NPC_PetFusionManWindowTalked( int meindex, int talkerindex, int seqno, int 
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    	return;
+	return;
 	if( select == WINDOW_BUTTONTYPE_NO || select == WINDOW_BUTTONTYPE_CANCEL ){
 		CHAR_setWorkInt( talkerindex, CHAR_WORKSHOPRELEVANT, 0);
 		return;
@@ -223,7 +221,6 @@ BOOL NPC_DoPetFusion( int meindex, int toindex, char *data, int sizes)
 		}
 		petNo = NPC_getPetArrayForNo( PetCode);
 
-
 		if( PETFUSION_DelPet( toindex, MainIndex, Subindex1, Subindex2, flg) == FALSE ){
 			return FALSE;
 		}
@@ -249,6 +246,4 @@ BOOL NPC_DoPetFusion( int meindex, int toindex, char *data, int sizes)
 }
 
 #endif
-
-
 

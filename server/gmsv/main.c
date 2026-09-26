@@ -44,7 +44,6 @@ void AngelReadyProc();
 // 启动封包处理线程
 void warplog_proc();
 
-
 WorkSpace gSaacWorkSpace;
 WorkSpace gGmsvWorkSpace;
 

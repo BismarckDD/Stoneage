@@ -9,7 +9,6 @@
 #include "gmsv_server.h"
 #include "npcutil.h"
 
-
 /*
  *  引切及夫午太午  by nakamura
  *
@@ -23,8 +22,7 @@ void NPC_TownPeopleTalked( int index, int talker, char *msg, int color )
 	char arg[NPC_UTIL_GETARGSTR_BUFSIZE], token[NPC_UTIL_GETARGSTR_LINEMAX];
     int i, tokennum;
 
-
-	if( CHAR_getInt(talker,CHAR_WHICHTYPE) == CHAR_TYPEPLAYER 
+	if( CHAR_getInt(talker,CHAR_WHICHTYPE) == CHAR_TYPEPLAYER
         && NPC_Util_charIsInFrontOfChar( talker, index, 3 ) ){
 
         NPC_Util_GetArgStr( index, arg, sizeof( arg));
@@ -56,6 +54,6 @@ BOOL NPC_TownPeopleInit( int meindex )
 
     CHAR_setInt( meindex , CHAR_WHICHTYPE , CHAR_TYPETOWNPEOPLE );
     //CHAR_setFlg( meindex , CHAR_ISOVERED , 1 );
-    
+
     return TRUE;
 }

@@ -6,7 +6,7 @@
 #include "npcutil.h"
 #include "npc_action.h"
 
-/* 
+/*
  * 皿伊奶乩□及失弁扑亦件卞  杀允月NPC［
  * 签卞韵曰忒仄凶曰允月分仃分互［
  * 汹仁］引凶反  匀化中月及失弁扑亦件卞反  杀仄卅中［
@@ -24,7 +24,6 @@
  *    sad:       仄戈失弁扑亦件卞覆仄化及忒蚕
  *    guard:     布□玉允月失弁扑亦件卞覆仄化及忒蚕
  */
- 
 
 #define NPC_ACTION_MSGCOLOR_DEFAULT CHAR_COLORYELLOW
 
@@ -52,19 +51,19 @@ void NPC_ActionTalked(int meindex, int talkerindex, char *szMes,
   if (CHAR_getInt(talkerindex, CHAR_WHICHTYPE) != CHAR_TYPEPLAYER) {
     return;
   }
-  if (!NPC_Util_charIsInFrontOfChar(talkerindex, meindex, 1)) return; 
+  if (!NPC_Util_charIsInFrontOfChar(talkerindex, meindex, 1)) return;
 
   NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
 
-  if( NPC_Util_GetStrFromStrWithDelim( argstr, 
+  if( NPC_Util_GetStrFromStrWithDelim( argstr,
                     "normal",
                     buf, sizeof( buf))
       != NULL )
   {
-      CHAR_talkToCli( talkerindex, meindex ,buf , 
+      CHAR_talkToCli( talkerindex, meindex ,buf ,
               CHAR_getWorkInt( meindex, CHAR_WORK_MSGCOLOR ));
   }
-  
+
 }
 
 void NPC_ActionWatch(int meobjindex, int objindex, CHAR_ACTION act,
@@ -91,18 +90,18 @@ void NPC_ActionWatch(int meobjindex, int objindex, CHAR_ACTION act,
     { CHAR_ACTNOD,    "nod"},
     { CHAR_ACTTHROW,  "throw"},
     };
-  
+
   if (OBJECT_getType(objindex) != OBJTYPE_CHARA) return;
   index = OBJECT_getIndex(objindex);
   if (CHAR_getInt(index, CHAR_WHICHTYPE) != CHAR_TYPEPLAYER) return;
     meindex = OBJECT_getIndex(meobjindex);
     if( NPC_Util_isFaceToFace(meindex, index, 1) != TRUE ) return;
-  
+
   NPC_Util_GetArgStr(meindex, argstr, sizeof(argstr));
-  
+
   for (i = 0; i < arraysizeof(searchtbl); ++i) {
     if (searchtbl[i].act == act) {
-      if (NPC_Util_GetStrFromStrWithDelim(argstr, 
+      if (NPC_Util_GetStrFromStrWithDelim(argstr,
          searchtbl[i].string, buf, sizeof(buf)) != NULL) {
          CHAR_talkToCli(index, meindex, buf,
                         CHAR_getWorkInt(meindex, CHAR_WORK_MSGCOLOR));

@@ -48,19 +48,19 @@ unsigned long READTIME1 = 0,
 BOOL NPC_FmDengonInit( int meindex)
 {
     int i;
-    
+
     CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_TYPEDENGON);
-    
+
     if( CHAR_getInt(meindex, CHAR_FLOOR) == 777 ){
         leaderdengonindex = meindex;
     }
-    
+
     if( READTIME1 == 0 || READTIME2 == 0 || READTIME3 == 0 || READTIME4 == 0 ){
         READTIME1 = NowTime.tv_sec+FM_WAITTIME,
         READTIME2 = NowTime.tv_sec+FM_WAITTIME,
         READTIME3 = NowTime.tv_sec+FM_WAITTIME,
         READTIME4 = NowTime.tv_sec+FM_WAITTIME;
-       
+
         // 取得家族的成员列表(memberlist struct)，以及家族的留言板
         for( i=0; i<FMMAXNUM; i++){
             SaacClient_ACShowMemberList_send( acfd, i);
@@ -70,7 +70,7 @@ BOOL NPC_FmDengonInit( int meindex)
         SaacClient_ACFMReadMemo_send( acfd, FMSDENGON_SN);
         SaacClient_ACFMPointList_send(acfd);
         SaacClient_ACShowTopFMList_send(acfd, FM_TOP_INTEGRATE);
-        SaacClient_ACShowTopFMList_send(acfd, FM_TOP_ADV);    
+        SaacClient_ACShowTopFMList_send(acfd, FM_TOP_ADV);
         SaacClient_ACShowTopFMList_send(acfd, FM_TOP_FEED);
         SaacClient_ACShowTopFMList_send(acfd, FM_TOP_SYNTHESIZE);
         SaacClient_ACShowTopFMList_send(acfd, FM_TOP_DEALFOOD);
@@ -91,34 +91,34 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
     int  buttontype = 0;
     struct timeval recvtime;
     if (!CHAR_CHECKINDEX(talker)) return;
-    
+
     CONNECT_getLastrecvtime_D( getfdFromCharaIndex( talker), &recvtime);
     if( time_diff( NowTime, recvtime) < 0.5 ){
         return;
     }
-    
+
     CONNECT_setLastrecvtime_D( getfdFromCharaIndex( talker), &NowTime);
 #ifndef _FM_MODIFY
     // 距离超出 DENGONDISTANCE 的  围内时，即取消动作
-#define DENGONDISTANCE 3	
+#define DENGONDISTANCE 3
     if( CHAR_getInt(index, CHAR_FLOOR) != 777 )
         if(NPC_Util_CharDistance( index, talker) > DENGONDISTANCE) return;
 #endif
-    
+
     // 家族留言板
     if( seqno == CHAR_WINDOWTYPE_FM_DENGON)
     {
 			int dengonindex;
 			int fmindex_wk;
 			char tmp_buffer[4096],tmp[4096];
-			
+
 			getDelimitedField(data,"|",1,tmp_buffer,sizeof(tmp_buffer));
 			dengonindex = atoi(tmp_buffer);
-			
+
 			fmindex_wk = CHAR_getWorkInt( talker, CHAR_WORKFMINDEXI);
-			
+
 			if( fmindex_wk < 0 || fmindex_wk >= FMMAXNUM) return;
-			
+
 			switch( select){
 			case WINDOW_BUTTONTYPE_NEXT:
 			case WINDOW_BUTTONTYPE_PREV:
@@ -126,25 +126,25 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int fd,i;
 					fd = getfdFromCharaIndex( talker);
 					if( fd == -1) return;
-					
+
 					dengonindex += 7 * (( select == WINDOW_BUTTONTYPE_NEXT) ? 1 : -1);
 					if( dengonindex > memberlist[fmindex_wk].memoindex && memberlist[fmindex_wk].memonum < DENGONFILELINENUM)
 						dengonindex = memberlist[fmindex_wk].memoindex;
-					else if( dengonindex < 6 && memberlist[fmindex_wk].memonum < DENGONFILELINENUM) 
+					else if( dengonindex < 6 && memberlist[fmindex_wk].memonum < DENGONFILELINENUM)
 						dengonindex = 6;
 					else if( dengonindex < 1 && memberlist[fmindex_wk].memonum >= DENGONFILELINENUM)
 						dengonindex = memberlist[fmindex_wk].memonum+dengonindex;
 					else if( dengonindex > memberlist[fmindex_wk].memonum && memberlist[fmindex_wk].memonum >= DENGONFILELINENUM)
 						dengonindex -= memberlist[fmindex_wk].memonum;
-					
+
 					buttontype = WINDOW_BUTTONTYPE_OKCANCEL;
-					if( dengonindex==memberlist[fmindex_wk].memoindex && memberlist[fmindex_wk].memonum >= DENGONFILELINENUM) 
+					if( dengonindex==memberlist[fmindex_wk].memoindex && memberlist[fmindex_wk].memonum >= DENGONFILELINENUM)
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 					else if( (dengonindex - 7)<=memberlist[fmindex_wk].memoindex && (dengonindex - 7)>=(memberlist[fmindex_wk].memoindex - 7) &&
-						memberlist[fmindex_wk].memonum >= DENGONFILELINENUM) 
+						memberlist[fmindex_wk].memonum >= DENGONFILELINENUM)
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
-					else if( dengonindex==memberlist[fmindex_wk].memoindex) 
-						buttontype |= WINDOW_BUTTONTYPE_PREV;    
+					else if( dengonindex==memberlist[fmindex_wk].memoindex)
+						buttontype |= WINDOW_BUTTONTYPE_PREV;
 					else if( dengonindex == 6) buttontype |= WINDOW_BUTTONTYPE_NEXT;
 					else{
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
@@ -174,7 +174,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						snprintf(tmp, sizeof(tmp), "%d\n", dengonindex);
 						strcat(NPC_sendbuf, tmp);
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DENGON,
 						buttontype,
 						CHAR_WINDOWTYPE_FM_DENGON,
@@ -191,24 +191,24 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int    fd,i;
 					struct tm tm1;
 					char   m_buf[4096];
-					
+
 					fd = getfdFromCharaIndex( talker);
 					if( fd == -1 ) return;
 					if( strlen(data) == 0 ) break;
-					
+
 					memberlist[fmindex_wk].memonum++;
-					if( memberlist[fmindex_wk].memonum > DENGONFILELINENUM) 
+					if( memberlist[fmindex_wk].memonum > DENGONFILELINENUM)
 						memberlist[fmindex_wk].memonum = DENGONFILELINENUM;
-					
+
 					memberlist[fmindex_wk].memoindex++;
-					if( memberlist[fmindex_wk].memoindex >= DENGONFILELINENUM) 
+					if( memberlist[fmindex_wk].memoindex >= DENGONFILELINENUM)
 						memberlist[fmindex_wk].memoindex=0;
-					
+
 					dengonindex = memberlist[fmindex_wk].memoindex;
-					
+
 					if( dengonindex < 6 && memberlist[fmindex_wk].memonum<DENGONFILELINENUM)
 						dengonindex = 6;
-					
+
 					memcpy( &tm1, localtime( (time_t *)&NowTime.tv_sec), sizeof(struct tm));
 					getDelimitedField(data,"|",2,tmp_buffer,sizeof(tmp_buffer));
 					sprintf( m_buf,"%s|%2d/%02d %2d:%02d %s",
@@ -216,13 +216,13 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						tm1.tm_mon +1, tm1.tm_mday, tm1.tm_hour, tm1.tm_min,
 						CHAR_getChar( talker, CHAR_NAME));
 					strcpy(memberlist[fmindex_wk].memo[memberlist[fmindex_wk].memoindex], m_buf);
-					
-					// send acsv 
-					SaacClient_ACFMWriteMemo_send( acfd, CHAR_getChar( talker, CHAR_FMNAME), 
+
+					// send acsv
+					SaacClient_ACFMWriteMemo_send( acfd, CHAR_getChar( talker, CHAR_FMNAME),
 						CHAR_getInt(talker, CHAR_FMINDEX),
 						makeEscapeString( memberlist[fmindex_wk].memo[memberlist[fmindex_wk].memoindex], buf, sizeof(buf)),
 						fmindex_wk);
-					
+
 					if( dengonindex >= 6){
 						strcpy( NPC_sendbuf, memberlist[fmindex_wk].memo[dengonindex - 6]);
 						strcat( NPC_sendbuf, "\n");
@@ -263,7 +263,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 				break;
       }  // Switch End
     }  // If End
-        
+
     // 家族之间留言板
     else if(seqno == CHAR_WINDOWTYPE_FM_FMSDENGON)
     {
@@ -271,7 +271,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			char tmp_buffer[4096],tmp[4096];
 			getDelimitedField(data,"|",1,tmp_buffer,sizeof(tmp_buffer));
 			dengonindex = atoi(tmp_buffer);
-			
+
 			switch( select ){
 			case WINDOW_BUTTONTYPE_NEXT:
 			case WINDOW_BUTTONTYPE_PREV:
@@ -279,32 +279,32 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int fd,i;
 					fd = getfdFromCharaIndex( talker);
 					if( fd == -1 ) return;
-					
+
 					dengonindex += 7 * (( select == WINDOW_BUTTONTYPE_NEXT) ? 1 : -1);
 					if( dengonindex > fmsmemo.memoindex && fmsmemo.memonum < FMSDENGONFILELINENUM)
 						dengonindex = fmsmemo.memoindex;
-					else if( dengonindex < 6 && fmsmemo.memonum < FMSDENGONFILELINENUM) 
+					else if( dengonindex < 6 && fmsmemo.memonum < FMSDENGONFILELINENUM)
 						dengonindex = 6;
 					else if( dengonindex < 1 && fmsmemo.memonum >= FMSDENGONFILELINENUM)
 						dengonindex = fmsmemo.memonum+dengonindex;
 					else if( dengonindex > fmsmemo.memonum && fmsmemo.memonum >= FMSDENGONFILELINENUM)
 						dengonindex -= fmsmemo.memonum;
-					
+
 					buttontype = WINDOW_BUTTONTYPE_OKCANCEL;
-					if( dengonindex==fmsmemo.memoindex && fmsmemo.memonum >= FMSDENGONFILELINENUM) 
+					if( dengonindex==fmsmemo.memoindex && fmsmemo.memonum >= FMSDENGONFILELINENUM)
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 					else if( (dengonindex-7)<=fmsmemo.memoindex && (dengonindex - 7)>=(fmsmemo.memoindex - 7) &&
-						fmsmemo.memonum >= FMSDENGONFILELINENUM) 
+						fmsmemo.memonum >= FMSDENGONFILELINENUM)
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
-					else if( dengonindex == fmsmemo.memoindex) 
-						buttontype |= WINDOW_BUTTONTYPE_PREV;    
-					else if( dengonindex == 6 ) 
+					else if( dengonindex == fmsmemo.memoindex)
+						buttontype |= WINDOW_BUTTONTYPE_PREV;
+					else if( dengonindex == 6 )
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
 					else{
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
 					}
-					
+
 					if( dengonindex >= 6 ){
 						if( (dengonindex - 6)  >= 140 ) return;
 						strcpy( NPC_sendbuf, fmsmemo.memo[dengonindex - 6]);
@@ -319,9 +319,9 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					if(dengonindex < 6){
 						if( (fmsmemo.memonum+(dengonindex - 6))  >= 140 ||
 							(fmsmemo.memonum+(dengonindex - 6))  < 0 ) return;
-						
+
 						strcpy( NPC_sendbuf, fmsmemo.memo[fmsmemo.memonum+(dengonindex - 6)]);
-						
+
 						strcat( NPC_sendbuf, "\n");
 						for( i=fmsmemo.memonum+(dengonindex - 5); i<fmsmemo.memonum; i++){
 							strcat( NPC_sendbuf, fmsmemo.memo[i]);
@@ -350,15 +350,15 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int    fd,i;
 					struct tm tm1;
 					char   m_buf[4096];
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
-#ifdef _FMVER21  
-					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) != FMMEMBER_LEADER){              
+
+#ifdef _FMVER21
+					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) != FMMEMBER_LEADER){
 #else
-					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) != FMMEMBER_MEMBER){              
-#endif              
+					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) != FMMEMBER_MEMBER){
+#endif
 							sprintf( NPC_sendbuf, "              『警       告』\n 抱歉！你不是族长，所以仅能查看。");
 							GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 								WINDOW_BUTTONTYPE_OK,
@@ -367,21 +367,21 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 								makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
 							return;
 						}
-						
+
 						if( strlen( data) == 0 )  break;
-						
+
 						fmsmemo.memonum++;
-						if( fmsmemo.memonum > FMSDENGONFILELINENUM) 
+						if( fmsmemo.memonum > FMSDENGONFILELINENUM)
 							fmsmemo.memonum = FMSDENGONFILELINENUM;
-            
+
 						fmsmemo.memoindex++;
-						if( fmsmemo.memoindex >= FMSDENGONFILELINENUM) 
+						if( fmsmemo.memoindex >= FMSDENGONFILELINENUM)
 							fmsmemo.memoindex = 0;
-						
+
 						dengonindex = fmsmemo.memoindex;
 						if( dengonindex < 6 && fmsmemo.memonum<FMSDENGONFILELINENUM)
 							dengonindex = 6;
-						
+
 						memcpy( &tm1, localtime( (time_t *)&NowTime.tv_sec), sizeof( tm1));
 						getDelimitedField(data,"|",2,tmp_buffer,sizeof(tmp_buffer));
 						sprintf( m_buf,"%s|%2d/%02d %2d:%02d %s",
@@ -389,13 +389,13 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 							tm1.tm_mon +1, tm1.tm_mday, tm1.tm_hour, tm1.tm_min,
 							CHAR_getChar( talker, CHAR_NAME));
 						strcpy( fmsmemo.memo[fmsmemo.memoindex], m_buf);
-						
-						// send acsv 
-						SaacClient_ACFMWriteMemo_send( acfd, "FMS", 
+
+						// send acsv
+						SaacClient_ACFMWriteMemo_send( acfd, "FMS",
 							FMSDENGON_SN,
 							makeEscapeString( fmsmemo.memo[fmsmemo.memoindex], buf, sizeof(buf)),
 							FMSDENGON_SN);
-						
+
 						if( dengonindex >= 6){
 							strcpy( NPC_sendbuf, fmsmemo.memo[dengonindex - 6]);
 							strcat( NPC_sendbuf, "\n");
@@ -435,7 +435,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 				default: break;
       }  // Switch End
     }  // If End
-        
+
     // 说明视窗(家族据点)
     else if( seqno == CHAR_WINDOWTYPE_FM_MESSAGE1)
     {
@@ -473,7 +473,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			default:
 				break;
 			}
-    }        
+    }
 
     // 说明视窗(成员列表)
     else if( seqno == CHAR_WINDOWTYPE_FM_MESSAGE2)
@@ -482,12 +482,12 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			char numberlistbuf[4096];
 			int fmindex_wk;
 			fmindex_wk = CHAR_getWorkInt( talker, CHAR_WORKFMINDEXI);
-			
+
 			if( fmindex_wk < 0 || fmindex_wk >= FMMAXNUM) return;
-			
+
 			fd = getfdFromCharaIndex( talker );
 			if( fd == -1 )  return;
-			
+
 			switch( select ){
 			case WINDOW_BUTTONTYPE_OK:
 				{
@@ -516,21 +516,21 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			default:
 				break;
 			}
-    }        
+    }
 
     // 强者表的选项视窗
     else if( seqno == CHAR_WINDOWTYPE_FM_DPSELECT)
     {
 			int fmindex_wk;
 			fmindex_wk = CHAR_getWorkInt( talker, CHAR_WORKFMINDEXI);
-			
+
 			if( CHAR_getInt(talker, CHAR_FMINDEX) > 0 ){
 				if( fmindex_wk < 0 || fmindex_wk >= FMMAXNUM){
 					print("FamilyNumber Data Error!!");
 					return;
 				}
 			}
-			
+
 			buttonevent = atoi(data);
 			switch( buttonevent ){
 			case 1:				// 前叁十大家族综合声望列表
@@ -539,7 +539,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					char listbuf[4096];
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( listbuf, fmdptop.topmemo[0]);
 					strcat( listbuf, "\n");
 					for( i=1; i<10; i++){
@@ -547,11 +547,11 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						strcat( listbuf, "\n");
 					}
 					strcat( listbuf, "0\n");
-#ifdef _FMVER21              
+#ifdef _FMVER21
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_TOP30DP,
 #else
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
-#endif              
+#endif
 						WINDOW_BUTTONTYPE_OK|
 						WINDOW_BUTTONTYPE_NEXT,
 						CHAR_WINDOWTYPE_FM_DPTOP,
@@ -569,14 +569,14 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					char listbuf[4096];
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( listbuf, fmdptop.adv_topmemo[0]);
 					strcat( listbuf, "\n");
 					for( i=1; i<10; i++){
 						strcat( listbuf, fmdptop.adv_topmemo[i]);
 						strcat( listbuf, "\n");
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
 						WINDOW_BUTTONTYPE_OK|
 						WINDOW_BUTTONTYPE_PREV,
@@ -595,14 +595,14 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					char listbuf[4096];
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( listbuf, fmdptop.feed_topmemo[0]);
 					strcat( listbuf, "\n");
 					for( i=1; i<10; i++){
 						strcat( listbuf, fmdptop.feed_topmemo[i]);
 						strcat( listbuf, "\n");
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
 						WINDOW_BUTTONTYPE_OK|
 						WINDOW_BUTTONTYPE_PREV,
@@ -622,14 +622,14 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					char listbuf[4096];
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( listbuf, fmdptop.syn_topmemo[0]);
 					strcat( listbuf, "\n");
 					for( i=1; i<10; i++){
 						strcat( listbuf, fmdptop.syn_topmemo[i]);
 						strcat( listbuf, "\n");
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
 						WINDOW_BUTTONTYPE_OK|
 						WINDOW_BUTTONTYPE_PREV,
@@ -648,14 +648,14 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					char listbuf[4096];
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( listbuf, fmdptop.food_topmemo[0]);
 					strcat( listbuf, "\n");
 					for( i=1; i<10; i++){
 						strcat( listbuf, fmdptop.food_topmemo[i]);
 						strcat( listbuf, "\n");
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
 						WINDOW_BUTTONTYPE_OK|
 						WINDOW_BUTTONTYPE_PREV,
@@ -679,14 +679,14 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					char listbuf[4096];
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( listbuf, fmdptop.pk_topmemo[0]);
 					strcat( listbuf, "\n");
 					for( i=1; i<10; i++){
 						strcat( listbuf, fmdptop.pk_topmemo[i]);
 						strcat( listbuf, "\n");
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
 						WINDOW_BUTTONTYPE_OK|
 						WINDOW_BUTTONTYPE_PREV,
@@ -706,14 +706,14 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					char listbuf[4096];
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( listbuf, fmdptop.momentum_topmemo[0]);
 					strcat( listbuf, "\n");
 					for( i=1; i<10; i++){
 						strcat( listbuf, fmdptop.momentum_topmemo[i]);
 						strcat( listbuf, "\n");
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_10_MEMONTUM,
 						WINDOW_BUTTONTYPE_OK|
 						WINDOW_BUTTONTYPE_PREV,
@@ -735,10 +735,10 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 				{
 					int  fd,i,h,k,fmid;
 					char listbuf[4096];
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					fmid = CHAR_getWorkInt(talker, CHAR_WORKFMINDEXI);
 					if( fmid < 0 ){
 						sprintf( NPC_sendbuf, "              『警       告』\n 抱歉！你不是家族人员，无法查看。");
@@ -748,16 +748,16 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 							makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
 						return;
 					}
-					
+
 					for( h=0; h<FMMAXNUM; h++)
-						if( fmdptop.fmtopid[h] == fmid ) 
+						if( fmdptop.fmtopid[h] == fmid )
 							break;
-						
+
 						k = h;                 // 标示颜色用(多传一个1，以供Client之用)
 						if(h <= 4) h = 0;
 						else if(h >= 994 ) h = 990;
 						else h -= 4;
-						
+
 						strcpy( listbuf, fmdptop.topmemo[h]);
 						if( k == h ) strcat( listbuf, "|1");
 						strcat( listbuf, "\n");
@@ -766,11 +766,11 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 							if(i == k) strcat( listbuf, "|1");
 							strcat( listbuf, "\n");
 						}
-#ifdef _FMVER21              
+#ifdef _FMVER21
 						GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_TOP30DP,
 #else
             GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
-#endif              
+#endif
 							WINDOW_BUTTONTYPE_OK|
 							WINDOW_BUTTONTYPE_PREV,
 							CHAR_WINDOWTYPE_FM_DPME,
@@ -788,10 +788,10 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int  fd,h,fmid;
 					char listbuf[4096];
 					char szTempbuf[12];
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					fmid = CHAR_getWorkInt(talker, CHAR_WORKFMINDEXI);
 					if( fmid < 0 ){
 						sprintf( NPC_sendbuf, "              『警       告』\n 抱歉！你不是家族人员，无法查看。");
@@ -801,7 +801,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 							makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
 						return;
 					}
-						
+
 					for( h=0; h<FAMILY_MAXNUM; h++){
 						if( fmdptop.momentum_topid[h] == fmid )
 							break;
@@ -824,43 +824,43 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 				break;
         }
     }
-        
+
     // 选项视窗
     else if( seqno == CHAR_WINDOWTYPE_FM_SELECT)
     {
 			int fmindex_wk;
 			fmindex_wk = CHAR_getWorkInt( talker, CHAR_WORKFMINDEXI);
-			
+
 			if( CHAR_getInt(talker, CHAR_FMINDEX) > 0 ){
 				if( fmindex_wk < 0 || fmindex_wk >= FMMAXNUM){
 					print("FamilyNumber Data Error!!");
 					return;
 				}
 			}
-			
+
 			buttonevent = atoi(data);
-			
+
 			switch( buttonevent ){
 			case FM_MEMBERLIST:
 				{
 					int fd;
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
-					if( CHAR_getInt(talker, CHAR_FMINDEX) <= 0){  
+
+					if( CHAR_getInt(talker, CHAR_FMINDEX) <= 0){
 						sprintf( NPC_sendbuf, "              『警       告』\n 抱歉！你不是家族人员，不得使用公布栏。");
 						GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE, WINDOW_BUTTONTYPE_OK,
 							-1, -1, makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
 						return;
 					}
 					/*
-					#ifdef _FMVER21                   
+					#ifdef _FMVER21
 					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER ||
 					CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_ELDER ){
 					#else
 					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) == 1){
-					#endif              
+					#endif
 					SaacClient_ACShowMemberList_send( acfd, fmindex_wk);
 					READTIME1 = NowTime.tv_sec+FM_WAITTIME;
 					}else
@@ -869,21 +869,21 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						SaacClient_ACShowMemberList_send( acfd, fmindex_wk);
 						READTIME1 = NowTime.tv_sec+FM_WAITTIME;
 					}
-					
-#ifdef _FMVER21                   
-					//              if( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER || 
+
+#ifdef _FMVER21
+					//              if( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER ||
 					//                  CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_ELDER ||
 					//                  CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_VICELEADER ){
-					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER || 
+					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER ||
 						CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_ELDER ){
 #else
 						if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) == FMMEMBER_MEMBER ){
-#endif              
+#endif
 							sprintf( NPC_sendbuf, "               『族 长 需 知』\n请小心处理族员的资料，一经修改後就无法回复原态，敬请小心。");
 						}else{
 							sprintf( NPC_sendbuf, "               『列 表 需 知』\n 此表族长可作修改，族员仅能查看。");
 						}
-						
+
 						GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 							WINDOW_BUTTONTYPE_OK,
 							CHAR_WINDOWTYPE_FM_MESSAGE2,
@@ -898,15 +898,15 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			case FM_FMPOINT:
 				{
 					int fd;
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
-#ifdef _FMVER21                   
+
+#ifdef _FMVER21
 					if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) == FMMEMBER_LEADER ){
 #else
 						if( CHAR_getInt( talker, CHAR_FMLEADERFLAG) == FMMEMBER_MEMBER ){
-#endif              
+#endif
 							SaacClient_ACFMPointList_send(acfd);
 							sprintf( NPC_sendbuf, "               『族 长 需 知』\n请小心慎选所申请的据点，一但选取据点後就无法回复原态，敬请小心。");
 							READTIME4 = NowTime.tv_sec+FM_WAITTIME;
@@ -914,12 +914,12 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						else{
 							sprintf( NPC_sendbuf, "               『列 表 需 知』\n此表族长可以申请，其馀仅能查看。");
 						}
-						
+
 						if( NowTime.tv_sec > READTIME4 ){
 							SaacClient_ACFMPointList_send(acfd);
 							READTIME4 = NowTime.tv_sec+FM_WAITTIME;
 						}
-						
+
 						GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 							WINDOW_BUTTONTYPE_OK,
 							CHAR_WINDOWTYPE_FM_MESSAGE1,
@@ -934,17 +934,17 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			case FM_FMDPTOP:
 				{
 					int  fd;
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					if( NowTime.tv_sec > READTIME3 ){
 						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_INTEGRATE );
-						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_ADV );    
+						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_ADV );
 						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_FEED );
 						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_SYNTHESIZE );
 						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_DEALFOOD );
-						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_PK );                           
+						SaacClient_ACShowTopFMList_send( acfd, FM_TOP_PK );
 #ifdef _NEW_MANOR_LAW
 						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_MOMENTUM);
 #endif
@@ -965,8 +965,8 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					strcat( NPC_sendbuf, "              自己家族声望列表\n");
 #ifdef _NEW_MANOR_LAW
 					strcat( NPC_sendbuf, "              自己家族气势排名\n");
-#endif					
-						
+#endif
+
 					GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_SELECT,
 						WINDOW_BUTTONTYPE_NONE,
 						CHAR_WINDOWTYPE_FM_DPSELECT,
@@ -976,7 +976,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						-1,
 #endif
 						makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
-					
+
 				}
 				break;
 			case FM_MEMBERMEMO:
@@ -984,12 +984,12 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int fd,i,dengonindex;
 					char tmp[4096];
 					fd = getfdFromCharaIndex( talker );
-					
+
 					if( fd == -1 )  return;
-					
-					if( CHAR_getInt(talker, CHAR_FMINDEX) <= 0){  
+
+					if( CHAR_getInt(talker, CHAR_FMINDEX) <= 0){
 						sprintf( NPC_sendbuf, "              『警       告』\n 抱歉！你不是家族人员，不得使用公布栏。");
-						
+
 						GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 							WINDOW_BUTTONTYPE_OK,
 							-1,
@@ -997,17 +997,17 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 							makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
 						return;
 					}
-					
+
 					if( NowTime.tv_sec > READTIME2 ){
 						SaacClient_ACFMReadMemo_send( acfd, fmindex_wk);
 						READTIME2 = NowTime.tv_sec+FM_WAITTIME;
 					}
-					
+
 					dengonindex = memberlist[fmindex_wk].memoindex;
 					if( memberlist[fmindex_wk].memoindex < 6 && memberlist[fmindex_wk].memonum < DENGONFILELINENUM ){
 						dengonindex = 6;
-					}    
-					
+					}
+
 					if( dengonindex >= 6 ){
 						strcpy( NPC_sendbuf, memberlist[fmindex_wk].memo[dengonindex - 6]);
 						strcat( NPC_sendbuf, "\n");
@@ -1033,7 +1033,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						sprintf(tmp, "%d\n", dengonindex);
 						strcat( NPC_sendbuf, tmp);
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DENGON,
 						WINDOW_BUTTONTYPE_OKCANCEL|
 						WINDOW_BUTTONTYPE_PREV,
@@ -1051,16 +1051,16 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int fd,i,dengonindex;
 					char tmp[4096];
 					fd = getfdFromCharaIndex( talker );
-					
+
 					if( fd == -1 )  return;
-					
+
 					if( NowTime.tv_sec > READTIME3 ){
 						SaacClient_ACFMReadMemo_send( acfd, FMSDENGON_SN);
 						READTIME3 = NowTime.tv_sec+FM_WAITTIME;
 					}
 					dengonindex = fmsmemo.memoindex;
 					if( fmsmemo.memoindex<6 || fmsmemo.memonum>FMSDENGONFILELINENUM ){
-						dengonindex = 6; 
+						dengonindex = 6;
 					}
 					if( dengonindex >= 6 ){
 						strcpy( NPC_sendbuf, fmsmemo.memo[dengonindex - 6]);
@@ -1088,7 +1088,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						sprintf(tmp, "%d\n", dengonindex);
 						strcat( NPC_sendbuf, tmp);
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_FMSDENGON,
 						WINDOW_BUTTONTYPE_OKCANCEL|
 						WINDOW_BUTTONTYPE_PREV,
@@ -1099,17 +1099,17 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						-1,
 #endif
 						makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
-				}   
+				}
 				break;
 #ifdef _FM_FMPOINTPK_LIST
 			case FM_FMPOINTPK:
-				{	
+				{
 					int fd;
 					fd = getfdFromCharaIndex( talker );
 					memset(&NPC_sendbuf,0,sizeof(NPC_sendbuf));
 					strcpy(NPC_sendbuf, "[庄园族战时间表]");
 				  {
-				  	char fmpointname[MANORNUM][16] = {"萨姆吉尔庄园", "玛丽娜丝庄园", "加    加庄园", "卡鲁它那庄园", "伊 甸 园庄园", "塔 尔 塔庄园", "尼 克 斯庄园", "弗 烈 顿庄园", "亚 依 欧庄园", "瑞尔亚斯庄园"};
+					char fmpointname[MANORNUM][16] = {"萨姆吉尔庄园", "玛丽娜丝庄园", "加    加庄园", "卡鲁它那庄园", "伊 甸 园庄园", "塔 尔 塔庄园", "尼 克 斯庄园", "弗 烈 顿庄园", "亚 依 欧庄园", "瑞尔亚斯庄园"};
 					  int i, fmpks_pos;
 						for( i=1; i<=MANORNUM; i++){
 							fmpks_pos = i * MAX_SCHEDULE;
@@ -1121,16 +1121,16 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 														, fmpks[fmpks_pos + 1].host_name
 														, fmpks[fmpks_pos + 1].max_player
 														);
-							
+
 /*
 							switch (fmpks[fmpks_pos+1].flag) {
-  							case FMPKS_FLAG_MANOR_BATTLEBEGIN:
-  							case FMPKS_FLAG_MANOR_PREPARE:
-  							case FMPKS_FLAG_MANOR_OTHERPLANET:
-  							{
+							case FMPKS_FLAG_MANOR_BATTLEBEGIN:
+							case FMPKS_FLAG_MANOR_PREPARE:
+							case FMPKS_FLAG_MANOR_OTHERPLANET:
+							{
 									time_t dueltime = (time_t)fmpks[fmpks_pos + 1].dueltime;
 									struct tm *tm1 = localtime(&dueltime);
-									
+
 									sprintf(tmpbuf, "『%s』%02d月%02d日 %d:%d 【%s】\n"
 																	"                %s ｖｓ %s\n"
 																	"                PK人数：%d ｖｓ %d\n", fmpointname[i - 1],
@@ -1173,7 +1173,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						-1,
 #endif
 						makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
-				}   
+				}
 				break;
 #endif
 			case FM_FMPOINTTIME:
@@ -1216,7 +1216,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 				break;
         }
     }
-        
+
     // 成员列表
     else if( seqno == CHAR_WINDOWTYPE_FM_MEMBERLIST)
     {
@@ -1225,63 +1225,63 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			int  fmindex_wk;
 			fmindex_wk = CHAR_getWorkInt( talker, CHAR_WORKFMINDEXI);
 			if( fmindex_wk < 0 || fmindex_wk >= FMMAXNUM) return;
-			
+
 			getDelimitedField(data,"|",1,tmp_buffer,sizeof(tmp_buffer));
 			numberlistindex = atoi(tmp_buffer);
 			getDelimitedField(data,"|",2,tmp_buffer,sizeof(tmp_buffer));
 			buttonevent = atoi(tmp_buffer);
 			getDelimitedField(data,"|",3,dutybuf,sizeof(dutybuf));
-			
+
 #ifdef _FMVER21
-			//        if( buttonevent>=1 && buttonevent<=11 && 
-			//            ( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER || 
+			//        if( buttonevent>=1 && buttonevent<=11 &&
+			//            ( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER ||
 			//              CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_ELDER ||
 			//              CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_VICELEADER ))
-			if( buttonevent>=1 && buttonevent<=11 && 
-				( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER || 
+			if( buttonevent>=1 && buttonevent<=11 &&
+				( CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER ||
 				CHAR_getInt( talker, CHAR_FMLEADERFLAG ) == FMMEMBER_ELDER ))
 #else
         if( buttonevent>=1 && buttonevent<=11 && CHAR_getInt( talker, CHAR_FMLEADERFLAG) == FMMEMBER_MEMBER )
-#endif        
+#endif
         {
 					int fd,i;
 					int int_status;
 					char getstatus[4096];
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					strcpy( getstatus, memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]
 						+ (strlen( memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]) - 1));
-					
+
 					int_status = atoi(getstatus);
-					
+
 					// 家族的加入、退出、申请等选项
 					if( buttonevent!=11 )
-#ifdef _FMVER21            
+#ifdef _FMVER21
 						strcpy( memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]
-						+ (strlen(memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]) - 1), dutybuf);                			    
+						+ (strlen(memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]) - 1), dutybuf);
 #else
 					switch( int_status ){
 					case 1:
 					case 3:
 						strcpy( memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]
-							+ (strlen(memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]) - 1), "4");                      
+							+ (strlen(memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]) - 1), "4");
 						break;
 					case 2:
 						strcpy( memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]
-							+ (strlen(memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]) - 1), "1"); 					  
+							+ (strlen(memberlist[fmindex_wk].numberlistarray[numberlistindex+buttonevent - 1]) - 1), "1");
 						break;
 					default:
 						break;
-					}              
-#endif                 
+					}
+#endif
 					// 家族的召募选项
 					if( buttonevent == 11 )
 					{
 						strcpy( getstatus, enlistbuf + (strlen(enlistbuf) - 1));
 						int_status = atoi(getstatus);
-						
+
 						switch( int_status ){
 						case 1:
 							memberlist[fmindex_wk].accept = 0;
@@ -1292,10 +1292,10 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 							sprintf(enlistbuf, "是否继续召募家族人员|%d|%d",numberlistindex,memberlist[fmindex_wk].accept);
 							break;
 						default:
-							break;    
+							break;
 						}
 					}
-					
+
 					strcpy( numberlistbuf, memberlist[fmindex_wk].numberlistarray[numberlistindex]);
 					strcat( numberlistbuf, "\n");
 					for( i=(numberlistindex + 1); i<numberlistindex + 10; i++){
@@ -1305,17 +1305,17 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					sprintf(enlistbuf, "是否继续召募家族人员|%d|%d",numberlistindex,memberlist[fmindex_wk].accept);
 					strcat( numberlistbuf, enlistbuf);
 					strcat( numberlistbuf, "\n");
-					
+
 					buttontype = WINDOW_BUTTONTYPE_OK;
-					if( (numberlistindex + 10) > memberlist[fmindex_wk].fmnum) 
+					if( (numberlistindex + 10) > memberlist[fmindex_wk].fmnum)
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
-					else if( numberlistindex == 0 ) 
+					else if( numberlistindex == 0 )
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
 					else{
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
 					}
-					
+
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_SELECT,
 						buttontype,
 						CHAR_WINDOWTYPE_FM_MEMBERLIST,
@@ -1331,19 +1331,19 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 				case WINDOW_BUTTONTYPE_PREV:
           {
 						int fd,i;
-						
+
 						fd = getfdFromCharaIndex( talker );
 						if( fd == -1 )  return;
-						
+
 						numberlistindex += 10 * (( select == WINDOW_BUTTONTYPE_NEXT) ? 1 : -1);
-						
-						if( numberlistindex >= memberlist[fmindex_wk].fmnum) 
+
+						if( numberlistindex >= memberlist[fmindex_wk].fmnum)
 							numberlistindex -= 10;
-						else if( numberlistindex < 1 ) 
+						else if( numberlistindex < 1 )
 							numberlistindex = 0;
-						
+
 						buttontype = WINDOW_BUTTONTYPE_OK;
-						if( (numberlistindex + 10) >= memberlist[fmindex_wk].fmnum) 
+						if( (numberlistindex + 10) >= memberlist[fmindex_wk].fmnum)
 							buttontype |= WINDOW_BUTTONTYPE_PREV;
 						else if( numberlistindex==0 )
 							buttontype |= WINDOW_BUTTONTYPE_NEXT;
@@ -1351,7 +1351,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 							buttontype |= WINDOW_BUTTONTYPE_PREV;
 							buttontype |= WINDOW_BUTTONTYPE_NEXT;
 						}
-						
+
 						strcpy( numberlistbuf, memberlist[fmindex_wk].numberlistarray[numberlistindex]);
 						strcat( numberlistbuf, "\n");
 						for( i=(numberlistindex+1); i<numberlistindex+10; i++){
@@ -1378,7 +1378,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
           break;
         }
     }
-    
+
     // 家族强者表(前叁十)
     else if( seqno == CHAR_WINDOWTYPE_FM_DPTOP)
     {
@@ -1386,7 +1386,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			int  listindex;
 			getDelimitedField(data,"|",1,tmp_buffer,sizeof(tmp_buffer));
 			listindex = atoi(tmp_buffer);
-			
+
 			switch( select ){
 			case WINDOW_BUTTONTYPE_NEXT:
 			case WINDOW_BUTTONTYPE_PREV:
@@ -1394,19 +1394,19 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					int fd,i;
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					listindex += 10 * (( select == WINDOW_BUTTONTYPE_NEXT) ? 1 : -1);
-					
-					if( listindex >= 30) 
+
+					if( listindex >= 30)
 						return;
 					//listindex = 20;
 					//listindex -= 10;
-					//else if( listindex < 1 ) 
+					//else if( listindex < 1 )
 					//    listindex = 0;
 					if (listindex < 0) return;
-					
+
 					buttontype = WINDOW_BUTTONTYPE_OK;
-					if( (listindex + 10) >= 30) 
+					if( (listindex + 10) >= 30)
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 					else if( listindex==0 )
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
@@ -1414,7 +1414,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
 					}
-					
+
 					strcpy( listbuf, fmdptop.topmemo[listindex]);
 					strcat( listbuf, "\n");
 					for( i=(listindex+1); i<listindex+10; i++){
@@ -1423,12 +1423,12 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					}
 					sprintf(tmp_buffer, "%d\n", listindex);
 					strcat( listbuf, tmp_buffer);
-					
-#ifdef _FMVER21              
+
+#ifdef _FMVER21
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_TOP30DP,
 #else
 					GmsvServer_WN_send( fd, WINDOW_FMMESSAGETYPE_DP,
-#endif              
+#endif
 						buttontype,
 						CHAR_WINDOWTYPE_FM_DPTOP,
 #ifndef _FM_MODIFY
@@ -1454,26 +1454,26 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			strcpy( pointbuf, "");
 			pointlistindex = 0;
 			buttonevent = atoi(data);
-			
+
 			switch( select ){
 			case WINDOW_BUTTONTYPE_NEXT:
 			case WINDOW_BUTTONTYPE_PREV:
 				{
 					int fd;
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
 
 					int i;
 					pointlistindex += 10 * (( select == WINDOW_BUTTONTYPE_NEXT) ? 1 : -1);
-					
-					if( pointlistindex > FMPOINTNUM) 
+
+					if( pointlistindex > FMPOINTNUM)
 						pointlistindex -= 10;
-					else if( pointlistindex < 1 ) 
+					else if( pointlistindex < 1 )
 						pointlistindex = 0;
-					
+
 					buttontype = WINDOW_BUTTONTYPE_OK;
-					if( (pointlistindex + 10) > FMPOINTNUM) 
+					if( (pointlistindex + 10) > FMPOINTNUM)
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 					else if( pointlistindex==0 )
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
@@ -1481,7 +1481,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 						buttontype |= WINDOW_BUTTONTYPE_PREV;
 						buttontype |= WINDOW_BUTTONTYPE_NEXT;
 					}
-					
+
 					strcpy( pointbuf, fmpointlist.pointlistarray[pointlistindex]);
 					strcat( pointbuf, "\n");
 					for( i=(pointlistindex+1); i<pointlistindex+10; i++){
@@ -1497,7 +1497,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 #else
 						-1,
 #endif
-					pointbuf);	
+					pointbuf);
 				}
 				break;
 			case WINDOW_BUTTONTYPE_OK:
@@ -1505,7 +1505,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			default:
 				break;
 			}
-    }        
+    }
 
     // 家族强者表(自己及前十大)
     else if( seqno == CHAR_WINDOWTYPE_FM_DPME )
@@ -1514,23 +1514,23 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			case WINDOW_BUTTONTYPE_PREV:
 				{
 					int  fd;
-					
+
 					fd = getfdFromCharaIndex( talker );
 					if( fd == -1 )  return;
-					
+
 					if( NowTime.tv_sec > READTIME3 ){
 						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_INTEGRATE);
-						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_ADV);    
+						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_ADV);
 						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_FEED);
 						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_SYNTHESIZE);
 						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_DEALFOOD);
-						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_PK);                           
+						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_PK);
 #ifdef _NEW_MANOR_LAW
 						SaacClient_ACShowTopFMList_send(acfd, FM_TOP_MOMENTUM);
 #endif
 						READTIME3 = NowTime.tv_sec+FM_WAITTIME;
 					}
-					
+
 					strcpy( NPC_sendbuf, "\n              三十大家族声望列表\n");
 					strcat( NPC_sendbuf, "              十大冒险家族\n");
 					strcat( NPC_sendbuf, "              十大饲育家族\n");
@@ -1545,7 +1545,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 					strcat( NPC_sendbuf, "              自己家族声望列表\n");
 #ifdef _NEW_MANOR_LAW
 					strcat( NPC_sendbuf, "              自己家族气势排名\n");
-#endif					
+#endif
 					GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_SELECT,
 						WINDOW_BUTTONTYPE_NONE,
 						CHAR_WINDOWTYPE_FM_DPSELECT,
@@ -1554,7 +1554,7 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 #else
 						-1,
 #endif
-						makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));                
+						makeEscapeString( NPC_sendbuf, buf, sizeof(buf)));
 				}
 				break;
 			case WINDOW_BUTTONTYPE_OK:
@@ -1562,8 +1562,8 @@ void NPC_FmDengonWindowTalked( int index, int talker, int seqno, int select, cha
 			default:
 				break;
 			}
-			
-    }  
+
+    }
 }
 
 // call FmDengon NPC event
@@ -1573,12 +1573,12 @@ void NPC_FmDengonLooked( int meindex, int lookedindex )
     char buf[DENGONFILEENTRYSIZE*MESSAGEINONEWINDOW*2];
     char menubuf[4096];
     int  fd;
-    
+
     if (!CHAR_CHECKINDEX(lookedindex)) return;
-    
+
     fd = getfdFromCharaIndex( lookedindex );
     if( fd == -1 )  return;
-    
+
     // 必须站在布告栏的前面一格
     if( NPC_Util_CharDistance( lookedindex, meindex ) > 1) return;
     // 空白处请勿更动
@@ -1593,10 +1593,10 @@ void NPC_FmDengonLooked( int meindex, int lookedindex )
 #endif
 	strcat( menubuf, "\n                  庄园占据时间表");
     GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_SELECT,
-        	     WINDOW_BUTTONTYPE_CANCEL,
+		     WINDOW_BUTTONTYPE_CANCEL,
                      CHAR_WINDOWTYPE_FM_SELECT,
- 		     CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
-		     makeEscapeString( menubuf, buf, sizeof(buf)));        
+		     CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
+		     makeEscapeString( menubuf, buf, sizeof(buf)));
 }
 #else
 void NPC_FmDengonLooked( int meindex, int lookedindex )
@@ -1604,12 +1604,12 @@ void NPC_FmDengonLooked( int meindex, int lookedindex )
     char buf[DENGONFILEENTRYSIZE*MESSAGEINONEWINDOW*2];
     char menubuf[4096];
     int  fd;
-    
+
     if (!CHAR_CHECKINDEX(lookedindex)) return;
-    
+
     fd = getfdFromCharaIndex( lookedindex );
     if( fd == -1 )  return;
-    
+
     // 空白处请勿更动
     strcpy( menubuf, "                  『家族布告栏』");
 	strcat( menubuf, "\n                   家族成员列表");
@@ -1623,9 +1623,9 @@ void NPC_FmDengonLooked( int meindex, int lookedindex )
 	strcat( menubuf, "\n                  庄园占据时间表");
     GmsvServer_WN_send(fd,
 										 WINDOW_MESSAGETYPE_SELECT,
-        						 WINDOW_BUTTONTYPE_CANCEL,
+							 WINDOW_BUTTONTYPE_CANCEL,
                      CHAR_WINDOWTYPE_FM_SELECT,
- 										 -1,
-										 makeEscapeString( menubuf, buf, sizeof(buf)));        
+										 -1,
+										 makeEscapeString( menubuf, buf, sizeof(buf)));
 }
 #endif

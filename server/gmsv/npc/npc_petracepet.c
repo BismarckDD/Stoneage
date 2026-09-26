@@ -6,7 +6,7 @@
 #include "npcutil.h"
 #include "gmsv_server.h"
 #include "handletime.h"
- 
+
 #ifdef _PETRACE
 #include "npc_petracepet.h"
 
@@ -46,7 +46,7 @@ BOOL NPC_PetRacePetInit( int meindex )
 	char buf[256];
 	int showstopx, showstopy;
 	int routenum = 0, i = 0;
-	
+
 	NPC_Util_GetArgStr(meindex, argstr, sizeof(argstr));
 	for (i = 1; i <= routenum; i++)
 	{
@@ -197,7 +197,7 @@ static void NPC_PetRacePet_Walk(int meindex)
 	{
 		char argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
 		NPC_Util_GetArgStr(meindex, argstr, sizeof( argstr));
-		CHAR_setWorkInt(meindex, NPC_WORK_ROUTEPOINT, 
+		CHAR_setWorkInt(meindex, NPC_WORK_ROUTEPOINT,
 			CHAR_getWorkInt(meindex, NPC_WORK_ROUTEPOINT) + 1);
 
 		if (NPC_PetRacePetSetPoint(meindex, argstr) == FALSE)
@@ -274,7 +274,7 @@ static int NPC_PetRacePetSetPoint(int meindex, char *argstr)
 		print("SetPoint_npcracepet: Didn't set route %s\n", routetostring);
 		return FALSE;
 	}
-	ret = getDelimitedField(buf, ";", 
+	ret = getDelimitedField(buf, ";",
 		CHAR_getWorkInt(meindex, NPC_WORK_ROUTEPOINT), buf2, sizeof(buf2));
 	if (ret == FALSE)	return FALSE;
 	ret = getDelimitedField(buf2, ",", 1, buf3, sizeof(buf3));
@@ -287,5 +287,4 @@ static int NPC_PetRacePetSetPoint(int meindex, char *argstr)
 }
 
 #endif
-
 

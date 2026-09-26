@@ -1,5 +1,4 @@
 #include "version.h"
-#include <ctype.h>
 #include "object.h"
 #include "char_base.h"
 #include "char.h"
@@ -33,21 +32,21 @@ void NPC_PetMakerTalked(int meindex, int talker, char *msg, int color)
     getDelimitedField(npcarg, "|", 1, token, sizeof(token));
     const int msg_no = atoi(token);
 
-    if (CHAR_getInt(talker, CHAR_WHICHTYPE) != CHAR_TYPEPLAYER)  
+    if (CHAR_getInt(talker, CHAR_WHICHTYPE) != CHAR_TYPEPLAYER)
         return;
 
-    if (NPC_Util_isFaceToFace(talker, meindex, 2) == FALSE) 
+    if (NPC_Util_isFaceToFace(talker, meindex, 2) == FALSE)
     {
-      if (NPC_Util_isFaceToFace(talker, meindex, 1) == FALSE) 
+      if (NPC_Util_isFaceToFace(talker, meindex, 1) == FALSE)
           return;
     }
-    
+
     // const int translv = CHAR_getInt(talker, CHAR_TRANSMIGRATION);    // 白虎
-    
+
     int pets_on_char = 0;
     int i;
     for (i = 0; i < CHAR_MAXPETHAVE; i++)
-      if (CHAR_getCharPet(talker, i) != -1) 
+      if (CHAR_getCharPet(talker, i) != -1)
         ++pets_on_char;
 
     // 白虎
@@ -55,8 +54,8 @@ void NPC_PetMakerTalked(int meindex, int talker, char *msg, int color)
         sprintf(tmpbuf, "抱歉哦～等到转生５次及等级１２５级时再来找我吧！");
         CHAR_talkToCli(talker, meindex, tmpbuf, CHAR_COLORWHITE);
         return;
-    }*/   
-    // 青龙  
+    }*/
+    // 青龙
     if (CHAR_getInt(talker, CHAR_FAME) < 200000) {
         sprintf(tmpbuf, "抱歉哦～你目前个人声望 %d 点，请等到超过二千点时再来找我吧！", (CHAR_getInt(talker, CHAR_FAME)/100));
         CHAR_talkToCli(talker, meindex, tmpbuf, CHAR_COLORWHITE);
@@ -70,9 +69,9 @@ void NPC_PetMakerTalked(int meindex, int talker, char *msg, int color)
     else if (pets_on_char >= CHAR_MAXPETHAVE) {
         sprintf(tmpbuf, "抱歉～没多余的空间可放置宠物。");
         CHAR_talkToCli(talker, meindex, tmpbuf, CHAR_COLORWHITE);
-        return;    
+        return;
     }
-    
+
     pet_make(talker, "1845");
     // 标识任务已经完成.
     ckpoint = ckpoint | (1 << shift);
@@ -95,7 +94,7 @@ void pet_make( int char_index, char* message )
   ret = ENEMY_createPetFromEnemyIndex( char_index, i);
   snprintf(msgbuf, sizeof(msgbuf), "哦～以你的能力足以配得上一只传说宠物，好吧！就是你了。");
   CHAR_talkToCli(char_index, -1, msgbuf, CHAR_COLORYELLOW);
-              
+
   for( i=0; i<CHAR_MAXPETHAVE; i++ ){
       if( CHAR_getCharPet( char_index, i) == ret )break;
   }
@@ -106,7 +105,7 @@ void pet_make( int char_index, char* message )
   }
   snprintf( msgbuf, sizeof( msgbuf ), "K%d", i );
   CHAR_sendStatusString( char_index, msgbuf );
-                   
+
   snprintf( msgbuf, sizeof( msgbuf ), "W%d", i );
   CHAR_sendStatusString( char_index, msgbuf );
 

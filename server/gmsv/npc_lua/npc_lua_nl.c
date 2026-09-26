@@ -26,11 +26,7 @@
 
 #include "enemy.h"
 
-
-
 #ifdef _JZ_NEWSCRIPT_LUA
-
-
 
 extern char M_OutErrMsg[1024];
 
@@ -42,21 +38,15 @@ static char Buff_Data[1024*64];
 
 static int Check_Num=0;
 
-
-
 int NPC_Lua_NL_GetErrorStr(lua_State *_NLL)
 
 {
 
 	CheckEx(_NLL, 0);
 
-
-
 	LRetMsg(_NLL, M_OutErrMsg);
 
 }
-
-
 
 BOOL NPC_Lua_NL_Mod(lua_State *_NLL)
 
@@ -96,8 +86,6 @@ BOOL NPC_Lua_NL_Mod(lua_State *_NLL)
 
 }
 
-
-
 BOOL NPC_Lua_CheckNpcEventFree(lua_State *_NLL)
 
 {
@@ -122,37 +110,37 @@ BOOL NPC_Lua_CheckNpcEventFree(lua_State *_NLL)
 
 		 ret = getDelimitedField( TM_NpcStr, "|", i, magicname,  sizeof( magicname));
 
-		 if (!ret) 
+		 if (!ret)
 
 		 {
 
-		 	ret = getDelimitedField( TM_NpcStr, "/", i, magicname,  sizeof( magicname));
+			ret = getDelimitedField( TM_NpcStr, "/", i, magicname,  sizeof( magicname));
 
-		 	if (!ret) 
+			if (!ret)
 
-		 	{
+			{
 
-		 		ret = getDelimitedField( TM_NpcStr, "\\", i, magicname,  sizeof( magicname));
+				ret = getDelimitedField( TM_NpcStr, "\\", i, magicname,  sizeof( magicname));
 
-		 		if (!ret)
+				if (!ret)
 
-		 		{
+				{
 
-		 			break;
+					break;
 
-		 		}
+				}
 
-		 	}
+			}
 
 		 }
 
 		 ret1 = ActionNpc_CheckFree(TM_NPCindex,TM_index,magicname);
 
-		 if (!ret1) 
+		 if (!ret1)
 
 		 {
 
-		 		break;
+				break;
 
 		 }
 
@@ -163,8 +151,6 @@ BOOL NPC_Lua_CheckNpcEventFree(lua_State *_NLL)
 	LRetBool(_NLL, ret1);
 
 }
-
-
 
 BOOL NPC_Lua_DoNpcEventAction(lua_State *_NLL)
 
@@ -190,27 +176,27 @@ BOOL NPC_Lua_DoNpcEventAction(lua_State *_NLL)
 
 		 ret = getDelimitedField( TM_NpcStr, "|", i, magicname,  sizeof( magicname));
 
-		 if (!ret) 
+		 if (!ret)
 
 		 {
 
-		 	ret = getDelimitedField( TM_NpcStr, "/", i, magicname,  sizeof( magicname));
+			ret = getDelimitedField( TM_NpcStr, "/", i, magicname,  sizeof( magicname));
 
-		 	if (!ret) 
+			if (!ret)
 
-		 	{
+			{
 
-		 		ret = getDelimitedField( TM_NpcStr, "\\", i, magicname,  sizeof( magicname));
+				ret = getDelimitedField( TM_NpcStr, "\\", i, magicname,  sizeof( magicname));
 
-		 		if (!ret)
+				if (!ret)
 
-		 		{
+				{
 
-		 			break;
+					break;
 
-		 		}
+				}
 
-		 	}
+			}
 
 		 }
 
@@ -223,10 +209,6 @@ BOOL NPC_Lua_DoNpcEventAction(lua_State *_NLL)
 	LRetBool(_NLL, ret1);
 
 }
-
-
-
-
 
 int NPC_Lua_NL_CreateNpc(lua_State *_NLL)
 
@@ -246,8 +228,6 @@ int NPC_Lua_NL_CreateNpc(lua_State *_NLL)
 
 	int TM_Top = lua_gettop(_NLL);
 
-
-
 	if(TM_Top >= 3)
 
 	{
@@ -264,19 +244,11 @@ int NPC_Lua_NL_CreateNpc(lua_State *_NLL)
 
 	}
 
-
-
 	int TM_Ret = NPC_Lua_Create(TM_DoFile, TM_InitFuncName, TM_seek, TM_IsFly);
-
-
 
 	LRet(TM_Ret);
 
 }
-
-
-
-
 
 int NPC_Lua_NL_DelNpc(lua_State *_NLL)
 
@@ -293,8 +265,6 @@ int NPC_Lua_NL_DelNpc(lua_State *_NLL)
 	LRetInt(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_NL_GetStringFromIndexWithDelim(lua_State *_NLL)
 
@@ -320,8 +290,6 @@ int NPC_Lua_NL_GetStringFromIndexWithDelim(lua_State *_NLL)
 
 }
 
-
-
 BOOL NPC_Lua_NL_ANSI_PlayerLoop(lua_State *_NLL)
 
 {
@@ -340,7 +308,7 @@ BOOL NPC_Lua_NL_ANSI_PlayerLoop(lua_State *_NLL)
 
 	{
 
-		TM_IsFly = (BOOL)lua_toboolean(_NLL, 1);	
+		TM_IsFly = (BOOL)lua_toboolean(_NLL, 1);
 
 	}
 
@@ -374,8 +342,6 @@ BOOL NPC_Lua_NL_ANSI_PlayerLoop(lua_State *_NLL)
 
 }
 
-
-
 BOOL NPC_Lua_NL_ANSI_PetLoop(lua_State *_NLL)
 
 {
@@ -398,7 +364,7 @@ BOOL NPC_Lua_NL_ANSI_PetLoop(lua_State *_NLL)
 
 	{
 
-		TM_IsFly = (BOOL)lua_toboolean(_NLL, 1);	
+		TM_IsFly = (BOOL)lua_toboolean(_NLL, 1);
 
 	}
 
@@ -411,8 +377,6 @@ BOOL NPC_Lua_NL_ANSI_PetLoop(lua_State *_NLL)
 		return;
 
 	}
-
-
 
 	for( i = indexn ; i < MAXPLAYER+MAXPET ; i++) {
 
@@ -432,12 +396,6 @@ BOOL NPC_Lua_NL_ANSI_PetLoop(lua_State *_NLL)
 
 }
 
-
-
-
-
-
-
 BOOL NPC_Lua_NL_ANSI_ItemLoop(lua_State *_NLL)
 
 {
@@ -456,7 +414,7 @@ BOOL NPC_Lua_NL_ANSI_ItemLoop(lua_State *_NLL)
 
 	{
 
-		TM_IsFly = (BOOL)lua_toboolean(_NLL, 1);	
+		TM_IsFly = (BOOL)lua_toboolean(_NLL, 1);
 
 	}
 
@@ -490,8 +448,6 @@ BOOL NPC_Lua_NL_ANSI_ItemLoop(lua_State *_NLL)
 
 }
 
-
-
 BOOL NPC_Lua_NL_PetLoopGetNext(lua_State *_NLL)
 
 {
@@ -500,8 +456,6 @@ BOOL NPC_Lua_NL_PetLoopGetNext(lua_State *_NLL)
 
 	int MAXPET = CHAR_getPetMaxNum();
 
-
-
 	CheckEx(_NLL, 1);
 
 	int i;
@@ -509,8 +463,6 @@ BOOL NPC_Lua_NL_PetLoopGetNext(lua_State *_NLL)
 	char *TM_FuncName = lua_tostring(_NLL, 1);
 
 	char TM_RetBuff[128];
-
-
 
 	for( i = MAXPLAYER ; i < MAXPLAYER+MAXPET ; i++) {
 
@@ -524,11 +476,7 @@ BOOL NPC_Lua_NL_PetLoopGetNext(lua_State *_NLL)
 
 	LRetBool(_NLL, TRUE);
 
-
-
 }
-
-
 
 int NPC_Lua_NL_ItemLoopGetNext(lua_State *_NLL)
 
@@ -544,8 +492,6 @@ int NPC_Lua_NL_ItemLoopGetNext(lua_State *_NLL)
 
 	char TM_RetBuff[128];
 
-
-
 	for( i = 0 ; i < itemnum ; i++) {
 
 		if( ITEM_CHECKINDEX(i) ){
@@ -558,11 +504,7 @@ int NPC_Lua_NL_ItemLoopGetNext(lua_State *_NLL)
 
 	LRetBool(_NLL, TRUE);
 
-
-
 }
-
-
 
 BOOL NPC_Lua_NL_PlayerLoopGetNext(lua_State *_NLL)
 
@@ -592,8 +534,6 @@ BOOL NPC_Lua_NL_PlayerLoopGetNext(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_GetConfigLineType(lua_State *_NLL)
 
 {
@@ -610,8 +550,6 @@ int NPC_Lua_NL_GetConfigLineType(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_GetConfigLineVal(lua_State *_NLL)
 
 {
@@ -627,8 +565,6 @@ int NPC_Lua_NL_GetConfigLineVal(lua_State *_NLL)
 	LRetMsg(_NLL, TM_RETMSG);
 
 }
-
-
 
 int NPC_Lua_NL_SetTimer(lua_State *_NLL)
 
@@ -650,8 +586,6 @@ int NPC_Lua_NL_SetTimer(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_DelTimer(lua_State *_NLL)
 
 {
@@ -667,8 +601,6 @@ int NPC_Lua_NL_DelTimer(lua_State *_NLL)
 	LRetBool(_NLL, TM_Ret);
 
 }
-
-
 
 int NPC_Lua_NL_RunSaFuncII(lua_State *_NLL)
 
@@ -695,8 +627,6 @@ int NPC_Lua_NL_RunSaFuncII(lua_State *_NLL)
 		atf( i1,i2 );
 
 }
-
-
 
 int NPC_Lua_NL_RunSaFuncIII(lua_State *_NLL)
 
@@ -726,8 +656,6 @@ int NPC_Lua_NL_RunSaFuncIII(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_ClsMk(lua_State *_NLL)
 
 {
@@ -740,13 +668,9 @@ int NPC_Lua_NL_ClsMk(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_AddCheckNum(lua_State *_NLL)
 
 {
-
-
 
 	CheckEx(_NLL,1);
 
@@ -760,15 +684,9 @@ int NPC_Lua_NL_AddCheckNum(lua_State *_NLL)
 
 }
 
-
-
-
-
 int NPC_Lua_NL_Mkstring(lua_State *_NLL)
 
 {
-
-
 
 	CheckEx(_NLL, 2);
 
@@ -788,13 +706,9 @@ int NPC_Lua_NL_Mkstring(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_Mkint(lua_State *_NLL)
 
 {
-
-
 
 	CheckEx(_NLL,2);
 
@@ -812,13 +726,9 @@ int NPC_Lua_NL_Mkint(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_SendMesg(lua_State *_NLL)
 
 {
-
-
 
 	CheckEx(_NLL,2);
 
@@ -834,15 +744,11 @@ int NPC_Lua_NL_SendMesg(lua_State *_NLL)
 
 	LRetInt(_NLL, 1);
 
-
-
 }
 
 int NPC_Lua_NL_SetCharSignDay(lua_State *_NLL)
 
 {
-
-
 
 	CheckEx(_NLL, 2);
 
@@ -859,10 +765,6 @@ int NPC_Lua_NL_SetCharSignDay(lua_State *_NLL)
 	return 0;
 
 }
-
-
-
-
 
 int NPC_Lua_NL_GetCharSignDay(lua_State *_NLL)
 
@@ -884,13 +786,9 @@ int NPC_Lua_NL_GetCharSignDay(lua_State *_NLL)
 
 }
 
-
-
 int NPC_Lua_NL_WriteShopData(lua_State *_NLL)
 
 {
-
-
 
 	CheckEx(_NLL, 2);
 
@@ -956,10 +854,6 @@ static const char *scanformat (lua_State *L, const char *strfrmt, char *form) {
 
 }
 
-
-
-
-
 static void addintlen (char *form) {
 
   size_t l = strlen(form);
@@ -973,8 +867,6 @@ static void addintlen (char *form) {
   form[l + sizeof(LUA_INTFRMLEN) - 1] = '\0';
 
 }
-
-
 
 static void addquoted (lua_State *L, luaL_Buffer *b, int arg) {
 

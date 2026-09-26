@@ -32,7 +32,7 @@ enum {
 	NPC_WORK_ROUTEPOINT = CHAR_NPCWORKINT3,
 	NPC_WORK_ROUNDTRIP = CHAR_NPCWORKINT4,
 	NPC_WORK_MODE = CHAR_NPCWORKINT5,
-	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6, 
+	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6,
 	NPC_WORK_ROUTEMAX = CHAR_NPCWORKINT7,
 	NPC_WORK_WAITTIME = CHAR_NPCWORKINT8,
 	NPC_WORK_CURRENTTIME = CHAR_NPCWORKINT9,
@@ -46,11 +46,10 @@ static void NPC_NewVipShop_selectWindow( int meindex, int toindex, int num,int s
 BOOL NewVipShop_GetMenuStr( int meindex, int toindex, char *npcarg, char *token, int index );
 int NewVipShop_ShowMenulist( char *npcarg );
 
-
 BOOL NPC_NewVipShopInit( int meindex )
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
-		
+
 	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg))==NULL){
 		print("TRANSER_MAN: GetArgStrErr!!");
 		return FALSE;
@@ -60,7 +59,6 @@ BOOL NPC_NewVipShopInit( int meindex )
 
 	CHAR_setWorkInt( meindex, NPC_WORK_MAXPAGE, NewVipShop_ShowMenulist(npcarg));
 
-
 	//CHAR_setInt( meindex, CHAR_LOOPINTERVAL, NEWNPCMAN_STANDBY);
 	CHAR_setWorkInt( meindex, NPC_WORK_CURRENTTIME, NowTime.tv_sec);
 	return TRUE;
@@ -69,7 +67,7 @@ BOOL NPC_NewVipShopInit( int meindex )
 void NPC_NewVipShopTalked( int meindex, int talkerindex, char *msg, int color )
 {
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    		return;
+		return;
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE)
 			return;
@@ -200,7 +198,7 @@ static void NPC_NewVipShop_selectWindow( int meindex, int toindex, int num,int s
 		if(getDelimitedField( npcarg,"}",select1, buf2, sizeof( buf2)) != FALSE)
 			NPC_Util_GetStrFromStrWithDelim( buf2, "MenuStr", buf3, sizeof( buf3));
 		sprintf( token, "\n%s\n\n        %s\n",buf1, buf3);
-		
+
 		windowtype = WINDOW_MESSAGETYPE_MESSAGE;
 		buttontype = WINDOW_BUTTONTYPE_YESNO;
 		windowno = NPC_TRANSERMAN_END;
@@ -215,14 +213,13 @@ static void NPC_NewVipShop_selectWindow( int meindex, int toindex, int num,int s
 		CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX), token);
 }
 
-
 BOOL NewVipShop_GetMenuStr( int meindex, int toindex, char *npcarg, char *token,int index )
 {
 	char buf1[1024], buf2[32], buf3[36];
 	BOOL FINDS=FALSE;
 	int talkNo=index*7+1;
 	if( npcarg == NULL ) return FALSE;
-	
+
 	sprintf( token, "                             %d/%d页\n",index+1, CHAR_getWorkInt( meindex, NPC_WORK_MAXPAGE));
 	while( getDelimitedField( npcarg,"}",talkNo, buf1, sizeof( buf1)) != FALSE )	{
 		talkNo++;
@@ -253,5 +250,4 @@ int NewVipShop_ShowMenulist( char *npcarg )
 }
 
 #endif
-
 

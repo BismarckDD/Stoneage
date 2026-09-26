@@ -41,15 +41,9 @@
 #ifdef _CHAR_PROFESSION
 #include "profession_skill.h"
 #endif
-#ifdef _AUTO_PK
-#include "npc_autopk.h"
-#endif
 #include "npc_autopk.h"
 #ifdef _CHATROOMPROTOCOL // (不可开) Syu ADD 聊天室频道
 #include "chatroom.h"
-#endif
-#ifdef _NPC_EVENT_NOTICE
-#include "npcutil.h"
 #endif
 extern int BATTLE_getRidePet(int char_index);
 
@@ -7802,7 +7796,7 @@ void CHAR_PetAddVariableAi(int pet_index, int loyalty) {
 }
 
 //------------------------------------------------------------
-// 
+//
 //------------------------------------------------------------
 int CHAR_makeDBKey(int char_index, char *pszBuffer, int size) {
 

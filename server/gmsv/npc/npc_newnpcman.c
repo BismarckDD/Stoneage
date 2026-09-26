@@ -2,7 +2,6 @@
 //
 #include "npc_newnpcman.h"
 //
-#include <math.h>
 #include "char.h"
 #include "object.h"
 #include "char_base.h"
@@ -85,7 +84,7 @@ static char petstring[7][2048]={"","","","","","",""};
 BOOL NPC_NewNpcManInit( int meindex )
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
-		
+
 	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg))==NULL){
 		print("TRANSER_MAN: GetArgStrErr!!");
 		return FALSE;
@@ -106,7 +105,7 @@ BOOL NPC_NewNpcManInit( int meindex )
 //			print("ANDY checkPc:%d[%d,%d,%d]\n", i, checkPc[i][0], checkPc[i][1],	checkPc[i][2]);
 		}
 	}
-   	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_NEWNPCMAN);
+	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_NEWNPCMAN);
 	CHAR_setWorkInt( meindex, NPC_WORK_CURRENTTIME, NowTime.tv_sec);
 	return TRUE;
 }
@@ -120,7 +119,7 @@ void NPC_NewNpcManTalked( int meindex , int talkerindex , char *msg , int color 
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    		return;
+		return;
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE)
 			return;
@@ -285,7 +284,7 @@ static void NPC_NewNpcMan_selectWindow( int meindex, int toindex, int num, int f
 
 			if( getDelimitedField( petstring[ti-1], "#", 2, petstring1, sizeof( petstring1)) == FALSE ){
 				CHAR_talkToCli( toindex, -1, "领取宠物失败！", CHAR_COLORYELLOW);
-				return;	
+				return;
 			}else{
 				char buf1[256];
 				if( getDelimitedField( petstring[ti-1], "|", 6, buf1, sizeof( buf1)) == FALSE ) return;
@@ -300,10 +299,9 @@ static void NPC_NewNpcMan_selectWindow( int meindex, int toindex, int num, int f
 				if( CHAR_getInt( toindex, CHAR_GOLD) < cost ) {
 					sprintf( buf1, "宠物已寄放%d天，共需%d石币才可领回。", ltime, cost);
 					CHAR_talkToCli( toindex, meindex, buf1, CHAR_COLORYELLOW);
-					return;	
+					return;
 				}
 			}
-
 
 			ret = CHAR_makePetFromStringToArg( petstring1, &ch, -2);
 			strcpy( petstring[ti-1], "");
@@ -329,7 +327,7 @@ static void NPC_NewNpcMan_selectWindow( int meindex, int toindex, int num, int f
 					print("ANDY err backup petstring !!\n");
 					return;
 				}
-				
+
 				sprintf( buf1, "LostPGet:%d", cost);
 				LogPet(
 					CHAR_getChar( toindex, CHAR_NAME ),
@@ -360,7 +358,7 @@ static void NPC_NewNpcMan_selectWindow( int meindex, int toindex, int num, int f
 					return;
 			}
 			return;
- 		}
+		}
 #endif
 		return;
 		break;
@@ -537,7 +535,6 @@ BOOL CHECK_MAGICAMOR( int toindex)
 }
 
 #endif
-
 
 BOOL CHECK_PETBBI( int toindex)
 {
@@ -736,7 +733,6 @@ void NPC_reCheckItemPilenum( int meindex, int toindex)
 				newindex = ITEM_makeItemAndRegist( itemID);
 				if( !ITEM_CHECKINDEX( newindex) ) break;
 
-
 				CHAR_setItemIndex( toindex , ti, newindex);
 				CHAR_sendItemDataOne( toindex, ti);
 				pilenum--;
@@ -862,9 +858,7 @@ BOOL NPC_backupLostPetString( int toindex)
 
 /*
 
-
 #ifdef _NEW_WARPMAN
-#include "npc_newnpcman.h"
 #define NEWNPCMAN_STANDBY	5000
 #define NEWNPCMAN_WAITTIME	150
 
@@ -966,12 +960,12 @@ void NPC_NewNpcManTalked( int meindex , int talkerindex , char *msg , int color 
 	char buf1[256];
 
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    		return;
+		return;
 	}
 
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE) return;
-	}    
+	}
 
 	if( CHAR_getWorkInt( meindex , NPC_WORK_INDEX) >= 0 )	{
 			sprintf( buf1,"%s","我正忙着呢！");
@@ -996,7 +990,7 @@ static void NPC_NewNpcMan_selectWindow( int meindex, int toindex, int num, int f
 	int petno = 718, petid =1479;
 	int type_str = 0;
 	windowtype = WINDOW_MESSAGETYPE_MESSAGE;
-	
+
 	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg)) == NULL)	{
 		print("GambleBank:GetArgStrErr");
 		CHAR_setWorkInt( meindex , NPC_WORK_INDEX, -1);
@@ -1065,11 +1059,11 @@ void NPC_NewNpcManWindowTalked( int meindex, int talkerindex, int seqno, int sel
 {
 
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    		return;
+		return;
 	}
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE) return;
-	}    
+	}
 
 	print("\n seqno=%d, select=%d", seqno, select);
 	switch( seqno)	{
@@ -1134,14 +1128,14 @@ int NPC_NewNpcManDelPet(int meindex,int talker, int petsel)
 		GmsvServer_KS_send( fd, -1, TRUE);
 	}
 	snprintf( msgbuf,sizeof( msgbuf), "交出%s。", CHAR_getChar( petindex, CHAR_NAME));
-	
+
 	// shan
 	if(CHAR_getChar( petindex, CHAR_UNIQUECODE)!=NULL){
 		strncpy(uStr, CHAR_getChar( petindex, CHAR_UNIQUECODE), sizeof( STRING32));
 	}else{
 		strncpy(uStr, "Pet_Unicode_null", sizeof( STRING32));
 	}
-	
+
 	CHAR_talkToCli( talker, -1, msgbuf,  CHAR_COLORWHITE);
 				LogPet(
 					CHAR_getChar( talker, CHAR_NAME ),
@@ -1206,7 +1200,7 @@ BOOL NPC_NewNpcManAddPet(int meindex, int talker, int petid)
 	if( CHAR_CHECKINDEX( ret ) == TRUE ){
 		CHAR_setMaxExpFromLevel( ret, CHAR_getInt( ret, CHAR_LV ));
 	}
-	
+
 	petindex2 = CHAR_getCharPet(talker, i);
 	if( !CHAR_CHECKINDEX( petindex2) )
 		return FALSE;
@@ -1224,7 +1218,7 @@ BOOL NPC_NewNpcManAddPet(int meindex, int talker, int petid)
 	}
 
 	// shan
-	CHAR_setChar(petindex2, CHAR_UNIQUECODE, uStr);	
+	CHAR_setChar(petindex2, CHAR_UNIQUECODE, uStr);
 
 	LogPet(
 		CHAR_getChar( talker, CHAR_NAME ),

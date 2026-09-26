@@ -73,7 +73,7 @@ static CharBase ItemBaseInt[] = {
 #ifdef _ITEM_USE_TIME
 	,{{"物品时间"},					ITEM_USETIME}
 #endif
-}; 
+};
 
 static CharBase ItemBaseChar[] = {
 	{{"名称"},				ITEM_NAME}
@@ -92,7 +92,7 @@ static CharBase ItemBaseChar[] = {
 #endif
 	,{{"Unicode"},	ITEM_UNIQUECODE}
 	,{{"编码"},	ITEM_UNIQUECODE}
-}; 
+};
 
 static CharBase ItemBaseValue[] = {
 	{{"爪"},						ITEM_FIST}
@@ -128,7 +128,7 @@ static CharBase ItemBaseValue[] = {
 	,{{"盾牌"},						ITEM_WSHIELD}
 	,{{"鞋子"},						ITEM_WSHOES}
 #endif
-#ifdef _EQUIT_NEWGLOVE 
+#ifdef _EQUIT_NEWGLOVE
 	,{{"手套"},						ITEM_WGLOVE}
 #endif
 #ifdef _ALCHEMIST
@@ -143,12 +143,12 @@ static CharBase ItemBaseValue[] = {
 	,{{"宠翅"},						ITEM_PET_WING}
 	,{{"宠脚"},						ITEM_PET_FEET}
 #endif
-}; 
+};
 
 static CharBase ItemBaseWorkInt[] = {
 	{{"对象"}, 						ITEM_WORKOBJINDEX}
 	,{{"玩家"}, 					ITEM_WORKCHARAINDEX}
-}; 
+};
 
 static CharBase ItemBaseEvent[] = {
 	{{"未知事件"}, 				ITEM_PREOVERFUNC}
@@ -159,9 +159,9 @@ static CharBase ItemBaseEvent[] = {
 	,{{"丢弃事件"}, 			ITEM_DROPFUNC}
 	,{{"检起事件"}, 			ITEM_PICKUPFUNC}
 	,{{"死亡事件"}, 			ITEM_DIERELIFEFUNC}
-}; 
+};
 
-static int getInt(lua_State *L) 
+static int getInt(lua_State *L)
 {
   const int index = luaL_checkint(L, 1);
   const int element = getCharBaseValue(L, 2, ItemBaseInt, arraysizeof(ItemBaseInt));
@@ -169,7 +169,7 @@ static int getInt(lua_State *L)
   return 1;
 }
 
-static int setInt(lua_State *L) 
+static int setInt(lua_State *L)
 {
   const int index = luaL_checkint(L, 1);
   const int element = getCharBaseValue(L, 2, ItemBaseInt, arraysizeof(ItemBaseInt));
@@ -177,7 +177,7 @@ static int setInt(lua_State *L)
   return (ITEM_setInt(index, element, data) == -1) ? 0 : 1;
 }
 
-static int getChar(lua_State *L) 
+static int getChar(lua_State *L)
 {
   const int index = luaL_checkint(L, 1);
   const int element = getCharBaseValue(L, 2, ItemBaseChar, arraysizeof(ItemBaseChar));
@@ -185,7 +185,7 @@ static int getChar(lua_State *L)
   return 1;
 }
 
-static int setChar(lua_State *L) 
+static int setChar(lua_State *L)
 {
   size_t l;
   const int index = luaL_checkint(L, 1);
@@ -194,7 +194,7 @@ static int setChar(lua_State *L)
   return (ITEM_setChar(index, element, data) == -1) ? 0 : 1;
 }
 
-static int getWorkInt(lua_State *L) 
+static int getWorkInt(lua_State *L)
 {
 	const int index = luaL_checkint(L, 1);
 	const int element = getCharBaseValue(L, 2, ItemBaseWorkInt, arraysizeof(ItemBaseWorkInt));
@@ -202,25 +202,25 @@ static int getWorkInt(lua_State *L)
 	return 1;
 }
 
-static int setWorkInt(lua_State *L) 
+static int setWorkInt(lua_State *L)
 {
 	const int index = luaL_checkint(L, 1);
 	const int element = getCharBaseValue(L, 2, ItemBaseWorkInt, arraysizeof(ItemBaseWorkInt));
 	const int data = luaL_checkint(L, 3);
-	
+
   if(ITEM_setWorkInt(index, element, data) == -1){
-  	return 0;
+	return 0;
   }else{
-  	return 1;
+	return 1;
   }
 }
 
-static int getNameFromNumber(lua_State *L) 
+static int getNameFromNumber(lua_State *L)
 {
 	const int id = luaL_checkint(L, 1);
-	
+
 	lua_pushstring(L, ITEM_getNameFromNumber(id));
-	
+
 	return 1;
 }
 
@@ -233,43 +233,43 @@ static int getArgumentString(lua_State *L)
 	return 1;
 }
 
-static int getcostFromITEMtabl(lua_State *L) 
+static int getcostFromITEMtabl(lua_State *L)
 {
 	const int id = luaL_checkint(L, 1);
-	
+
 	lua_pushinteger(L, ITEM_getcostFromITEMtabl(id));
-	
+
 	return 1;
 }
 
-static int getlevelFromITEMtabl(lua_State *L) 
+static int getlevelFromITEMtabl(lua_State *L)
 {
 	const int id = luaL_checkint(L, 1);
-	
+
 	lua_pushinteger(L, ITEM_getlevelFromITEMtabl(id));
-	
+
 	return 1;
 }
 
-static int getgraNoFromITEMtabl(lua_State *L) 
+static int getgraNoFromITEMtabl(lua_State *L)
 {
 	const int id = luaL_checkint(L, 1);
-	
+
 	lua_pushinteger(L, ITEM_getgraNoFromITEMtabl(id));
-	
+
 	return 1;
 }
 
-static int getItemInfoFromNumber(lua_State *L) 
+static int getItemInfoFromNumber(lua_State *L)
 {
 	const int id = luaL_checkint(L, 1);
-	
+
 	lua_pushstring(L, ITEM_getItemInfoFromNumber(id));
-	
+
 	return 1;
 }
 
-static int setFunctionPointer(lua_State *L) 
+static int setFunctionPointer(lua_State *L)
 {
 	size_t l;
 	const int index = luaL_checkint(L, 1);
@@ -279,7 +279,7 @@ static int setFunctionPointer(lua_State *L)
 	return ITEM_setLUAFunction( index, functype, luafuncname );
 }
 
-static int addLUAListFunction(lua_State *L) 
+static int addLUAListFunction(lua_State *L)
 {
 	size_t l;
 	char *luafuncname=luaL_checklstring(L, 1, &l);
@@ -289,10 +289,10 @@ static int addLUAListFunction(lua_State *L)
 	if(strlen(luafunctablepath) > 0){
 		SaLua *mylua = &gSaLua;
 	  while(mylua->next != NULL){
-	  	if(strcmp(mylua->luapath, luafunctablepath) == 0){
-	  		return ITEM_addLUAListFunction( mylua->lua, luafuncname, luafunctable);
-	  	}
-	  	mylua = mylua->next;
+		if(strcmp(mylua->luapath, luafunctablepath) == 0){
+			return ITEM_addLUAListFunction( mylua->lua, luafuncname, luafunctable);
+		}
+		mylua = mylua->next;
 	  }
 	}else{
 		return ITEM_addLUAListFunction(  L, luafuncname, luafunctable );
@@ -300,7 +300,7 @@ static int addLUAListFunction(lua_State *L)
 	return 1;
 }
 
-static int UpdataItemOne(lua_State *L) 
+static int UpdataItemOne(lua_State *L)
 {
 	const int char_index = luaL_checkint(L, 1);
 	const int item_index = luaL_checkint(L, 2);
@@ -316,7 +316,7 @@ static int UpdataItemOne(lua_State *L)
 	return 1;
 }
 
-static int UpdataHaveItemOne(lua_State *L) 
+static int UpdataHaveItemOne(lua_State *L)
 {
 	const int char_index = luaL_checkint(L, 1);
 	const int haveitem_index = luaL_checkint(L, 2);

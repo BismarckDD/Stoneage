@@ -16,12 +16,12 @@ char buf[1024];
 char subbuf[128];
 int i, j;
 
-/* 
+/*
  * 涩烂今木凶它奴件玉它毛请允NPC
  * 棵哑  平旦玄失玉矛件民乓□仁日中卅日综木月井手［
  *
  */
- 
+
 struct	{
 	int		windowno;
 	int		windowtype;
@@ -42,10 +42,6 @@ struct	{
 	int		gotowin;
 }buttonproc[13];		/* ok,cancel, yes,no,prev,next 及凛及质   */
 
-
-
-
-
 enum {
 	CHAR_WORK_MSGCOLOR	= CHAR_NPCWORKINT1,
 };
@@ -59,11 +55,11 @@ BOOL NPC_FamilymanInit( int meindex )
 {
 	char	argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
 	char	buf[1024];
-	
+
 	NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "conff", buf, sizeof( buf))
-		== NULL ) 
+		== NULL )
 	{
 		print( "familyman:没有指定设定的档案 。\n");
 		return FALSE;
@@ -72,33 +68,30 @@ BOOL NPC_FamilymanInit( int meindex )
 	if( !NPC_Familyman_readData( meindex, -1, TRUE) ) {
 		return FALSE;
 	}
-	
+
 	CHAR_setInt( meindex , CHAR_WHICHTYPE , CHAR_TYPEWINDOWMAN );
-	
+
 	return TRUE;
 }
 
-
-
-
 /*********************************
-*   仄井仃日木凶凛及质  
+*   仄井仃日木凶凛及质
 *********************************/
 void NPC_FamilymanTalked( int meindex , int talkerindex , char *szMes ,int color )
 {
 
 	NPC_Familyman_selectWindow( meindex, talkerindex, 1 );
-	
+
 }
 /*********************************
-* 苇日木凶凛及质  
+* 苇日木凶凛及质
 *********************************/
 void NPC_FamilymanLooked( int meindex , int lookedindex)
 {
 
 	//print(" Look:me:%d,looked:%d ",meindex,lookedindex);
 	NPC_Familyman_selectWindow( meindex, lookedindex,1 );
-	
+
 }
 
 static void NPC_Familyman_selectWindow( int meindex, int toindex, int num)
@@ -106,22 +99,22 @@ static void NPC_Familyman_selectWindow( int meindex, int toindex, int num)
 
 	int		fd;
 	char	buf[256];
-	
+
 	/* 皿伊奶乩□卞覆仄化分仃  杀允月 */
 	if( CHAR_getInt( toindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
 		return;
 	}
 	/* ㄠ弘伉永玉动  及心 */
-	if( !NPC_Util_charIsInFrontOfChar( toindex, meindex, 1 )) return; 
+	if( !NPC_Util_charIsInFrontOfChar( toindex, meindex, 1 )) return;
 
 	if( !NPC_Familyman_readData( meindex, num, FALSE) ) {
 		print( "familyman:readdata error\n");
 		return;
 	}
-	
+
 	fd = getfdFromCharaIndex( toindex);
 	if( fd != -1 ) {
-		GmsvServer_WN_send( fd, w.windowtype, 
+		GmsvServer_WN_send( fd, w.windowtype,
 						w.buttontype,
 						w.windowno+100,
 						CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
@@ -130,17 +123,17 @@ static void NPC_Familyman_selectWindow( int meindex, int toindex, int num)
 	}
 }
 
-void NPC_FamilymanWindowTalked( int meindex, int talkerindex, 
+void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 								int seqno, int select, char *data)
 
 {
-		
+
 	int		button = -1;
 	char	buf[256];
 
 	/* ㄠ弘伉永玉动  及心 */
 	if( NPC_Util_CharDistance( talkerindex, meindex ) > 1) return;
-	
+
 	// CoolFish Add For Check Old Leader Del Family
 	if(seqno == CHAR_WINDOWTYPE_FAMILYMAN_OUT)
 	{
@@ -151,7 +144,7 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 	}
 	// CoolFish End
 
-	/* 仇及它奴件玉它  寞及犯□正毛  心  戈 */	
+	/* 仇及它奴件玉它  寞及犯□正毛  心  戈 */
 	if( !NPC_Familyman_readData( meindex, seqno - 100, FALSE) ) {
 		print( "familyman:readdata error\n");
 		return;
@@ -177,14 +170,14 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 	if( buttonproc[button].use == TRUE ) {
 		int	fd;
 		int	newwin = -1;
-	
+
 		fd = getfdFromCharaIndex( talkerindex);
-		
+
 		/* 示正件卞方匀化质  毛孔曰歹仃月 */
 		if( newwin == -1 ) {
 			newwin = buttonproc[button].gotowin;
 		}
-		
+
 		// Robin
 		// 成立
 		if( newwin == 5 )	{
@@ -195,7 +188,7 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 					WINDOW_BUTTONTYPE_OK, -1, -1,
 					makeEscapeString( "\n很抱歉喔！你已经加入家族了！", buf, sizeof(buf)));
 				return;
-			}		
+			}
 			if( (CHAR_getInt( talkerindex, CHAR_TRANSMIGRATION ) == 0)
 				&& (CHAR_getInt( talkerindex, CHAR_LV) < 30)  )
 			{
@@ -205,7 +198,7 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 					makeEscapeString( "\n很抱歉喔！你的等级不足！", buf, sizeof(buf)));
 				return;
                         }
-                        
+
                         if( !NPC_EventCheckFlg( talkerindex, 4 ) )
                         {
 				GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
@@ -213,7 +206,7 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 					makeEscapeString( "\n很抱歉喔！你必须先完成成人礼才行！", buf, sizeof(buf)));
 				return;
                         }
-                        
+
 			if( CHAR_getInt( talkerindex, CHAR_GOLD ) < 10000 )
 			{
 				GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
@@ -221,10 +214,10 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 					makeEscapeString( "\n很抱歉喔！你的申请手续费不足！", buf, sizeof(buf)));
 				return;
 			}
-						
+
 			GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_FAMILYADD, WINDOW_BUTTONTYPE_NONE, CHAR_WINDOWTYPE_FAMILYMAN_ADD,
 				CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX), "Hello!!" );
-			
+
 			return;
 		}
 		// 列表 , 加入
@@ -243,15 +236,15 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 			}
 
 			sprintf( sendbuf, "S|F|%d|%d|%d%s", gFamilyNumTotal, 1, j, buf );
-			//print(" FL:%s ", sendbuf );			
+			//print(" FL:%s ", sendbuf );
 			GmsvServer_FM_send( fd, sendbuf );
 			*/
-			
+
 			//SaacClient_ACShowFMList_send( acfd );
-			
-			FAMILY_Detail( fd, talkerindex, "S|F|1|0" );			
+
+			FAMILY_Detail( fd, talkerindex, "S|F|1|0" );
 			return;
-				  
+
 		}
 		// 退出
 		if( newwin == 7 )
@@ -263,12 +256,12 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 					makeEscapeString( "\n很抱歉喔！你还没有加入任何家族呀！", buf, sizeof(buf)));
 				return;
 			}
-						
+
 			//if (CHAR_getInt(talkerindex, CHAR_FMLEADERFLAG) == FMMEMBER_LEADER) {
 			//	CHAR_talkToCli( talkerindex, -1, "族长....", CHAR_COLORWHITE );
 			//	return;
 			//}
-			
+
 			print(" WN2FM ");
 
 			// CoolFish Change for old leader del family check
@@ -277,44 +270,42 @@ void NPC_FamilymanWindowTalked( int meindex, int talkerindex,
 				GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_MESSAGE,
 					WINDOW_BUTTONTYPE_YESNO, CHAR_WINDOWTYPE_FAMILYMAN_OUT,
 					CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-					makeEscapeString("\n您现在是这个家族的族长喔...\n\n家族解散了就无法再救回唷！～\n\n确定要解散家族吗？",buf, sizeof(buf)));		
+					makeEscapeString("\n您现在是这个家族的族长喔...\n\n家族解散了就无法再救回唷！～\n\n确定要解散家族吗？",buf, sizeof(buf)));
 				return;
 			}
 			else
 				FAMILY_Leave( fd, talkerindex, "E|1");
 			// CoolFish Change End
-									
+
 			return;
 		}
-		
+
 		if( !NPC_Familyman_readData( meindex, newwin, FALSE) ) {
 			print( "familyman:readdata error\n");
 			return;
 		}
 		//fd = getfdFromCharaIndex( talkerindex);
 		if( fd != -1 ) {
-			GmsvServer_WN_send( fd, w.windowtype, 
+			GmsvServer_WN_send( fd, w.windowtype,
 							w.buttontype,
 							w.windowno+100,
 							CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 							makeEscapeString( w.message, buf, sizeof(buf)));
 		}
-		
-		
-		
+
 	}
 }
-/* 
+/*
  * 涩烂白央奶伙毛  氏匹隙烂今木凶windowno及犯□正毛本永玄允月
- * 
+ *
  * 娄醒“
  *		meindex		int		仇及NPC及char_index
  *		windowno	int		它奴件玉它  寞
- *		
+ *
  */
 static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 {
-	
+
 	int		i;
 	int		linenum = 0;
 	int		endflg = FALSE;
@@ -332,9 +323,9 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 	char	line[1024];
 	char	firstToken[1024];
 	char	secondToken[1024];
-	
+
 	/* 它奴件玉它及涩烂毛  曰  戈厌瞻   */
-	
+
 	NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
 	/* 涩烂白央奶伙  潸   */
 	NPC_Util_GetStrFromStrWithDelim( argstr, "conff", filename, sizeof( filename));
@@ -363,7 +354,7 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 		w.takeitem = -1;
 		w.giveitem = -1;
 		w.message[0] = '\0';
-	
+
 		for( i = 0; i < arraysizeof( buttonproc); i ++ ) {
 			buttonproc[i].use = FALSE;
 			buttonproc[i].checkhaveitem = -1;
@@ -387,7 +378,7 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 			if( line[0] == '#' || line[0] == '\n') continue;
 			/* 荼垫潸月 */
 			chomp( line );
-			
+
 			/*  垫毛帮溥允月    */
 			/*  引内 tab 毛 " " 卞  五晶尹月    */
 			replaceString( line, '\t' , ' ' );
@@ -416,7 +407,7 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 					   filename , linenum);
 				continue;
 			}
-			
+
 			if( strcasecmp( firstToken, "winno") == 0 ) {
 				if( winno != -1 ) {
 					print( "familyman:已有winno却重新定义winno\n");
@@ -440,7 +431,7 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 			/* 它奴件玉它No 互域谯仄凶凛反椭瘀毛  戈［
 			 * 公木动陆反  骰允月 */
 			if( (chkflg == FALSE && winno == windowno )||
-				chkflg == TRUE) 
+				chkflg == TRUE)
 			{
 				if( buttonconfmode == TRUE ) {
 					if( strcasecmp( firstToken, "gotowin") == 0 ) {
@@ -460,23 +451,23 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 					}
 					else if( strcasecmp( firstToken, "endbutton") == 0 ) {
 						if( buttonproc[b_mode].gotowin == - 1 ) {
-							if( buttonproc[b_mode].checkhaveitem == -1 && 
+							if( buttonproc[b_mode].checkhaveitem == -1 &&
 								buttonproc[b_mode].checkdonthaveitem == -1)
 							{
 								errflg = TRUE;
 							}
 							else {
 								/* 升匀切井井凶匀吊分仃匹手涩烂今木化中木壬     */
-								if( !((buttonproc[b_mode].checkhaveitem != -1 && 
+								if( !((buttonproc[b_mode].checkhaveitem != -1 &&
 									   buttonproc[b_mode].checkhaveitemgotowin != -1)
-									 || (buttonproc[b_mode].checkdonthaveitem != -1 && 
+									 || (buttonproc[b_mode].checkdonthaveitem != -1 &&
 									     buttonproc[b_mode].checkdonthaveitemgotowin != -1)))
 								{
 									errflg = TRUE;
 								}
 							}
 						}
-						
+
 						if( errflg == TRUE) {
 							print( "familyman: 找不到gotowin\n");
 							print( "filename:[%s] line[%d]\n", filename, linenum);
@@ -490,7 +481,7 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 					}
 				}
 				else {
-					
+
 					w.windowno = winno;
 					/* 它奴件玉它正奶皿及涩烂 */
 					if( strcasecmp( firstToken, "wintype") == 0 ) {
@@ -606,7 +597,7 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 		}
 	}
 	fclose( fp);
-	
+
 	if( chkflg == FALSE && w.windowno == -1 ) {
 		print( "familyman: 找不到所指定的windowno\n");
 		print( "filename:[%s] line[%d]\n", filename, linenum);
@@ -618,7 +609,7 @@ static BOOL NPC_Familyman_readData( int meindex, int windowno, BOOL chkflg)
 		return FALSE;
 	}
 	if( errflg == TRUE) return FALSE;
-	
+
 	return TRUE;
 }
 /*
@@ -631,7 +622,7 @@ static int NPC_Familyman_restoreButtontype( char *data )
 	int		rc;
 	int		i;
 	char	buff[1024];
-	
+
 	for( i = 1; ; i ++ ) {
 		rc = getDelimitedField( data, "|",  i, buff,
 											   sizeof( buff ) );
@@ -660,5 +651,4 @@ static int NPC_Familyman_restoreButtontype( char *data )
 	}
 	return ret;
 }
-
 

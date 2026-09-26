@@ -53,7 +53,7 @@ BOOL NPC_PetSkillShopInit( int meindex )
 void NPC_PetSkillShopTalked( int meindex , int talkerindex , char *szMes ,int color )
 {
     if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    	return;
+	return;
     }
 	if(NPC_Util_isFaceToFace(talkerindex,meindex,2 )==FALSE){
 		if( NPC_Util_CharDistance( talkerindex, meindex ) > 1) return;
@@ -64,7 +64,7 @@ void NPC_PetSkillShopTalked( int meindex , int talkerindex , char *szMes ,int co
 void NPC_PetSkillShopLooked( int meindex , int lookedindex)
 {
     if( CHAR_getInt( lookedindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    	return;
+	return;
     }
 	if( NPC_Util_CharDistance( lookedindex, meindex ) > 2) return;
 }
@@ -80,7 +80,7 @@ static void NPC_PetSkillShop_selectWindow( int meindex, int toindex, int num,int
 	}
 }
 
-void NPC_PetSkillShopWindowTalked( int meindex, int talkerindex, 
+void NPC_PetSkillShopWindowTalked( int meindex, int talkerindex,
 								int seqno, int select, char *data)
 {
 	int skill;
@@ -122,13 +122,13 @@ void NPC_PetSkillShopWindowTalked( int meindex, int talkerindex,
 
 	slot--;
 	if( !CHAR_CHECKPETSKILLINDEX( slot)){
-	 	CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
-		return ; 
+		CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
+		return ;
 	}
 	petindex = CHAR_getCharPet( talkerindex, pet-1);
     if( !CHAR_CHECKINDEX(petindex) ){
-    	CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
-    	return ;
+	CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
+	return ;
 	}
 	if(skillID < 0) return ;
 
@@ -156,7 +156,7 @@ void NPC_PetSkillShopWindowTalked( int meindex, int talkerindex,
 		CHAR_send_P_StatusString( talkerindex, CHAR_P_STRING_GOLD);
 		return;
 	}
-#ifdef _PETSKILL_SHOP_LUA   
+#ifdef _PETSKILL_SHOP_LUA
 	if(FreePetSkillShop(talkerindex, petindex, CHAR_getPetSkill(petindex, slot), skillID) == FALSE )	{
 		return;
 	}
@@ -165,7 +165,7 @@ void NPC_PetSkillShopWindowTalked( int meindex, int talkerindex,
 	CHAR_setPetSkill( petindex, slot, skillID);
 	CHAR_complianceParameter(petindex);
 	CHAR_DelGold( talkerindex, cost );
-	
+
 	snprintf( msgbuf, sizeof( msgbuf ), "W%d",pet-1);
 	CHAR_sendStatusString( talkerindex, msgbuf );
 	snprintf( msgbuf, sizeof( msgbuf ), "K%d",pet-1);
@@ -185,12 +185,12 @@ BOOL NPC_PetSkillMakeStr(int meindex,int toindex,int select)
 
 	if(select==0){
 		sprintf(token,"0|0");
-		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PETSKILLSHOP, 
-			WINDOW_BUTTONTYPE_NONE, 
+		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PETSKILLSHOP,
+			WINDOW_BUTTONTYPE_NONE,
 			CHAR_WINDOWTYPE_WINDOWPETSKILLSHOP,
 			CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 			token);
-		
+
 	}
 
 	if(NPC_Util_GetArgStr( meindex, argstr, sizeof(argstr))==NULL){
@@ -205,12 +205,11 @@ BOOL NPC_PetSkillMakeStr(int meindex,int toindex,int select)
 
 	sprintf(token,"1|%s|%s",
 	CHAR_getChar(meindex,CHAR_NAME),msg);
-		
+
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "skill_rate", msg, sizeof( msg)) != NULL){
 		rate=atof(msg);
 	}
 
-		
 	if( NPC_Util_GetStrFromStrWithDelim( argstr, "pet_skill", msg, sizeof( msg) ) != NULL){
 		int skillarray;
 		int skillID;
@@ -230,18 +229,18 @@ BOOL NPC_PetSkillMakeStr(int meindex,int toindex,int select)
 			cost = PETSKILL_getInt(skillarray,PETSKILL_COST);
 			cost = (int)cost*rate;
 #ifdef _VERSION_25
-			sprintf(token2,"|%s|%d|%s",	PETSKILL_getChar(skillarray, PETSKILL_NAME), 
+			sprintf(token2,"|%s|%d|%s",	PETSKILL_getChar(skillarray, PETSKILL_NAME),
 															cost, PETSKILL_getChar(skillarray, PETSKILL_COMMENT));
 #else
-			sprintf(token2,"|%s|%d|%s|0",	PETSKILL_getChar(skillarray, PETSKILL_NAME), 
+			sprintf(token2,"|%s|%d|%s|0",	PETSKILL_getChar(skillarray, PETSKILL_NAME),
 															cost, PETSKILL_getChar(skillarray, PETSKILL_COMMENT));
 #endif
 
 			strcat(token,token2);
 			}
 		}
-		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PETSKILLSHOP, 
-				WINDOW_BUTTONTYPE_NONE, 
+		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_PETSKILLSHOP,
+				WINDOW_BUTTONTYPE_NONE,
 				CHAR_WINDOWTYPE_WINDOWPETSKILLSHOP,
 				CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 				token);

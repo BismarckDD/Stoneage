@@ -29,7 +29,7 @@ enum {
 	NPC_WORK_ROUTEPOINT = CHAR_NPCWORKINT3,
 	NPC_WORK_ROUNDTRIP = CHAR_NPCWORKINT4,
 	NPC_WORK_MODE = CHAR_NPCWORKINT5,
-	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6, 
+	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6,
 	NPC_WORK_ROUTEMAX = CHAR_NPCWORKINT7,
 	NPC_WORK_WAITTIME = CHAR_NPCWORKINT8,
 	NPC_WORK_CURRENTTIME = CHAR_NPCWORKINT9,
@@ -45,13 +45,13 @@ BOOL TranserMan_GetMenuStr( int meindex, int toindex, char *npcarg, char *token)
 BOOL NPC_TranserManInit( int meindex )
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
-		
+
 	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg))==NULL){
 		print("TRANSER_MAN: GetArgStrErr!!");
 		return FALSE;
 	}
 
-   	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_TRANSERMANS);
+	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_TRANSERMANS);
 
 	//CHAR_setInt( meindex, CHAR_LOOPINTERVAL, NEWNPCMAN_STANDBY);
 	CHAR_setWorkInt( meindex, NPC_WORK_CURRENTTIME, NowTime.tv_sec);
@@ -61,7 +61,7 @@ BOOL NPC_TranserManInit( int meindex )
 void NPC_TranserManTalked( int meindex, int talkerindex, char *msg, int color )
 {
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    		return;
+		return;
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE)
 			return;
@@ -169,7 +169,7 @@ BOOL TranserMan_GetMenuStr( int meindex, int toindex, char *npcarg, char *token)
 	BOOL FINDS=FALSE;
 	int talkNo=1;
 	if( npcarg == NULL ) return FALSE;
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( npcarg, "MenuHead", buf1, sizeof( buf1) ) == NULL){
 		print("TranserMan Get MenuHead ERROR!");
 		return FALSE;
@@ -191,5 +191,4 @@ BOOL TranserMan_GetMenuStr( int meindex, int toindex, char *npcarg, char *token)
 }
 
 #endif
-
 

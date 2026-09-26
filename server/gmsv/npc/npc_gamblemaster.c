@@ -28,11 +28,11 @@ enum
 
 enum
 {
-	roulette1 = 11,	roulette2, roulette3, roulette4, roulette5,	roulette6, roulette7, 
+	roulette1 = 11,	roulette2, roulette3, roulette4, roulette5,	roulette6, roulette7,
 	roulette8, roulette9, roulette10, roulette11, roulette12, roulette13, roulette14,
-	roulette15,	roulette16,	roulette17,	roulette18,	roulette19,	roulette20,	
+	roulette15,	roulette16,	roulette17,	roulette18,	roulette19,	roulette20,
 
-	roulette21 = 41, roulette22, roulette23, roulette24, roulette25,	roulette26,	
+	roulette21 = 41, roulette22, roulette23, roulette24, roulette25,	roulette26,
 	roulette27,	roulette28,	roulette29, roulette30, roulette31, roulette32,
 	roulette33,	roulette34,	roulette35,	roulette36,	roulette37,	roulette38,
 	roulette39,	roulette40,
@@ -46,7 +46,7 @@ typedef struct tagGambleMaster
 {
 	int m_fx;
 	int m_fy;
-	int m_type;	//号码 
+	int m_type;	//号码
 	int m_RG;	//红绿1 2
 	int m_EO;	//单双1 2
 	int m_SI;
@@ -158,7 +158,7 @@ void NPC_Gamble_MasterTalked( int meindex , int talkerindex , char *szMes , int 
 	char argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
 
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ){
-    		return;
+		return;
 	}
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE) return;
@@ -203,8 +203,8 @@ void NPC_GambleRoulette_selectWindow(int meindex,int toindex,int num,int select)
 			i++;
 			sprintf( buf2,"%s%d", "gamble_msg0", i);
 		}
-	  	windowtype=WINDOW_MESSAGETYPE_SELECT;
-	  	windowno = WINDOWTYPE_GAMBLEROULETTE_START; 
+		windowtype=WINDOW_MESSAGETYPE_SELECT;
+		windowno = WINDOWTYPE_GAMBLEROULETTE_START;
 		break;
 	break;
 	case ROULETTE_SELECT:
@@ -219,7 +219,7 @@ void NPC_GambleRoulette_selectWindow(int meindex,int toindex,int num,int select)
 			pagenum+=1;
 			CHAR_setWorkInt( toindex , CHAR_WORKSHOPRELEVANT, pagenum);
 		}
-		
+
 		if( NPC_Util_GetStrFromStrWithDelim( npcarg, buf2, token, sizeof( token) ) == NULL )	{
 			print("\n error: not found token:%s", token);
 			CHAR_setWorkInt( toindex , CHAR_WORKSHOPRELEVANT,0);
@@ -263,20 +263,20 @@ void NPC_GambleRoulette_selectWindow(int meindex,int toindex,int num,int select)
 	break;
 	}
 
-	GmsvServer_WN_send( fd, windowtype, buttontype, windowno, 
+	GmsvServer_WN_send( fd, windowtype, buttontype, windowno,
 		CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX), token);
 }
 
 void NPC_Gamble_MasterWindowTalked( int meindex, int talkerindex, int seqno, int select, char *data)
 {
 	int pagenum=0;
-	
+
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ){
-    		return;
+		return;
 	}
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE) return;
-	}    
+	}
 
 	switch( seqno )	{
 	case WINDOWTYPE_GAMBLEROULETTE_START:
@@ -320,7 +320,7 @@ void NPC_Gamble_MasterLoop( int meindex)
 				//0 null 1 准备 2 跑 3 停
 				CHAR_setWorkInt( meindex, NPC_WORK_GAMEFLG, 1);
 				showString( meindex, "下注时间剩下２０秒。", 0);
-			  }else	if( timeNum == 10 )	{	
+			  }else	if( timeNum == 10 )	{
 				  showString( meindex, "standby_msg", 0);	//广播
 				  SetCasinoMap( meindex, 0, 0);	//设定地图不可下注
 			  }else	if( timeNum <= 6 )	{	//开始
@@ -378,7 +378,7 @@ void defPlayerGold( int meindex , int flg)
 	char buf1[56],buf2[56];
 	BOOL GAMBLE_YES = FALSE;
 	endpoint = CHAR_getWorkInt( meindex, NPC_WORK_ENDPOINT);
-	
+
 	X = (endpoint >> 16 );
 	Y = (endpoint & 0xffff);
 
@@ -468,7 +468,7 @@ void defPlayerGold( int meindex , int flg)
 					gamble_num += 1;
 					GAMBLE_YES = TRUE;
 					Codef_Gold( meindex, toindex, gamble_num, 0, buf1 );
-				}else if( player_type == EndTypedef[End_type].m_SI   )	{	//横列					
+				}else if( player_type == EndTypedef[End_type].m_SI   )	{	//横列
 					gamble_num += 2;
 					GAMBLE_YES = TRUE;
 					sprintf( token,"%s%d", "横列", EndTypedef[End_type].m_SI-100 );
@@ -484,7 +484,7 @@ void defPlayerGold( int meindex , int flg)
 					sprintf( token,"%s%s", "范围", buff );
 					Codef_Gold( meindex, toindex, gamble_num, 0, token );
 				}else	{	//没中	扣积分
-					if( (player_type>>16) == EndTypedef[End_type].m_type || 
+					if( (player_type>>16) == EndTypedef[End_type].m_type ||
 						(player_type&0xffff) == EndTypedef[End_type].m_type
 						)	{	//中双号
 						gamble_num += 10;
@@ -524,7 +524,7 @@ void defPlayerGold( int meindex , int flg)
 
 		if( GAMBLE_YES == FALSE )	{
 			sprintf( token, "你所有押注都没中奖！");
-			CHAR_talkToCli( toindex, meindex, token,  CHAR_COLORYELLOW);		
+			CHAR_talkToCli( toindex, meindex, token,  CHAR_COLORYELLOW);
             continue;
 		}
 		NPC_MAPCLEANGOLD( meindex , CHAR_getInt( meindex, CHAR_FLOOR ));
@@ -560,7 +560,7 @@ void Codef_Gold( int meindex, int toindex, int stone,int flg, char *token)
 		CHAR_setInt( toindex, CHAR_GAMBLENUM, CHAR_getInt( toindex, CHAR_GAMBLENUM) + stone);
 #endif
 	}
-	
+
 	LogGamble(
 		CHAR_getChar( toindex, CHAR_NAME ),
 		CHAR_getChar( toindex, CHAR_CDKEY ),
@@ -574,7 +574,7 @@ void Codef_Gold( int meindex, int toindex, int stone,int flg, char *token)
 		CHAR_getInt( toindex, CHAR_GAMBLENUM ),
 		1
 	);
-	
+
 	//纪录盈亏
 	if( Master_gnum > 5000000 )	Master_gnum = 5000000;
 	if( Master_gnum < 0 ) Master_gnum = 0;
@@ -595,6 +595,4 @@ void NPC_GAMBLEMASTER_RESET( int meindex)
 }
 
 #endif
-
-
 

@@ -94,7 +94,7 @@ int loadSaLua(const char *filename) {
     print("[Lua] failed to create state: %s\n", filename);
     return FALSE;
   }
-  
+
   /* stop collector during initialization open libraries */
   lua_gc(mylua->lua, LUA_GCSTOP, 0);
   luaL_openlibs(mylua->lua); // 2026.09.22 这两个函数的形式完全相同

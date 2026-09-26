@@ -2,14 +2,14 @@
 #include "net.h"
 #include "log.h"
 
-static int endOne(lua_State *L) 
+static int endOne(lua_State *L)
 {
 	const int sockfd = luaL_checkint(L, 1);
 	CONNECT_endOne_debug(sockfd);
 	return 1;
 }
 
-static int userip(lua_State *L) 
+static int userip(lua_State *L)
 {
 	int char_index = luaL_checkint(L, 1);
 	int sockfd = getfdFromCharaIndex(char_index);
@@ -24,7 +24,7 @@ static int userip(lua_State *L)
 	return 1;
 }
 #ifdef _NEWCLISETSERVID
-static int getServid(lua_State *L) 
+static int getServid(lua_State *L)
 {
 	int char_index = luaL_checkint(L, 1);
 
@@ -35,7 +35,7 @@ static int getServid(lua_State *L)
 }
 #endif
 #ifdef _NEWCLISETMAC
-static int getMac(lua_State *L) 
+static int getMac(lua_State *L)
 {
 	int sockfd = luaL_checkint(L, 1);
 
@@ -47,7 +47,7 @@ static int getMac(lua_State *L)
 }
 #endif
 
-static int getIP(lua_State *L) 
+static int getIP(lua_State *L)
 {
 	int sockfd = luaL_checkint(L, 1);
 	char strIP[32];
@@ -61,13 +61,13 @@ static int getIP(lua_State *L)
 	return 1;
 }
 
-static int getUse(lua_State *L) 
+static int getUse(lua_State *L)
 {
 	int fd = luaL_checkint(L, 1);
 	lua_pushinteger(L, CONNECT_getUse(fd));
 	return 1;
 }
-static int getCharaindex(lua_State *L) 
+static int getCharaindex(lua_State *L)
 {
 	int fd = luaL_checkint(L, 1);
 	lua_pushinteger(L, CONNECT_getCharaindex(fd));
@@ -87,7 +87,6 @@ static const luaL_Reg netlib[] = {
 	{"getCharaindex", 	getCharaindex},
 	{NULL, 							NULL}
 };
-
 
 LUALIB_API int luaopen_Net (lua_State *L) {
   luaL_register(L, "net", netlib);

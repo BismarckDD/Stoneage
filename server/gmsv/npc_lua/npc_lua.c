@@ -1456,7 +1456,6 @@ const char *NPC_Lua_popstring(int _ArgNum)
   return lua_tostring(M_Script_Lua, _ArgNum);
 }
 
-
 const char *NPC_Lua_CallFunc(const char *_FuncName, char *_RetBuff, size_t _n)
 
 {
@@ -3857,8 +3856,6 @@ int NPC_Lua_CreateVsPlayer(int *_OutBattleIndex, int char_index0,
 
   /*
 
-
-
           if( PKLIST_CheckPKReapetTeam(
 
                           CHAR_getInt( char_index0, CHAR_PKLISTTEAMNUM),
@@ -3973,7 +3970,6 @@ int NPC_Lua_CreateVsPlayer(int *_OutBattleIndex, int char_index0,
 
     BattleArray[battleindex].Side[j].flg &= ~BSIDE_FLG_HELP_OK;
   }
-
 
   if (iRet) {
 

@@ -75,9 +75,9 @@ void CHECK_FMPknumInFloor( int meindex)
 	//if( fmpks_pos < 0 || fmpks_pos >= MAX_SCHEDULEMAN ) return;
 	if( fmpks_pos < 0 || fmpks_pos >= MAX_SCHEDULEMAN * MAX_SCHEDULE ) return;
 	NPC_GetPKFMNum(CHAR_getWorkInt(meindex, NPC_WORK_WARPFLOOR),
-		         		fmpks[fmpks_pos].host_index,
-		         		fmpks[fmpks_pos].guest_index,
-		         		&fmnum1, &fmnum2 );
+					fmpks[fmpks_pos].host_index,
+					fmpks[fmpks_pos].guest_index,
+					&fmnum1, &fmnum2 );
 
 	CHAR_setWorkInt( meindex, NPC_WORK_FMNUMI , fmnum1);
 	CHAR_setWorkInt( meindex, NPC_WORK_FMNUMII, fmnum2);
@@ -136,7 +136,7 @@ BOOL NPC_FMWarpManInit( int meindex )
 		return FALSE;
 	}
 	// shan end
-	
+
 	meid = NPC_Util_GetNumFromStrWithDelim(npcarg, "ID");
 	if ((meid < 0) || (meid >= MAX_SCHEDULEMAN))
 	{
@@ -146,7 +146,7 @@ BOOL NPC_FMWarpManInit( int meindex )
 
 	/*--正奶皿涩烂--*/
 	CHAR_setInt(meindex, CHAR_LOOPINTERVAL, FMWARPMAN_INIT_LOOPTIME);
-   	CHAR_setInt( meindex , CHAR_WHICHTYPE , CHAR_TYPEWARPMAN );
+	CHAR_setInt( meindex , CHAR_WHICHTYPE , CHAR_TYPEWARPMAN );
 	CHAR_setWorkInt(meindex, NPC_WORK_MODEFLAG, NPC_STATEINIT);
 	CHAR_setWorkInt(meindex, NPC_WORK_CURRENTTIME, NowTime.tv_sec);
 	CHAR_setWorkInt(meindex, NPC_WORK_TIMEFLAG, 0);
@@ -156,18 +156,18 @@ BOOL NPC_FMWarpManInit( int meindex )
 	CHAR_setWorkInt(meindex, NPC_WORK_FMNUMII, 0);
 
 	CHAR_setWorkInt( meindex, NPC_WORK_CleanTime, 6*10);
-	
+
     return TRUE;
 }
 
 void NPC_FMWarpManTalked(int meindex, int talkerindex, char *szMes, int color)
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
-	
+
 	CHAR_setWorkInt( talkerindex, CHAR_WORKWARPCHECK, FALSE );
-	
+
     if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    	return;
+	return;
     }
 
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex ,2)==FALSE){
@@ -201,7 +201,7 @@ void NPC_FMWarpManLoop(int meindex)
 	memcpy(&tm1, localtime((time_t *)&NowTime.tv_sec), sizeof(tm1));
 
 	if (tm1.tm_min == 0)
-   	CHAR_setWorkInt(meindex, NPC_WORK_TIMEFLAG, tm1.tm_min);
+	CHAR_setWorkInt(meindex, NPC_WORK_TIMEFLAG, tm1.tm_min);
 	if (CHAR_getWorkInt(meindex, NPC_WORK_MODEFLAG) == NPC_STATEINIT)
 	{
 		if (tm1.tm_sec == 0)
@@ -213,7 +213,7 @@ void NPC_FMWarpManLoop(int meindex)
 	if (CHAR_getWorkInt(meindex, NPC_WORK_MODEFLAG) == NPC_STATEFREE)
 	{
 		// 取得目前系统时间，若目前时间 >= 准备时间则设定ＢＵＳＹ状态
-		
+
 		if (tm1.tm_min > CHAR_getWorkInt(meindex, NPC_WORK_TALKFLAG)
 			&& tm1.tm_min == 0)
 		{
@@ -227,31 +227,31 @@ void NPC_FMWarpManLoop(int meindex)
 		if ((fmpks[fmpks_pos].prepare_time > 0) && (fmpks[fmpks_pos].flag == FMPKS_FLAG_SCHEDULED))
 		{
 			int clock = 0;
-			
+
 			NPC_FMBATTLESET(floor, fmpks[fmpks_pos].host_index,
 				fmpks[fmpks_pos].guest_index, -1);
 			if (tm1.tm_hour - (fmpks[fmpks_pos].dueltime / 100) < 0)
 				clock = (fmpks[fmpks_pos].dueltime % 100) + fmpks[fmpks_pos].prepare_time - 60;
 			else
 				clock = fmpks[fmpks_pos].dueltime - (tm1.tm_hour * 100) + fmpks[fmpks_pos].prepare_time;
-			
+
 			if ((tm1.tm_min >= clock) && (fmpks[fmpks_pos].prepare_time > 0))
 			{
-				
+
 				NPC_talkToFloor(floor, fmpks[fmpks_pos].host_index,
 					fmpks[fmpks_pos].guest_index, "开战罗～！！");
 #ifdef _FMPOINT_PK_MESSAGE
 				char token[256];
-	    	sprintf(token, "庄园所有权争夺战『%s ＶＳ %s』开～战～罗～",
-								    		fmpks[fmpks_pos].guest_name,
-								    		fmpks[fmpks_pos].host_name);
+		sprintf(token, "庄园所有权争夺战『%s ＶＳ %s』开～战～罗～",
+										fmpks[fmpks_pos].guest_name,
+										fmpks[fmpks_pos].host_name);
 	      CHAR_talkToAll(-1, token, CHAR_COLORGREEN);
-#endif   	
+#endif
 				CHAR_setWorkInt(meindex, NPC_WORK_MODEFLAG, NPC_STATEBUSY);
 				CHAR_setInt(meindex, CHAR_LOOPINTERVAL, FMWARPMAN_BUSY_LOOPTIME);
 				NPC_FMBATTLESET(floor, fmpks[fmpks_pos].host_index,
 					fmpks[fmpks_pos].guest_index, 1);
-				
+
 //				print("\n won ==> set fmwaperman state busy !!");
 			}
 			else if (tm1.tm_min > CHAR_getWorkInt(meindex, NPC_WORK_TIMEFLAG))
@@ -272,16 +272,16 @@ void NPC_FMWarpManLoop(int meindex)
 		int winflag = 0;
 		int floor = CHAR_getWorkInt(meindex, NPC_WORK_WARPFLOOR);
 		int meid = CHAR_getWorkInt(meindex, NPC_WORK_ID);
-		
+
 //		print("\n won ==> check_winner : npc_meid(%d)", meid );
-		
+
 		NPC_GetPKFMNum(floor, fmpks[fmpks_pos].host_index,
 			fmpks[fmpks_pos].guest_index, &num1, &num2);
 		NPC_FMBATTLESET(floor, fmpks[fmpks_pos].host_index,
 			fmpks[fmpks_pos].guest_index, 1);
 		CheckLeavePK(meindex, floor, fmpks[fmpks_pos].host_index,
 			fmpks[fmpks_pos].guest_index);
-		
+
 		if (meid > MANORNUM){
 			if (tm1.tm_min == FMWARPMAN_CLEANPLACE){
 				// 判断胜负、WARP离场、设定ＮＰＣ状态
@@ -311,13 +311,13 @@ void NPC_FMWarpManLoop(int meindex)
 			winflag = 1;
 		}else if ((num1 == 0) && (num2 == 0)){
 			winflag = 3;
-		}      
+		}
 		if (winflag > 0 && winflag < 3){
-#ifdef _MANOR_PKRULE      
+#ifdef _MANOR_PKRULE
 			if(meid > MANORNUM){
 #endif
 				// 流浪家族pk 过声望
-				if (winflag == 1){	 		 
+				if (winflag == 1){
 					SaacClient_ACFixFMPK_send(acfd,
 						fmpks[fmpks_pos].host_name,
 						fmpks[fmpks_pos].host_index + 1,
@@ -325,7 +325,7 @@ void NPC_FMWarpManLoop(int meindex)
 						fmpks[fmpks_pos].guest_name,
 						fmpks[fmpks_pos].guest_index + 1,
 						fmpks[fmpks_pos].guest_index);
-				} else {			 
+				} else {
 					SaacClient_ACFixFMPK_send(acfd,
 						fmpks[fmpks_pos].guest_name,
 						fmpks[fmpks_pos].guest_index + 1,
@@ -333,11 +333,11 @@ void NPC_FMWarpManLoop(int meindex)
 						fmpks[fmpks_pos].host_name,
 						fmpks[fmpks_pos].host_index + 1,
 						fmpks[fmpks_pos].host_index);
-				}  
-#ifdef _MANOR_PKRULE      
+				}
+#ifdef _MANOR_PKRULE
 			}
 #endif
-			
+
 			{
 				if (meid > 0 && meid <= MANORNUM){// CoolFish 2002/2/25 Change MANOR -> MANORNUM
 #ifdef _NEW_MANOR_LAW
@@ -349,7 +349,7 @@ void NPC_FMWarpManLoop(int meindex)
 						sprintf( token, " (%d:%d) %d/%d/%d",
 							tm1.tm_hour, tm1.tm_min,
 							tm1.tm_year+1900, tm1.tm_mon+1, tm1.tm_mday);
-						SaacClient_ACFixFMPoint_send(acfd, 
+						SaacClient_ACFixFMPoint_send(acfd,
 							fmpks[fmpks_pos].host_name,
 							fmpks[fmpks_pos].host_index + 1,
 							fmpks[fmpks_pos].host_index,
@@ -408,22 +408,22 @@ void NPC_FMWarpManLoop(int meindex)
 						   if( CHAR_getInt( meindex, CHAR_RIDEPET ) != -1 )
 						   {
 							   int rideindex = CHAR_getCharPet( iCharindex, CHAR_getInt( iCharindex, CHAR_RIDEPET) );
-							
+
 							   if( CHAR_getInt( rideindex, CHAR_BASEIMAGENUMBER) == 100372 || CHAR_getInt( rideindex, CHAR_BASEIMAGENUMBER) == 100373 )
 							   {
 								   CHAR_setInt( iCharindex, CHAR_RIDEPET, -1);
 								   CHAR_send_P_StatusString( iCharindex, CHAR_P_STRING_RIDEPET );
-								
+
 								   CHAR_sendStatusString(iCharindex, "f");
 								   CHAR_complianceParameter( iCharindex );
 								   CHAR_sendCToArroundCharacter( CHAR_getWorkInt( iCharindex , CHAR_WORKOBJINDEX ));
 							   }
-						   } 
+						   }
 					   }
 						}
 #endif
-					} 
-					else if (winflag == 2){	
+					}
+					else if (winflag == 2){
 						char token[256];
 						sprintf( token, " (%d:%d) %d/%d/%d",
 							tm1.tm_hour, tm1.tm_min,
@@ -434,10 +434,10 @@ void NPC_FMWarpManLoop(int meindex)
 						for (fmid=0; fmid<MANORNUM; fmid++){	// 10个庄园
 				       getDelimitedField(fmpointlist.pointlistarray[fmid], "|", 5, fmindex, sizeof(fmindex));
 				       if (fmpks[fmpks_pos].guest_index==atoi(fmindex)-1)
-				       	 break;
+					 break;
 				    }
 #endif
-						SaacClient_ACFixFMPoint_send(acfd, 
+						SaacClient_ACFixFMPoint_send(acfd,
 							fmpks[fmpks_pos].guest_name,
 							fmpks[fmpks_pos].guest_index + 1,
 							fmpks[fmpks_pos].guest_index,
@@ -469,13 +469,13 @@ void NPC_FMWarpManLoop(int meindex)
 								   CHAR_complianceParameter( iCharindex );
 								   CHAR_sendCToArroundCharacter( CHAR_getWorkInt( iCharindex , CHAR_WORKOBJINDEX ));
 							   }
-						   } 
+						   }
 					   }
 						}
 					}
 #ifdef _FM_POINT_PK
 						if(fmid>=0 && fmid<MANORNUM){
-							SaacClient_ACFixFMPoint_send(acfd, 
+							SaacClient_ACFixFMPoint_send(acfd,
 							fmpks[fmpks_pos].host_name,
 							fmpks[fmpks_pos].host_index + 1,
 							fmpks[fmpks_pos].host_index,
@@ -532,7 +532,7 @@ void NPC_FMWarpManLoop(int meindex)
 							tm1.tm_hour, tm1.tm_min,
 							tm1.tm_year+1900, tm1.tm_mon+1, tm1.tm_mday);
 					fmpks[fmpks_pos + 1].flag = FMPKS_FLAG_MANOR_BATTLEEND;
-					SaacClient_ACFixFMPoint_send(acfd, 
+					SaacClient_ACFixFMPoint_send(acfd,
 							fmpks[fmpks_pos].host_name,
 							fmpks[fmpks_pos].host_index + 1,
 							fmpks[fmpks_pos].host_index,
@@ -568,23 +568,23 @@ void NPC_FMWarpManLoop(int meindex)
 #endif
 				}
 				NPC_talkToFloor(floor, fmpks[fmpks_pos].host_index,
-         	fmpks[fmpks_pos].guest_index, "双方平手，不分胜负！！");
+		fmpks[fmpks_pos].guest_index, "双方平手，不分胜负！！");
 				NPC_WarpFamily(floor, fmpks[fmpks_pos].host_index,
-         	fmpks[fmpks_pos].guest_index,
-         	CHAR_getInt(meindex, CHAR_FLOOR),
-         	CHAR_getInt(meindex, CHAR_X),
-         	CHAR_getInt(meindex, CHAR_Y));
+		fmpks[fmpks_pos].guest_index,
+		CHAR_getInt(meindex, CHAR_FLOOR),
+		CHAR_getInt(meindex, CHAR_X),
+		CHAR_getInt(meindex, CHAR_Y));
 				CHAR_setWorkInt(meindex, NPC_WORK_MODEFLAG, NPC_STATEWAIT);
-				CHAR_setInt(meindex, CHAR_LOOPINTERVAL, FMWARPMAN_WAIT_LOOPTIME);  
+				CHAR_setInt(meindex, CHAR_LOOPINTERVAL, FMWARPMAN_WAIT_LOOPTIME);
       }
    }else if (CHAR_getWorkInt(meindex, NPC_WORK_MODEFLAG) == NPC_STATEWAIT){
-		 
+
 		 //	andy_edit 2002/07/29
 		 if (tm1.tm_min == FMWARPMAN_CLEANPLACE)
 			 CHAR_setInt(meindex, CHAR_LOOPINTERVAL, FMWARPMAN_FREE_LOOPTIME);
-		 
+
 		 NPC_CleanPK(floor, meindex);
-		 
+
 		 if (tm1.tm_min == 0){
 			 CHAR_setWorkInt(meindex, NPC_WORK_MODEFLAG, NPC_STATEFREE);
 			 // shan add
@@ -600,7 +600,7 @@ void NPC_FMWarpManLoop(int meindex)
    }
 }
 
-void NPC_FMWarpManWindowTalked( int meindex, int talkerindex, 
+void NPC_FMWarpManWindowTalked( int meindex, int talkerindex,
 		int seqno, int select, char *data)
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
@@ -617,13 +617,13 @@ void NPC_FMWarpManWindowTalked( int meindex, int talkerindex,
 	if(select==WINDOW_BUTTONTYPE_OK){
 		return;
 	}
-   	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg))==NULL){
+	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg))==NULL){
 		print("GetArgStrErr");
 		return ;
 	}
 	// shan add
 	fmpks_pos = CHAR_getWorkInt(meindex, NPC_WORK_ID) * MAX_SCHEDULE;
-   
+
 	if (CHAR_getWorkInt(talkerindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].host_index){
 		if( NPC_Util_GetStrFromStrWithDelim( npcarg, "WARP1", buf, sizeof( buf)) == NULL ){
 			print("FM WARPMAN Can't Read WARP1!\n");
@@ -645,7 +645,6 @@ void NPC_FMWarpManWindowTalked( int meindex, int talkerindex,
 	getDelimitedField(buf,",",3,buff2,sizeof(buff2));
 	y=atoi(buff2);
 
-
 	switch (seqno){
 	case CHAR_WINDOWTYPE_WINDOWWARPMAN_MAIN:
 		if(select==WINDOW_BUTTONTYPE_YES){
@@ -658,19 +657,19 @@ void NPC_FMWarpManWindowTalked( int meindex, int talkerindex,
 			if(CHAR_getWorkInt( talkerindex , CHAR_WORKSHOPRELEVANTTRD) <= 0){
 				if( CHAR_getWorkInt( talkerindex, CHAR_WORKWARPCHECK ) == TRUE )  {
 					if (CHAR_getWorkInt(meindex, NPC_WORK_MODEFLAG) == NPC_STATEFREE){
-         		if (CHAR_getWorkInt(talkerindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].host_index){
-         			int tmpnum1 = CHAR_getWorkInt(meindex, NPC_WORK_FMNUMI) + 1;
-	         		CHAR_setWorkInt(meindex, NPC_WORK_FMNUMI, tmpnum1);
-		       	}else if (CHAR_getWorkInt(talkerindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].guest_index){
-			     		int tmpnum2 = CHAR_getWorkInt(meindex, NPC_WORK_FMNUMII) + 1;
-				   		CHAR_setWorkInt(meindex, NPC_WORK_FMNUMII, tmpnum2);
+			if (CHAR_getWorkInt(talkerindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].host_index){
+				int tmpnum1 = CHAR_getWorkInt(meindex, NPC_WORK_FMNUMI) + 1;
+				CHAR_setWorkInt(meindex, NPC_WORK_FMNUMI, tmpnum1);
+			}else if (CHAR_getWorkInt(talkerindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].guest_index){
+					int tmpnum2 = CHAR_getWorkInt(meindex, NPC_WORK_FMNUMII) + 1;
+						CHAR_setWorkInt(meindex, NPC_WORK_FMNUMII, tmpnum2);
 						}else{
 							CHAR_talkToCli( talkerindex, meindex, "你并非对战双方所属任一家族成员！", CHAR_COLORYELLOW);
 						}
-	         	CHAR_setWorkInt(talkerindex, CHAR_WORKFMPKFLAG, 1);
-		       	CHAR_setWorkInt(talkerindex, CHAR_WORKFMMANINDEX, meindex);
-			     	CHAR_setWorkInt( talkerindex, CHAR_WORKWARPCHECK, FALSE );
-				   	CHAR_warpToSpecificPoint(talkerindex, fl, x,y);
+			CHAR_setWorkInt(talkerindex, CHAR_WORKFMPKFLAG, 1);
+			CHAR_setWorkInt(talkerindex, CHAR_WORKFMMANINDEX, meindex);
+				CHAR_setWorkInt( talkerindex, CHAR_WORKWARPCHECK, FALSE );
+					CHAR_warpToSpecificPoint(talkerindex, fl, x,y);
 /*						{
 							FILE *fp;
 							struct tm tm1;
@@ -708,8 +707,8 @@ void NPC_FMWarpManWindowTalked( int meindex, int talkerindex,
 							"\n谢谢您的合作！"
 							"\n距离对战时间还剩下：%4d分钟",
 							clock);
-						GmsvServer_WN_send(fd, 
-			         	WINDOW_MESSAGETYPE_MESSAGE, WINDOW_BUTTONTYPE_OK,
+						GmsvServer_WN_send(fd,
+					WINDOW_MESSAGETYPE_MESSAGE, WINDOW_BUTTONTYPE_OK,
 								-1, -1,
 								makeEscapeString(tmpbuf, buff2, sizeof(buff2)));
 					}
@@ -731,7 +730,7 @@ void NPC_FMWarpManWindowTalked( int meindex, int talkerindex,
 
 void NPC_ERR_FMDiSP(int meindex,int talker,int errNO)
 {
-	
+
 	char token[1024];
 	int i=0;
 	int otherindex;
@@ -742,7 +741,7 @@ void NPC_ERR_FMDiSP(int meindex,int talker,int errNO)
 		print("GetArgStrErr");
 		return ;
 	}
-	
+
 	if(errNO==1){
 		/*--由□  奴□匹  仄井仃凶--*/
 		if(NPC_Util_GetStrFromStrWithDelim( npcarg, "PartyMsg",token, sizeof( token))==NULL) {
@@ -751,11 +750,11 @@ void NPC_ERR_FMDiSP(int meindex,int talker,int errNO)
 		}
 
 		if(CHAR_getWorkInt(talker,CHAR_WORKPARTYMODE)==CHAR_PARTY_CLIENT){
-					
+
 		}else{
-			
+
 		/*--伉□母□互  仄井仃凶桦宁及心--*/
-		/*--由□  奴□蝈够卞丢永本□斥毛请允--*/		
+		/*--由□  奴□蝈够卞丢永本□斥毛请允--*/
 		for( i=0 ; i < getPartyNum(talker  )  ;i++)
 		{
 			otherindex=CHAR_getWorkInt(talker,CHAR_WORKPARTYINDEX1+i);
@@ -766,14 +765,14 @@ void NPC_ERR_FMDiSP(int meindex,int talker,int errNO)
 				/*-仇仇匹霜耨允月--*/
 				GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 							WINDOW_BUTTONTYPE_OK,
-							CHAR_WINDOWTYPE_WINDOWWARPMAN_ERR, 
+							CHAR_WINDOWTYPE_WINDOWWARPMAN_ERR,
 							CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 							token);
 				}
 			}
 			return ;
 		}
-	
+
 	}else if (errNO==2){
 		/*--嗯互凶曰卅中匹允［--*/
 		if(NPC_Util_GetStrFromStrWithDelim( npcarg, "MoneyMsg", token, sizeof( token))==NULL){
@@ -785,7 +784,7 @@ void NPC_ERR_FMDiSP(int meindex,int talker,int errNO)
 		/*-仇仇匹霜耨允月--*/
 		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 						WINDOW_BUTTONTYPE_OK,
-						CHAR_WINDOWTYPE_WINDOWWARPMAN_ERR, 
+						CHAR_WINDOWTYPE_WINDOWWARPMAN_ERR,
 						CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 						token);
 }
@@ -801,7 +800,7 @@ static void NPC_FMWarpMan_selectWindow( int meindex, int toindex, int num,int se
 	int fl = 0, num1 = 0, num2 = 0;
 	int fmpks_pos = CHAR_getWorkInt(meindex, NPC_WORK_ID) * MAX_SCHEDULE;
 	int floor = CHAR_getWorkInt(meindex, NPC_WORK_WARPFLOOR);
-	int fd = getfdFromCharaIndex( toindex);	
+	int fd = getfdFromCharaIndex( toindex);
 	if( fd == -1 ) {
 		printEx( "GET FD ERROR!!!\n");
 		return;
@@ -816,9 +815,9 @@ static void NPC_FMWarpMan_selectWindow( int meindex, int toindex, int num,int se
 		getDelimitedField(buf,",",1,buf3,sizeof(buf3));
 		fl = NPC_FMFloorUse(atoi(buf3));
 	}
-	   	
+
 	//修正无家族使用系统
-	if (CHAR_getInt(toindex, CHAR_FMLEADERFLAG) == FMMEMBER_NONE)	   	
+	if (CHAR_getInt(toindex, CHAR_FMLEADERFLAG) == FMMEMBER_NONE)
 	{
 		char	tmpbuf[256];
 		sprintf(tmpbuf, "\n你还没有正式加入家族，所以不能进场！");
@@ -827,11 +826,11 @@ static void NPC_FMWarpMan_selectWindow( int meindex, int toindex, int num,int se
 			makeEscapeString(tmpbuf, token, sizeof(token)));
 		return;
 	}
-	
+
 	CHAR_setWorkInt(toindex, CHAR_WORKWARPCHECK, TRUE);
 	CHAR_setWorkInt(toindex, NPC_WORK_WARPFLOOR, fl);
 	memcpy(&tm1, localtime((time_t *)&NowTime.tv_sec), sizeof(tm1));
-	
+
 	if (CHAR_getWorkInt(meindex, NPC_WORK_MODEFLAG) == NPC_STATEFREE)
 	{
 		if (((CHAR_getWorkInt(toindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].host_index)
@@ -843,23 +842,23 @@ static void NPC_FMWarpMan_selectWindow( int meindex, int toindex, int num,int se
 		      && (CHAR_getWorkInt(toindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].host_index))
 			{
 				// WON ADD 修正家族pk场的约战问题
-				
+
 				if(fmpks[fmpks_pos].flag == -1)		return;
-				
+
 				if (fmpks[fmpks_pos].flag != FMPKS_FLAG_SCHEDULED)
-					
+
 				{
 					GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 						WINDOW_BUTTONTYPE_OK, -1, -1,
 						makeEscapeString("\n这场战斗对方好像还没同意呢！\n下次请记得先邀约对方後再来登记吧～", token, sizeof(token)));
 					return;
 				}
-#ifdef _FMVER21		   	
+#ifdef _FMVER21
 				if (CHAR_getInt(toindex, CHAR_FMLEADERFLAG) == FMMEMBER_APPLY)
 #else
 				if (CHAR_getInt(toindex, CHAR_FMLEADERFLAG) == 0)
-#endif		   	
-				{	
+#endif
+				{
 					char	tmpbuf[256];
 					sprintf(tmpbuf, "\n你还没有正式加入%s家族，所以不能进场！", fmpks[fmpks_pos].host_name);
 					GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_MESSAGE,
@@ -879,22 +878,22 @@ static void NPC_FMWarpMan_selectWindow( int meindex, int toindex, int num,int se
 		      && (CHAR_getWorkInt(toindex, CHAR_WORKFMINDEXI) == fmpks[fmpks_pos].guest_index))
 			{
 				// WON ADD 修正家族pk场的约战问题
-				
+
 				if(fmpks[fmpks_pos].flag == -1)		return;
-				
+
 				if (fmpks[fmpks_pos].flag != FMPKS_FLAG_SCHEDULED)
-					
+
 				{
 					GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 						WINDOW_BUTTONTYPE_OK, -1, -1,
 						makeEscapeString("\n这场战斗你好像还没同意呢！\n下次请记得提早来跟我确认～", token, sizeof(token)));
 					return;
 				}
-#ifdef _FMVER21		   	
+#ifdef _FMVER21
 				if (CHAR_getInt(toindex, CHAR_FMLEADERFLAG) == FMMEMBER_APPLY)
 #else
 					if (CHAR_getInt(toindex, CHAR_FMLEADERFLAG) == 0)
-#endif		   	
+#endif
 				{
 					char	tmpbuf[256];
 					sprintf(tmpbuf, "\n你还没有正式加入%s家族，所以不能进场！", fmpks[fmpks_pos].guest_name);
@@ -962,7 +961,7 @@ static void NPC_FMWarpMan_selectWindow( int meindex, int toindex, int num,int se
 				fmpks[fmpks_pos].host_index,
 				fmpks[fmpks_pos].guest_index,
 				&num1, &num2);
-			sprintf(token, buf2, 
+			sprintf(token, buf2,
 				fmpks[fmpks_pos].host_name, num1,
 				fmpks[fmpks_pos].guest_name, num2,
 				tm1.tm_hour, tm1.tm_min);
@@ -1024,10 +1023,10 @@ static void NPC_FMWarpMan_selectWindow( int meindex, int toindex, int num,int se
 	/*-仇仇匹霜耨允月--*/
 	GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
 		WINDOW_BUTTONTYPE_YESNO,
-		CHAR_WINDOWTYPE_WINDOWWARPMAN_MAIN, 
+		CHAR_WINDOWTYPE_WINDOWWARPMAN_MAIN,
 		CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 		token);
-	
+
 }
 
 int NPC_FMFloorUse(int floor)
@@ -1084,7 +1083,7 @@ void NPC_FMBATTLESET(int floor, int index1, int index2, int flag)
 			{
 			        CHAR_setWorkInt( charindex, CHAR_WORKBATTLEFLAG, flag);
 			        if(flag==1)
-    				    CHAR_setFlg(charindex, CHAR_ISDUEL, 1);
+				    CHAR_setFlg(charindex, CHAR_ISDUEL, 1);
 		        }
 		}
 		else
@@ -1115,8 +1114,8 @@ void NPC_CleanPK(int floor, int meindex)
 	for( i=0 ; i< playernum ; i++ )
 	{
 	   if( CHAR_getCharUse(i) == FALSE )continue;
-	   	if(CHAR_getInt(i,CHAR_FLOOR)==floor)
-	   		CHAR_warpToSpecificPoint(i, fl, x, y);
+		if(CHAR_getInt(i,CHAR_FLOOR)==floor)
+			CHAR_warpToSpecificPoint(i, fl, x, y);
 	}
 }
 
@@ -1129,7 +1128,7 @@ void NPC_talkToFloor(int floor, int index1, int index2, char *data)
 		charindex = gFamilyMemberIndex[index1][i];
 		if (CHAR_getCharUse(charindex))
 		{
-//			print("charname:%s fmname:%s\n", 
+//			print("charname:%s fmname:%s\n",
 //				CHAR_getChar(charindex, CHAR_NAME),
 //				CHAR_getChar(charindex, CHAR_FMNAME));
 			if (CHAR_getInt(charindex, CHAR_FLOOR) == floor)
@@ -1140,7 +1139,7 @@ void NPC_talkToFloor(int floor, int index1, int index2, char *data)
 		charindex = gFamilyMemberIndex[index2][i];
 		if (CHAR_getCharUse(charindex))
 		{
-//			print("charname:%s fmname:%s\n", 
+//			print("charname:%s fmname:%s\n",
 //				CHAR_getChar(i, CHAR_NAME),
 //				CHAR_getChar(i, CHAR_FMNAME));
 			if (CHAR_getInt(charindex, CHAR_FLOOR) == floor)
@@ -1162,8 +1161,8 @@ void NPC_WarpFamily(int floor, int index1, int index2, int fl, int x, int y)
                 {
                    if (CHAR_getInt(charindex1, CHAR_FLOOR) == floor)
                    {
-                   	CHAR_setWorkInt(charindex1, CHAR_WORKBATTLEFLAG, FALSE);
-                   	CHAR_warpToSpecificPoint(charindex1, fl, x, y);
+			CHAR_setWorkInt(charindex1, CHAR_WORKBATTLEFLAG, FALSE);
+			CHAR_warpToSpecificPoint(charindex1, fl, x, y);
                    }
                 }
                 else
@@ -1172,8 +1171,8 @@ void NPC_WarpFamily(int floor, int index1, int index2, int fl, int x, int y)
                 {
                    if (CHAR_getInt(charindex2, CHAR_FLOOR) == floor)
                    {
-                   	CHAR_setWorkInt(charindex2, CHAR_WORKBATTLEFLAG, FALSE);
-                   	CHAR_warpToSpecificPoint(charindex2, fl, x, y);
+			CHAR_setWorkInt(charindex2, CHAR_WORKBATTLEFLAG, FALSE);
+			CHAR_warpToSpecificPoint(charindex2, fl, x, y);
                    }
                 }
                 else
@@ -1202,7 +1201,7 @@ void NPC_BattleOut(int index1, int index2)
                 }
                 else
                          gFamilyMemberIndex[index2][i] = -1;
-        }   
+        }
 }
 
 void CheckLeavePK(int npcindex, int floor, int index1, int index2)
@@ -1219,7 +1218,7 @@ void CheckLeavePK(int npcindex, int floor, int index1, int index2)
 	      if (CHAR_getInt(charindex, CHAR_FLOOR) == floor){
 	         if (CHAR_getWorkInt(charindex, CHAR_WORKFMPKFLAG) < 0){
 	            if (CHAR_getWorkInt(charindex, CHAR_WORKPARTYMODE) != CHAR_PARTY_NONE)
-	            	CHAR_DischargeParty( charindex, 0);
+			CHAR_DischargeParty( charindex, 0);
 	            CHAR_setWorkInt(charindex, CHAR_WORKWARPCHECK, FALSE);
 	            CHAR_setWorkInt(charindex, CHAR_WORKBATTLEFLAG, FALSE);
 	            CHAR_warpToSpecificPoint(charindex, fl, x, y);
@@ -1233,7 +1232,7 @@ void CheckLeavePK(int npcindex, int floor, int index1, int index2)
 	      if (CHAR_getInt(charindex, CHAR_FLOOR) == floor){
 	         if (CHAR_getWorkInt(charindex, CHAR_WORKFMPKFLAG) < 0){
 	            if (CHAR_getWorkInt(charindex, CHAR_WORKPARTYMODE) != CHAR_PARTY_NONE)
-	            	CHAR_DischargeParty(charindex, 0);
+			CHAR_DischargeParty(charindex, 0);
 	            CHAR_setWorkInt(charindex, CHAR_WORKWARPCHECK, FALSE);
 	            CHAR_setWorkInt(charindex, CHAR_WORKBATTLEFLAG, FALSE);
 	            CHAR_warpToSpecificPoint(charindex, fl, x, y);

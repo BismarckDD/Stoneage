@@ -36,7 +36,6 @@ extern int getConnectnum(void);
 #ifdef _AUTO_PK
 #include "npc_autopk.h"
 #endif
-#include "pet_event.h"
 #ifdef _PLAYER_DIY_MAP
 #include "readmap.h"
 extern Player_Diy_Map PlayerDiyMap[Player_Diy_Map_NUM];
@@ -2162,7 +2161,6 @@ int isThereThisIP(unsigned long ip) {
 
   return 0;
 }
-
 
 struct timeval speedst, speedet;
 

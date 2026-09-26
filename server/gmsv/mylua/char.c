@@ -2095,7 +2095,7 @@ static int GetEmptyItemBoxNum(lua_State *L)
   lua_pushinteger(L, empty_num);
 }
 
-// 
+//
 static int GetOldLevelExp(lua_State *L) {
   const int level = luaL_checkint(L, 1);
   lua_pushinteger(L, CHAR_GetOldLevelExp(level));
@@ -2221,7 +2221,6 @@ static int CheckUserItem(lua_State *L) {
 #ifdef _JZ_NEWSCRIPT_LUA
 extern int NPC_Lua_NLG_UpChar(lua_State *_NLL);
 #endif
-
 
 // 2026.09.22 定义lua全局变量char中的函数
 static const luaL_Reg charLib[] = {

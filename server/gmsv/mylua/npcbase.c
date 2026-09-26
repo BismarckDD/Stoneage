@@ -570,7 +570,6 @@ static int OnlineBuy(lua_State *L) {
 }
 #endif
 
-
 //
 static const luaL_Reg npclib[] = {{"CreateNpc", CreateNpc},
 #ifdef _DEL_FAME
@@ -622,7 +621,7 @@ static const luaL_Reg npclib[] = {{"CreateNpc", CreateNpc},
 #endif
                                   {NULL, NULL}};
 
-// 
+//
 LUALIB_API int luaopen_NPC(lua_State *L) {
   luaL_register(L, "npc", npclib);
   return 1;

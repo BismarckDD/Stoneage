@@ -3,7 +3,7 @@
 #include "object.h"
 #include "npcutil.h"
 #include "readmap.h"
- 
+
 /*
  * 扔件皿伙及NPC戊□玉
  *
@@ -32,7 +32,7 @@ void NPC_SampleLoop( int index )
     BOOL    found=FALSE;
     int     fl,x,y;
     BOOL    nearby = FALSE;
-    
+
     fl = CHAR_getInt(index,CHAR_FLOOR);
     x  = CHAR_getInt(index,CHAR_X);
     y  = CHAR_getInt(index,CHAR_Y);
@@ -67,19 +67,18 @@ void NPC_SampleLoop( int index )
                         ABS( y-OBJECT_getY(objindex) ) <= 1 ){
                         nearby = TRUE;
                     }
-                    
+
                     break;
                 }
             }
         }
     }
-    
+
     if( !found )
         CHAR_walk( index,RAND(0,7),0);
 
 /*    print( "e(%d,%d)[%d]" ,CHAR_getInt(index,CHAR_X),
            CHAR_getInt(index,CHAR_Y),found );*/
-    
 
     if( found && nearby ){
 /*        print( "found" );*/
@@ -89,5 +88,5 @@ void NPC_SampleLoop( int index )
 
 //    print( "%d %d\n",CHAR_getInt( index,CHAR_X),
 //           CHAR_getInt( index,CHAR_Y) );
-    
+
 }

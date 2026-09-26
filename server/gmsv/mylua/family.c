@@ -12,7 +12,7 @@
 extern struct FM_POINTLIST fmpointlist; // 家族据点
 #endif
 
-static int ShowFamilyList(lua_State *L) 
+static int ShowFamilyList(lua_State *L)
 {
 	size_t l;
 	const int index = luaL_checkint(L, 1);

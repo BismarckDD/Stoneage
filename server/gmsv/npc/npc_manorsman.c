@@ -42,9 +42,8 @@ enum {
 #define SCHEDULEFILEDIR		"./Schedule/"
 
 #ifdef _FIX_FAMILY_PK_LIMIT	   // WON ADD 将可挑战庄园的由前十大改为前三十大
-#define PK_LIMIT	30	       
+#define PK_LIMIT	30
 #endif
-
 
 extern struct FM_POINTLIST  fmpointlist;
 extern void NPC_talkToFloor(int floor, int index1, int index2, char *data);
@@ -74,11 +73,11 @@ BOOL NPC_ManorSmanInit( int meindex )
   int meid;
   int a;
 	int super;
-	
+
 	if(getAllowManorPK() == 0){
 		return TRUE;
 	}
-	
+
   CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_TYPEMANORSCHEDULEMAN );
 
   // 参数
@@ -122,7 +121,6 @@ BOOL NPC_ManorSmanInit( int meindex )
 	  }
 	  CHAR_setWorkInt(meindex, NPC_WORK_CHALLENGEWAIT, a);
 
-
   a = NPC_Util_GetNumFromStrWithDelim(argstr, "peacewait");
   if ((a<1) || (a>432000)) {
     print("MANORSMAN init error: invalid peacewait(%d).",a);
@@ -158,10 +156,10 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
   if (fd == -1) return;
 	if(getAllowManorPK() == 0){
 		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-	    		WINDOW_BUTTONTYPE_YESNO,
-    			-1,
-    			-1,
-    			"庄园所有权争夺战的挑战资格请到任务线下战书");
+			WINDOW_BUTTONTYPE_YESNO,
+			-1,
+			-1,
+			"庄园所有权争夺战的挑战资格请到任务线下战书");
 		return;
 	}
 	if(fmpks[fmpks_pos+1].flag==FMPKS_FLAG_CHALLENGE){
@@ -188,10 +186,10 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
                  "请稍待，我将确认你的资格。");
 #endif
     GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-	    		WINDOW_BUTTONTYPE_YESNO,
-    			CHAR_WINDOWTYPE_CHECKMAN_START,
-    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-    			buf);
+			WINDOW_BUTTONTYPE_YESNO,
+			CHAR_WINDOWTYPE_CHECKMAN_START,
+			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+			buf);
     break;
   case FMPKS_FLAG_MANOR_PREPARE:
     // 目前已经定好战斗，准备中
@@ -212,19 +210,19 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
       if (strlen(buf2)==0)
         sprintf(buf, "庄园所有权争夺战\n『%s ＶＳ %s』\n\n"
                     "即将开始，请准备入场。",
-    		fmpks[fmpks_pos+1].guest_name,
-    		fmpks[fmpks_pos+1].host_name);
+		fmpks[fmpks_pos+1].guest_name,
+		fmpks[fmpks_pos+1].host_name);
       else
         sprintf(buf, "庄园所有权争夺战\n『%s ＶＳ %s』\n\n"
                     "预定将在%s後开始。",
-    		fmpks[fmpks_pos+1].guest_name,
-    		fmpks[fmpks_pos+1].host_name,
-    		buf2);
+		fmpks[fmpks_pos+1].guest_name,
+		fmpks[fmpks_pos+1].host_name,
+		buf2);
       GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    	WINDOW_BUTTONTYPE_OK,
-    			CHAR_WINDOWTYPE_CHECKMAN_END,
-    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-    			buf);
+			WINDOW_BUTTONTYPE_OK,
+			CHAR_WINDOWTYPE_CHECKMAN_END,
+			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+			buf);
     }
     break;
   case FMPKS_FLAG_MANOR_PEACE:
@@ -249,35 +247,35 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
       else
         sprintf(buf, "现在是休战时期，要踢馆的话\n请%s後再来申请。",buf2);
       GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    	WINDOW_BUTTONTYPE_OK,
-    			CHAR_WINDOWTYPE_CHECKMAN_END,
-    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX), buf);
+			WINDOW_BUTTONTYPE_OK,
+			CHAR_WINDOWTYPE_CHECKMAN_END,
+			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX), buf);
     }
     break;
   case FMPKS_FLAG_MANOR_BATTLEBEGIN:
     // 目前正在进行踢馆
     sprintf(buf, "庄园所有权争夺战\n『%s ＶＳ %s』\n\n"
                  "开～打～罗～\n还没进场的人赶快进场吧。",
-    		fmpks[fmpks_pos+1].guest_name,
-    		fmpks[fmpks_pos+1].host_name);
+		fmpks[fmpks_pos+1].guest_name,
+		fmpks[fmpks_pos+1].host_name);
     GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    	WINDOW_BUTTONTYPE_OK,
-    			CHAR_WINDOWTYPE_CHECKMAN_END,
-    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-    			buf);
+			WINDOW_BUTTONTYPE_OK,
+			CHAR_WINDOWTYPE_CHECKMAN_END,
+			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+			buf);
     break;
   case FMPKS_FLAG_MANOR_OTHERPLANET:
     // 在别的星球进行战斗
     sprintf(buf, "庄园所有权争夺战\n『%s ＶＳ %s』\n\n"
-    		 "决斗地点在 %s 。",
+		 "决斗地点在 %s 。",
               fmpks[fmpks_pos+1].guest_name,
               fmpks[fmpks_pos+1].host_name,
               fmpks[fmpks_pos+2].host_name);
     GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    	WINDOW_BUTTONTYPE_OK,
-    			CHAR_WINDOWTYPE_CHECKMAN_END,
-    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-    			buf);
+			WINDOW_BUTTONTYPE_OK,
+			CHAR_WINDOWTYPE_CHECKMAN_END,
+			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+			buf);
     break;
   }
 }
@@ -300,13 +298,13 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
   if(fd == -1) return;
 	if(getAllowManorPK() == 0){
 	GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-	    		WINDOW_BUTTONTYPE_YESNO,
-    			-1,
-    			-1,
-    			"庄园所有权争夺战的挑战资格请到规定线路下战书");
+			WINDOW_BUTTONTYPE_YESNO,
+			-1,
+			-1,
+			"庄园所有权争夺战的挑战资格请到规定线路下战书");
 		return;
 	}
-	
+
 	if(fmpks[fmpks_pos+1].flag == FMPKS_FLAG_CHALLENGE) fmpks[fmpks_pos+1].flag = FMPKS_FLAG_NONE;
 
   switch(fmpks[fmpks_pos+1].flag){
@@ -322,7 +320,7 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
 								"按 OK 确认你的资格，按NO观看挑战排名\n"
 								"待确认时间还剩余%d秒", max(0, fmpks[fmpks_pos+1].dueltime - NowTime.tv_sec));
     GmsvServer_WN_send(fd,WINDOW_MESSAGETYPE_MESSAGE,WINDOW_BUTTONTYPE_YESNO,CHAR_WINDOWTYPE_CHECKMAN_START,
-    								 CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),buf);
+								 CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),buf);
 		if(fmpointlist.fm_momentum[manorid-1] <= -1){
 			int hadfmindex,index;
 			char token[256];
@@ -365,12 +363,12 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
       strcat(buf2,buf);
       if(strlen(buf2) == 0)
         sprintf(buf,"庄园所有权争夺战\n『%s ＶＳ %s』\n\n即将开始，请准备入场。",
-    						fmpks[fmpks_pos+1].guest_name,fmpks[fmpks_pos+1].host_name);
+						fmpks[fmpks_pos+1].guest_name,fmpks[fmpks_pos+1].host_name);
       else
 				sprintf(buf,"庄园所有权争夺战\n『%s ＶＳ %s』\n\n预定将在%s後开始。",
-    						fmpks[fmpks_pos+1].guest_name,fmpks[fmpks_pos+1].host_name,buf2);
+						fmpks[fmpks_pos+1].guest_name,fmpks[fmpks_pos+1].host_name,buf2);
       GmsvServer_WN_send(fd,WINDOW_MESSAGETYPE_MESSAGE,WINDOW_BUTTONTYPE_OK,CHAR_WINDOWTYPE_CHECKMAN_END,
-    									 CHAR_getWorkInt(meindex,CHAR_WORKOBJINDEX),buf);
+									 CHAR_getWorkInt(meindex,CHAR_WORKOBJINDEX),buf);
     }
     break;
 	// 休战期及准备期,五天
@@ -400,16 +398,16 @@ void NPC_ManorSmanTalked(int meindex, int talkerindex, char *msg, int color)
 	// 挑战中
   case FMPKS_FLAG_MANOR_BATTLEBEGIN:
     sprintf(buf,"庄园所有权争夺战\n『%s ＶＳ %s』\n\n开～打～罗～\n还没进场的人赶快进场吧。",
-    				fmpks[fmpks_pos+1].guest_name,fmpks[fmpks_pos+1].host_name);
+				fmpks[fmpks_pos+1].guest_name,fmpks[fmpks_pos+1].host_name);
     GmsvServer_WN_send(fd,WINDOW_MESSAGETYPE_MESSAGE,WINDOW_BUTTONTYPE_OK,CHAR_WINDOWTYPE_CHECKMAN_END,
-    								 CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),buf);
+								 CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),buf);
     break;
   case FMPKS_FLAG_MANOR_OTHERPLANET:
     // 在别的星球进行战斗
     sprintf(buf,"庄园所有权争夺战\n『%s ＶＳ %s』\n\n决斗地点在 %s 。",
             fmpks[fmpks_pos+1].guest_name,fmpks[fmpks_pos+1].host_name,fmpks[fmpks_pos+2].host_name);
     GmsvServer_WN_send(fd,WINDOW_MESSAGETYPE_MESSAGE,WINDOW_BUTTONTYPE_OK,CHAR_WINDOWTYPE_CHECKMAN_END,
-    								 CHAR_getWorkInt(meindex,CHAR_WORKOBJINDEX),buf);
+								 CHAR_getWorkInt(meindex,CHAR_WORKOBJINDEX),buf);
     break;
   }
 }
@@ -425,17 +423,17 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
   char hadfmname[256];
 //#endif
   int hadfmpopular;
-  
+
   if (NPC_Util_CharDistance(meindex,talkerindex) > 2) return;
   if (!NPC_Util_isFaceToFace(meindex, talkerindex, 2)) return;
   fd = getfdFromCharaIndex(talkerindex);
   if (fd == -1) return;
- 	if(getAllowManorPK() == 0){
+	if(getAllowManorPK() == 0){
 		GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-	    		WINDOW_BUTTONTYPE_YESNO,
-    			-1,
-    			-1,
-    			"庄园所有权争夺战的挑战资格请到规定线路下战书");
+			WINDOW_BUTTONTYPE_YESNO,
+			-1,
+			-1,
+			"庄园所有权争夺战的挑战资格请到规定线路下战书");
 		return;
 	}
   fmpks_pos = CHAR_getWorkInt(meindex, NPC_WORK_ID)*MAX_SCHEDULE;
@@ -448,15 +446,15 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
   strcpy(hadfmname, token);
   getDelimitedField(fmpointlist.pointlistarray[manorid-1], "|", 7, token, sizeof(token));
   hadfmpopular = atoi(token);
-  
+
   switch (seqno){
   case CHAR_WINDOWTYPE_CHECKMAN_START:
     if (select==WINDOW_BUTTONTYPE_YES){
-#ifdef _FMVER21      
+#ifdef _FMVER21
 		  if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_LEADER) &&
 #else
       if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_MEMBER) &&
-#endif      
+#endif
 				(CHAR_getWorkInt(talkerindex, CHAR_WORKFMSETUPFLAG)==1)){
         if (hadfmindex != -1) {
           if (hadfmindex-1 != tkfmindex){
@@ -468,7 +466,7 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 		              if (tkfmindex==atoi(token)-1)break;
 		           }
 		           if(i==MANORNUM){
-		           	 check=3;
+				 check=3;
 		          }
 		        }else
 #endif
@@ -481,8 +479,8 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 	              if (tkfmindex==atoi(token)-1) check=1;
 	            }
 	          }
-#else 
-  					// Arminius 2.25 fix: fmpks 中第 1~"MANORNUM" 组一定要给 manorsman
+#else
+					// Arminius 2.25 fix: fmpks 中第 1~"MANORNUM" 组一定要给 manorsman
             for (i=0; i<MANORNUM; i++) {	// 9个庄园
               getDelimitedField(fmpointlist.pointlistarray[i], "|", 5, token, sizeof(token));
               if (tkfmindex==atoi(token)-1) check=1;
@@ -531,7 +529,7 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 							}
 	#endif
 
-							if(won1 == 1){		
+							if(won1 == 1){
 			// WON END
 	#ifdef _NEW_MANOR_LAW
 							sprintf(buf,"确定庄园挑战资格後会有一天的准备时间\n"
@@ -555,11 +553,11 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 														"你确定要挑战这个庄园吗？");
 #endif
                 GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    							WINDOW_BUTTONTYPE_YESNO,
-    															CHAR_WINDOWTYPE_CHECKMAN_MAIN,
-    															CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-    															buf);
-    					}
+									WINDOW_BUTTONTYPE_YESNO,
+															CHAR_WINDOWTYPE_CHECKMAN_MAIN,
+															CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+															buf);
+					}
 							else{
 #ifdef _NEW_MANOR_LAW
 								sprintf(buf, "你的家族气势尚未到达 3000 ，请再加油。");
@@ -577,65 +575,65 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 	#endif
 #endif
                 GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-						              	    	WINDOW_BUTTONTYPE_OK,
-													   			CHAR_WINDOWTYPE_CHECKMAN_END,
-												    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-													   			buf);
-		   	      }
+									WINDOW_BUTTONTYPE_OK,
+																CHAR_WINDOWTYPE_CHECKMAN_END,
+															CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+																buf);
+			      }
             }
 						else if(check == 2){
               sprintf(buf, "你的家族正在挑战其他庄园，\n"
                            "请把机会留给其他家族吧！");
               GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-													    	WINDOW_BUTTONTYPE_OK,
-											    			CHAR_WINDOWTYPE_CHECKMAN_END,
-											    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-											    			buf);
+														WINDOW_BUTTONTYPE_OK,
+														CHAR_WINDOWTYPE_CHECKMAN_END,
+														CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+														buf);
             }else if(check == 3){
-            	sprintf(buf, "该庄园必需有庄园的家族才可以下书挑战哟!\n");
+		sprintf(buf, "该庄园必需有庄园的家族才可以下书挑战哟!\n");
               GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-													    	WINDOW_BUTTONTYPE_OK,
-											    			CHAR_WINDOWTYPE_CHECKMAN_END,
-											    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-											    			buf);
+														WINDOW_BUTTONTYPE_OK,
+														CHAR_WINDOWTYPE_CHECKMAN_END,
+														CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+														buf);
             }
 						else{
               sprintf(buf, "一个家族只能拥有一个庄园，\n"
                            "如果庄园家族之间需要切磋\n"
                            "请到家族ＰＫ场。");
               GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    						WINDOW_BUTTONTYPE_OK,
-											    			CHAR_WINDOWTYPE_CHECKMAN_END,
-											    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-										    				buf);
+								WINDOW_BUTTONTYPE_OK,
+														CHAR_WINDOWTYPE_CHECKMAN_END,
+														CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+														buf);
             }
           }
 					else{
             sprintf(buf, "这个庄园已经是你的家族的喔。");
             GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              						  	WINDOW_BUTTONTYPE_OK,
-									    				CHAR_WINDOWTYPE_CHECKMAN_END,
-											   			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-										    			buf);
+								WINDOW_BUTTONTYPE_OK,
+													CHAR_WINDOWTYPE_CHECKMAN_END,
+														CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+													buf);
           }
         }
 				else{
           sprintf(buf, "现在并没有庄园家族！\n"
                        "直接去申请迁入就可以了哟。");
           GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-			              	    	WINDOW_BUTTONTYPE_OK,
-    												CHAR_WINDOWTYPE_CHECKMAN_END,
-									    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-									    			buf);
+						WINDOW_BUTTONTYPE_OK,
+												CHAR_WINDOWTYPE_CHECKMAN_END,
+												CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+												buf);
         }
       }
 			else{
         sprintf(buf, "只有族长可以下战书喔。");
         GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    			WINDOW_BUTTONTYPE_OK,
-									   			CHAR_WINDOWTYPE_CHECKMAN_END,
-								    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-								    			buf);
+					WINDOW_BUTTONTYPE_OK,
+												CHAR_WINDOWTYPE_CHECKMAN_END,
+											CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+											buf);
       }
     }
 #ifdef _NEW_MANOR_LAW
@@ -654,46 +652,46 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 				}
 			}
 			GmsvServer_WN_send(fd,WINDOW_FMMESSAGETYPE_MANOR_SCHEDULE,WINDOW_BUTTONTYPE_OK,CHAR_WINDOWTYPE_CHECKMAN_END,
-								    	 CHAR_getWorkInt(meindex,CHAR_WORKOBJINDEX),buf);
+									 CHAR_getWorkInt(meindex,CHAR_WORKOBJINDEX),buf);
 		}
 #endif
     break;
-  case CHAR_WINDOWTYPE_CHECKMAN_MAIN:	  
+  case CHAR_WINDOWTYPE_CHECKMAN_MAIN:
     if (select==WINDOW_BUTTONTYPE_YES) {
-#ifdef _FMVER21    
-      if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_LEADER) && 
+#ifdef _FMVER21
+      if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_LEADER) &&
 #else
-      if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_MEMBER) &&     
-#endif      
-          (CHAR_getWorkInt(talkerindex, CHAR_WORKFMSETUPFLAG)==1) &&   
+      if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_MEMBER) &&
+#endif
+          (CHAR_getWorkInt(talkerindex, CHAR_WORKFMSETUPFLAG)==1) &&
           (hadfmindex != -1) &&
-		  (hadfmindex - 1 != tkfmindex)    
+		  (hadfmindex - 1 != tkfmindex)
 #ifndef _MANOR_PKRULE
           && (tkfmdp >= hadfmpopular)
 #endif
 		  ){
 #ifndef _ACFMPK_LIST
-		  struct tm tm1; 
+		  struct tm tm1;
 #endif
 
 #ifndef _NEW_MANOR_LAW
 #ifndef _FMPOINT_PKTIME_SELECT
 	#ifdef _MANOR_PKRULE
 		  time_t timep;
-		  struct tm *p;		  
+		  struct tm *p;
 		  time(&timep);
-		  p = gmtime(&timep);		
+		  p = gmtime(&timep);
 		  if( p->tm_hour+8 > 24)
-		  	  p->tm_hour = p->tm_hour-16;
+			  p->tm_hour = p->tm_hour-16;
 		  else
-			  p->tm_hour = p->tm_hour+8;		 
+			  p->tm_hour = p->tm_hour+8;
 	  if(p->tm_hour<20 || p->tm_hour>23){
 		  sprintf(buf, "请於下午２０：００至晚上２４：００再来约战吧！");
 			  GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    	WINDOW_BUTTONTYPE_OK,
-    			        CHAR_WINDOWTYPE_CHECKMAN_END,
-    			        CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-    			        buf);
+			WINDOW_BUTTONTYPE_OK,
+				CHAR_WINDOWTYPE_CHECKMAN_END,
+				CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+				buf);
 			  break;
 		  }
 	#endif
@@ -709,8 +707,6 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 					 return;
 			}
 #endif
-
-
 
 #ifdef _ACFMPK_LIST
 #ifdef _FMPOINT_PKTIME_SELECT
@@ -738,14 +734,13 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 #else
 	    memcpy( &tm1, localtime( (time_t *)&NowTime.tv_sec), sizeof( tm1));
 
-
         fmpks[fmpks_pos+1].dueltime = CHAR_getWorkInt(meindex, NPC_WORK_CHALLENGEWAIT) + NowTime.tv_sec
                            - tm1.tm_min*60 + 1800; // Arminius 11.1 改成一律 xx:30 开打
-                           
+
         fmpks[fmpks_pos+1].host_index = hadfmindex-1;
         strcpy(fmpks[fmpks_pos+1].host_name, hadfmname);
         fmpks[fmpks_pos+1].guest_index = tkfmindex;
-        strcpy(fmpks[fmpks_pos+1].guest_name, CHAR_getChar(talkerindex, CHAR_FMNAME));        
+        strcpy(fmpks[fmpks_pos+1].guest_name, CHAR_getChar(talkerindex, CHAR_FMNAME));
         fmpks[fmpks_pos+1].prepare_time = 15;
         fmpks[fmpks_pos+1].max_player = 50;
         fmpks[fmpks_pos+1].win = -1;
@@ -756,22 +751,22 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 		NPC_ManorSavePKSchedule(meindex, talkerindex, 0);
 		sprintf(buf, "庄园挑战已经设定完成，请好好准备。");
         GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-              	    	WINDOW_BUTTONTYPE_OK,
-    			CHAR_WINDOWTYPE_CHECKMAN_END,
-    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-    			buf);
+			WINDOW_BUTTONTYPE_OK,
+			CHAR_WINDOWTYPE_CHECKMAN_END,
+			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+			buf);
 	#else
 		NPC_ManorAddToSchedule(meindex,talkerindex, 0);
 	#endif
     fmpks[fmpks_pos+1].flag = FMPKS_FLAG_MANOR_PREPARE;
 #endif
-        
+
       }
     }
     break;
 #ifdef _FMPOINT_PKTIME_SELECT
   case CHAR_WINDOWTYPE_FAMILYMAN_PKTIME:
-  	if (select==WINDOW_BUTTONTYPE_NONE) {
+	if (select==WINDOW_BUTTONTYPE_NONE) {
 /*
 #ifdef _FMPOINTPK_FOR_TWO
 {
@@ -812,19 +807,19 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 								|| strcmp(fmpks[i*MAX_SCHEDULE+1].guest_name, CHAR_getChar(talkerindex, CHAR_FMNAME))==0
 							) {
 					GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-			             	    	WINDOW_BUTTONTYPE_OK,
-			   			        CHAR_WINDOWTYPE_CHECKMAN_END,
-			   			        CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-			   							"你的家族正在约战之中,所以无法进行约战!");
-          	return;
+						WINDOW_BUTTONTYPE_OK,
+							CHAR_WINDOWTYPE_CHECKMAN_END,
+							CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+										"你的家族正在约战之中,所以无法进行约战!");
+		return;
         }else if(strcmp(fmpks[i*MAX_SCHEDULE+1].host_name, hadfmname)==0
 								|| strcmp(fmpks[i*MAX_SCHEDULE+1].guest_name, hadfmname)==0
 							) {
 					GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-			             	    	WINDOW_BUTTONTYPE_OK,
-			   			        CHAR_WINDOWTYPE_CHECKMAN_END,
-			   			        CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-			   			        "对方的家族正在约战中,所以无法进行约战!");
+						WINDOW_BUTTONTYPE_OK,
+							CHAR_WINDOWTYPE_CHECKMAN_END,
+							CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+							"对方的家族正在约战中,所以无法进行约战!");
           return;
         }
       }
@@ -844,11 +839,11 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 		//else if(fmdptop.fmMomentum[index] < fmpointlist.fm_momentum[manorid-1]*0.9){
 		else if(fmdptop.fmMomentum[index] < 100000){
       GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-						              	    	WINDOW_BUTTONTYPE_OK,
-													   			CHAR_WINDOWTYPE_CHECKMAN_END,
-												    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+									WINDOW_BUTTONTYPE_OK,
+																CHAR_WINDOWTYPE_CHECKMAN_END,
+															CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 				//									   			"你的家族气势尚未到达庄园家族气势的九成，请再加油。");
-													   			"你的家族气势尚未达到1000，请再加油。");
+																"你的家族气势尚未达到1000，请再加油。");
 			return;
 		}
 }
@@ -857,10 +852,10 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 /*
 	if(CHAR_getInt(talkerindex, CHAR_FAME) < 50000){
     GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-						              	    	WINDOW_BUTTONTYPE_OK,
-													   			CHAR_WINDOWTYPE_CHECKMAN_END,
-												    			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
-													   			"你的个人声望小于500，无法下战书哦。");
+									WINDOW_BUTTONTYPE_OK,
+																CHAR_WINDOWTYPE_CHECKMAN_END,
+															CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
+																"你的个人声望小于500，无法下战书哦。");
 		return;
 	}else{
 		CHAR_setInt(talkerindex, CHAR_FAME, CHAR_getInt(talkerindex, CHAR_FAME) - 50000);
@@ -868,7 +863,7 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 	}
 	*/
 #endif
-  		int manorid, dueltime;
+		int manorid, dueltime;
 			char msg[1024], n1[256], n2[256], n3[256];
 			char token[256], hadfmname[256];
 			int hadfmindex=0, hadfmpopular=0, tkfmindex=0;
@@ -882,30 +877,30 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 		manorid = CHAR_getWorkInt(meindex, NPC_WORK_MANORID);
 		memcpy( &tm1, localtime( (time_t *)&NowTime.tv_sec), sizeof( tm1));
 		// 以挑战时的时间为开打的时间,中间所经过的时间为准备时间
-		
+
 		switch (atoi(data)){
-  		case 1:
-  			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 20 ;
-  			break;
-  		case 2:
-  			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 21;
-  			break;
-  		case 3:
-  			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 22;
-  			break;
-  		case 4:
-  			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 22;
-  			break;
-  		case 5:
-  			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 22 + 1800;
-  			break;
-  		default:
-  			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * getFimalyPkTime();
-  			break;
-  	}
-  	
+		case 1:
+			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 20 ;
+			break;
+		case 2:
+			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 21;
+			break;
+		case 3:
+			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 22;
+			break;
+		case 4:
+			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 22;
+			break;
+		case 5:
+			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * 22 + 1800;
+			break;
+		default:
+			dueltime = NowTime.tv_sec - tm1.tm_min * 60 + ((24 - tm1.tm_hour) * 3600) + 3600 * getFimalyPkTime();
+			break;
+	}
+
 #ifdef _NEW_MANOR_LAW
-  	NPC_ManorAddToSchedule(meindex,talkerindex, dueltime);
+	NPC_ManorAddToSchedule(meindex,talkerindex, dueltime);
 #else
 		//				|-------------取整点-------------|  |--------加到0000时-------|  |挑战时的时间(算整点)|
 		getDelimitedField( fmpointlist.pointlistarray[manorid-1], "|", 5, token, sizeof(token));
@@ -916,7 +911,7 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 		strcpy( hadfmname, token);
 		makeEscapeString( hadfmname, n1, sizeof(n1));
 #ifndef _NEW_MANOR_LAW
-		makeEscapeString( CHAR_getChar(talkerindex, CHAR_FMNAME), n2, sizeof(n2));		
+		makeEscapeString( CHAR_getChar(talkerindex, CHAR_FMNAME), n2, sizeof(n2));
 #else
 		// 找出挑战家族中气势最高家族索引
 		int index = ManorSchedule[manorid-1].iSort[0];
@@ -942,7 +937,7 @@ void NPC_ManorSmanWindowTalked(int meindex, int talkerindex, int seqno, int sele
 	SaacClient_ACSendFmPk_send( acfd, -1, PkFlg, CHAR_getWorkInt( meindex, NPC_WORK_ID), msg);
 #endif
 #endif
-  	}
+	}
     break;
 #endif
 	}
@@ -1016,7 +1011,7 @@ void NPC_ManorSmanLoop(int meindex)
 			}
 			SortManorSchedule();
 		}
-#endif    
+#endif
     break;
 
 #ifdef _NEW_MANOR_LAW
@@ -1099,7 +1094,7 @@ void NPC_ManorSmanLoop(int meindex)
 					fmpointlist.fm_inwar[manorid-1] = FALSE;
 					// 通知所有人
 					sprintf(szMsg,"%s 家族获得挑战庄园资格",ManorSchedule[manorindex].szFmName[iNo1FmIndexSort]);
-					
+
 					for(i=0;i<iPlayerNum;i++){
 						if(CHAR_getCharUse(i) != FALSE){
 							CHAR_talkToCli(i,-1,szMsg,CHAR_COLORBLUE2);
@@ -1118,14 +1113,14 @@ void NPC_ManorSmanLoop(int meindex)
       fmpks[fmpks_pos+1].dueltime = 0;
       fmpks[fmpks_pos+1].flag = FMPKS_FLAG_MANOR_BATTLEBEGIN;
       NPC_talkToFloor(CHAR_getInt(meindex, CHAR_FLOOR) , fmpks[fmpks_pos].host_index,
-         	fmpks[fmpks_pos].guest_index, "庄园争夺战已经开始，请尽快入场！");
+		fmpks[fmpks_pos].guest_index, "庄园争夺战已经开始，请尽快入场！");
 #ifdef _FMPOINT_PK_MESSAGE
 			char token[256];
-    	sprintf(token, "『%s ＶＳ %s』庄园所有权争夺战即将开始～",
-							    		fmpks[fmpks_pos+1].guest_name,
-							    		fmpks[fmpks_pos+1].host_name);
+	sprintf(token, "『%s ＶＳ %s』庄园所有权争夺战即将开始～",
+									fmpks[fmpks_pos+1].guest_name,
+									fmpks[fmpks_pos+1].host_name);
       CHAR_talkToAll(-1, token, CHAR_COLORGREEN);
-#endif   	
+#endif
 #ifdef _NEW_MANOR_LAW
 			CHAR_setWorkInt(meindex,NPC_WORK_BETTLETIME,tm1.tm_mday);
 #endif
@@ -1275,7 +1270,7 @@ void NPC_ManorLoadPKSchedule(int meindex)
 	if (getDelimitedField(tmp,"|",9,token,sizeof(token))) {
 		strcpy(fmpks[fmpks_pos+2].host_name,makeStringFromEscaped(token));
 	}
-  
+
 	// no schedule
 	fmpks[fmpks_pos].flag=-1;
 	// prepare time expired?
@@ -1365,7 +1360,7 @@ void NPC_ManorSavePKSchedule(int meindex, int toindex, int flg,int setTime,struc
 		strcpy( hadfmname, token);
 		makeEscapeString( hadfmname, n1, sizeof(n1));
 #ifndef _NEW_MANOR_LAW
-		makeEscapeString( CHAR_getChar(toindex, CHAR_FMNAME), n2, sizeof(n2));		
+		makeEscapeString( CHAR_getChar(toindex, CHAR_FMNAME), n2, sizeof(n2));
 #else
 		int index;
 		// 找出挑战家族中气势最高家族索引
@@ -1518,7 +1513,7 @@ void SortManorSchedule()
 int SortManorScheduleMomentum(const void *indexa, const void *indexb)
 {
   int momentumA,momentumB;
-  
+
   momentumA = ManorSchedule[g_iSortManor].iFmMomentum[*(int*)indexa];
   momentumB = ManorSchedule[g_iSortManor].iFmMomentum[*(int*)indexb];
   return (momentumA > momentumB) ? -1:1;

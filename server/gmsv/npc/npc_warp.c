@@ -67,10 +67,10 @@ BOOL NPC_WarpInit( int char_index )
 			NPC_WarpsetNeverMake( char_index );
 			//print( "Warp NPC:Invalid arg:%s\n", arg );
 			print( "Warp Npc Err:%d:%d:%d->(%s)\n",
-        		CHAR_getInt( char_index, CHAR_FLOOR ),
-        		CHAR_getInt( char_index, CHAR_X ),
-        		CHAR_getInt( char_index, CHAR_Y ),
-        		arg );
+			CHAR_getInt( char_index, CHAR_FLOOR ),
+			CHAR_getInt( char_index, CHAR_X ),
+			CHAR_getInt( char_index, CHAR_Y ),
+			arg );
 			return FALSE;
 		}
 		ret=getDelimitedField(arg,"|",4,token,sizeof(token));
@@ -243,7 +243,7 @@ void NPC_WarpWarpCharacter( int warpnpcindex, int char_index )
 		  int of=CHAR_getInt(char_index, CHAR_FLOOR);
 		  int fd=CHAR_getWorkInt( char_index, CHAR_WORKFD);
 		  int eqen=getEqNoEnemy(fd);
-	  		if (eqen<200) {
+			if (eqen<200) {
 			  if (eqen>=120) {
 				if ((ff==100)||(ff==200)||(ff==300)||(ff==400)||(ff==500)) {
 				  if ((of!=100)&&(of!=200)&&(of!=300)&&(of!=400)&&(of!=500)) {
@@ -293,9 +293,9 @@ void NPC_WarpWarpCharacter( int warpnpcindex, int char_index )
 				}
 			}
 			CHAR_setWorkInt(char_index, CHAR_WORKSTAKEFLAG, 0);
-#ifdef _FIX_GAMBLENUM		
+#ifdef _FIX_GAMBLENUM
 			if(CHAR_getInt(char_index, CHAR_GAMBLENUM) < 0)
-				CHAR_setInt(char_index, CHAR_GAMBLENUM, 0);			
+				CHAR_setInt(char_index, CHAR_GAMBLENUM, 0);
 #endif
 		}
 #endif
@@ -349,7 +349,6 @@ int NPC_WarpSearchByPosition( int fl , int x, int y)
     }
     return -1;
 }
-
 
 int NPC_TimeWarpCheck(int meindex,char *buf,int mode)
 {

@@ -12,7 +12,6 @@
 
 #ifdef _JZ_NEWSCRIPT_LUA
 
-
 int NPC_Lua_SQL_Push(lua_State *_NLL)
 {
 	CheckEx(_NLL, 1);
@@ -22,7 +21,6 @@ int NPC_Lua_SQL_Push(lua_State *_NLL)
 	_SQLSTR = lua_tostring(_NLL, 1);
 	sasql_LUASQL(_SQLSTR,-1,"NULL","NULL",-1,-1,"NULL");
 }
-
 
 int NPC_Lua_SQL_PushPop(lua_State *_NLL)
 {
@@ -87,7 +85,6 @@ int NPC_Lua_SQL_FetchRow(lua_State *_NLL)
 	int npcindex,char_index;
 	char* sqlstr,*function,*filepath,*msg;
 
-
 	if(lua_isnil((_NLL), (3))){
 		filepath = "";
 	}else{
@@ -106,7 +103,6 @@ int NPC_Lua_SQL_FreeResult(lua_State *_NLL)
 	CheckEx(_NLL,5);
 	int npcindex,char_index;
 	char* sqlstr,*function,*filepath,*msg;
-
 
 	if(lua_isnil((_NLL), (3))){
 		filepath = "";

@@ -1,13 +1,12 @@
 #include "version.h"
 /*----------  Shan (BEGIN) ----------*/
 /*---------  AD 2001/05/28  ---------*/
-// 
-//            家族医疗 
-// 
+//
+//            家族医疗
+//
 /*----------   Shan(END)   ----------*/
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "object.h"
 #include "char_base.h"
@@ -16,7 +15,7 @@
 #include "npcutil.h"
 #include "item.h"
 #include "readmap.h"
-  
+
 #define RANGE 2
 void NPC_FmHealerSpeak( int index, int talker);
 void NPC_FmHealerAllHeal( int talker );
@@ -43,15 +42,15 @@ void NPC_FmHealerTalked( int meindex , int talker , char *msg ,int color )
     getDelimitedField( npcarg, "|", 1, token,sizeof( token));
     msgNo  = atoi( token );
 
-    if( CHAR_getInt( talker , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )	
+    if( CHAR_getInt( talker , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
         return;
 
-    if( NPC_Util_isFaceToFace( talker, meindex , 2 ) == FALSE ) 
+    if( NPC_Util_isFaceToFace( talker, meindex , 2 ) == FALSE )
     {
-    	if( NPC_Util_isFaceToFace( talker, meindex , 1 ) == FALSE ) 
-        	return;
+	if( NPC_Util_isFaceToFace( talker, meindex , 1 ) == FALSE )
+		return;
     }
-     
+
     //if( CHAR_getInt(meindex, CHAR_FLOOR) != CHAR_getWorkInt(talker, CHAR_WORKFMFLOOR)){
         //print("\n npc floor->%d player floor->%d",CHAR_getInt(meindex, CHAR_FLOOR),
         //       CHAR_getWorkInt(talker, CHAR_WORKFMFLOOR));
@@ -59,7 +58,7 @@ void NPC_FmHealerTalked( int meindex , int talker , char *msg ,int color )
     //             "抱歉！你不是本家族人员，无法帮你回复。",CHAR_COLORWHITE);
     //    return;
     //}
-     
+
     if( (CHAR_getWorkInt( talker, CHAR_WORKPARTYMODE) == 0)
 	|| (CHAR_getWorkInt( talker, CHAR_WORKPARTYMODE) == 2)){
 	NPC_FmHealerAllHeal( talker);
@@ -68,20 +67,20 @@ void NPC_FmHealerTalked( int meindex , int talker , char *msg ,int color )
 		    "已经全部回复。请小心自己的身体唷！",CHAR_COLORWHITE);
 	}else if(msgNo == 2){
 	    CHAR_talkToCli( talker, meindex,
-	       	   "由於你是本家族人员，请让我帮你回复吧！",CHAR_COLORWHITE);
+		   "由於你是本家族人员，请让我帮你回复吧！",CHAR_COLORWHITE);
 	}
     }else{
 	int i = 0;
 	int otherindex;
 	for( i=0 ; i < getPartyNum(talker  ) ; i++){
 	    otherindex = CHAR_getWorkInt( talker, CHAR_WORKPARTYINDEX1 + i);
-   	    if(otherindex != -1){
-	    	NPC_FmHealerAllHeal( otherindex);
+	    if(otherindex != -1){
+		NPC_FmHealerAllHeal( otherindex);
 		if(msgNo == 1){
                     CHAR_talkToCli( otherindex, meindex,
-		       	"已经全部回复。请小心自己的身体唷！",CHAR_COLORWHITE);
+			"已经全部回复。请小心自己的身体唷！",CHAR_COLORWHITE);
 		}else if(msgNo == 2){
-		    CHAR_talkToCli( otherindex, meindex, 
+		    CHAR_talkToCli( otherindex, meindex,
 			"由於你是本家族人员，请让我帮你回复吧！",CHAR_COLORWHITE);
 		}
             }
@@ -93,9 +92,9 @@ void NPC_FmHealerAllHeal( int talker )
 {
     int i;
     int petindex;
-    char petsend[3];	
+    char petsend[3];
     char msgbuf[5];
-	
+
     CHAR_setInt( talker , CHAR_HP ,CHAR_getWorkInt( talker, CHAR_WORKMAXHP ) );
     CHAR_setInt( talker , CHAR_MP ,CHAR_getWorkInt( talker, CHAR_WORKMAXMP ) );
 
@@ -112,7 +111,7 @@ void NPC_FmHealerAllHeal( int talker )
 	sprintf( petsend, "K%d", i );
 	CHAR_sendStatusString( talker , petsend );
     }
-	
+
     if(CHAR_getWorkInt( talker, CHAR_WORKPARTYMODE) != CHAR_PARTY_NONE ){
 	int topartyarray = -1;
 	int oyaindex = CHAR_getWorkInt( talker, CHAR_WORKPARTYINDEX1);

@@ -119,11 +119,11 @@ void NPC_DoormanTalked( int meindex , int talkerindex , char *msg ,
             if( now_g < g ){
                 snprintf( msg , sizeof( msg ) ,
                           "打开门 %d的金子是必要的。", g );
-            	CHAR_talkToCli( talkerindex, meindex , msg, CHAR_COLORWHITE );
+		CHAR_talkToCli( talkerindex, meindex , msg, CHAR_COLORWHITE );
             } else {
                 snprintf( msg , sizeof( msg ),
                           "%d 收到金子了。现在就来开门。", g );
-            	CHAR_talkToCli( talkerindex, meindex , msg, CHAR_COLORWHITE );
+		CHAR_talkToCli( talkerindex, meindex , msg, CHAR_COLORWHITE );
 
                 /* 云嗯毛必永玄 */
                 now_g -= g;
@@ -161,7 +161,7 @@ void NPC_DoormanTalked( int meindex , int talkerindex , char *msg ,
 		int maxnum, i, iNum;
 
 	    if( !getDelimitedField( arg, "|", 2, szBuf, sizeof( szBuf ) ))
-    	    return;
+	    return;
 
 		/* 譬屯月白夫失午    谛醒 */
 		if( sscanf( szBuf, "%d:%d", &checkfloor, &maxnum ) != 2 ){
@@ -177,11 +177,11 @@ void NPC_DoormanTalked( int meindex , int talkerindex , char *msg ,
 			iNum++;
 		}
 	    if( !getDelimitedField( arg, "|", 5, szNg, sizeof( szNg ))){
-   			strcpy( szNg, "。。。。" );	/* 凤伞卅仄及本伉白 */
+			strcpy( szNg, "。。。。" );	/* 凤伞卅仄及本伉白 */
 		}
-    	if( !getDelimitedField( arg, "|", 4, szOk, sizeof( szOk ))){
-   			strcpy( szOk, "开门吧。。。" );	/* 凤伞丐曰及本伉白 */
-   		}
+	if( !getDelimitedField( arg, "|", 4, szOk, sizeof( szOk ))){
+			strcpy( szOk, "开门吧。。。" );	/* 凤伞丐曰及本伉白 */
+		}
 
 		if( iNum >= maxnum ){
 			/*     毛译尹化中月桦宁 */

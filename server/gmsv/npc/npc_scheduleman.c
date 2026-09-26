@@ -81,7 +81,7 @@ BOOL NPC_SchedulemanInit( int meindex )
   interval = NPC_Util_GetNumFromStrWithDelim(argstr, "challengetimeout");
   if ((interval<60) || (interval>60*60)) interval=20*60;
   CHAR_setWorkInt(meindex, NPC_WORK_CHALLENGETIMEOUT, interval);
-  
+
   interval = NPC_Util_GetNumFromStrWithDelim(argstr, "settingtimeout");
   if ((interval<10) || (interval>60*60)) interval=60;
   CHAR_setWorkInt(meindex, NPC_WORK_SETTINGTIMEOUT, interval);
@@ -89,7 +89,6 @@ BOOL NPC_SchedulemanInit( int meindex )
   interval = NPC_Util_GetNumFromStrWithDelim(argstr, "fightinterval");
   if ((interval<5) || (interval>60)) interval = 50;
   CHAR_setWorkInt(meindex, NPC_WORK_FIGHTINTERVAL, interval);
-
 
   NPC_LoadPKSchedule(meindex);
 
@@ -108,8 +107,8 @@ void NPC_SchedulemanTalked(int meindex, int talkerindex, char *msg, int color)
   CHAR_setWorkInt(talkerindex, CHAR_WORK_PAGE, 0);
   NPC_LIST_gendata(meindex, talkerindex, 0, buf, sizeof(buf));
   GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULELIST,
-        		WINDOW_BUTTONTYPE_NEXT | WINDOW_BUTTONTYPE_CANCEL,
-        		CHAR_WINDOWTYPE_SCHEDULEMAN_START,
+			WINDOW_BUTTONTYPE_NEXT | WINDOW_BUTTONTYPE_CANCEL,
+			CHAR_WINDOWTYPE_SCHEDULEMAN_START,
 			CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 			buf);
 }
@@ -152,19 +151,19 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
       // Send WN
       NPC_LIST_gendata(meindex, talkerindex, page, buf, sizeof(buf));
       GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULELIST,
-        		   buttontype,
-        		   CHAR_WINDOWTYPE_SCHEDULEMAN_START,
+			   buttontype,
+			   CHAR_WINDOWTYPE_SCHEDULEMAN_START,
 			   CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 			   buf);
       break;
     case WINDOW_BUTTONTYPE_OK:
 
-#ifdef _FMVER21    
+#ifdef _FMVER21
       if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_LEADER) &&
 #else
       if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_MEMBER) &&
-#endif     
-		  
+#endif
+
         (CHAR_getWorkInt(talkerindex, CHAR_WORKFMSETUPFLAG)==1)) {
         // 只有已成立家族的族长可以使用进一步的功能 (设定、更改、同意)
 
@@ -185,12 +184,12 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
                 CHAR_talkToCli(talkerindex, meindex,
                   "你已经安排过战斗，将机会留给其他家族吧。", CHAR_COLORWHITE);
               } else {
-				
+
                 fmpks[fmpks_pos+i].host_index=CHAR_getWorkInt(talkerindex, CHAR_WORKFMINDEXI);
                 strcpy(fmpks[fmpks_pos+i].host_name,makeStringFromEscaped(CHAR_getChar(talkerindex, CHAR_FMNAME)));
-                
+
 //                print("CHAR_FMNAME: %s\n",fmpks[fmpks_pos+i].host_name);
-                
+
                 fmpks[fmpks_pos+i].guest_index=-1;
                 strcpy(fmpks[fmpks_pos+i].guest_name,"");
                 fmpks[fmpks_pos+i].prepare_time=5;	// default
@@ -207,8 +206,8 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
                 if (gFamilyNumTotal>MAXFAMILYINONEWINDOW)
                   buttontype |= WINDOW_BUTTONTYPE_NEXT;
                 GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULESELECTFAMILY,
-        			   buttontype,
-        			   CHAR_WINDOWTYPE_SCHEDULEMAN_SELECT,
+				   buttontype,
+				   CHAR_WINDOWTYPE_SCHEDULEMAN_SELECT,
 				   CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 				   buf);
 
@@ -225,33 +224,33 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
                   CHAR_setWorkInt(talkerindex, CHAR_WORK_DUELTIME, dt);
                   NPC_DETAIL_gendata(meindex, buf, sizeof(buf), dt);
                   GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULEDETAIL,
-        	  		   WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_CANCEL,
-        	 		   CHAR_WINDOWTYPE_SCHEDULEMAN_DETAIL,
+				   WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_CANCEL,
+				   CHAR_WINDOWTYPE_SCHEDULEMAN_DETAIL,
 				   CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 				   buf);
                 } else if (tkfmindex==fmpks[fmpks_pos+i].guest_index) {
 					fmpks[fmpks_pos+i].flag=FMPKS_FLAG_SCHEDULED;
-  					page=CHAR_getWorkInt(talkerindex, CHAR_WORK_PAGE);
-   					buttontype=WINDOW_BUTTONTYPE_NEXT | WINDOW_BUTTONTYPE_PREV | WINDOW_BUTTONTYPE_OK;
+					page=CHAR_getWorkInt(talkerindex, CHAR_WORK_PAGE);
+					buttontype=WINDOW_BUTTONTYPE_NEXT | WINDOW_BUTTONTYPE_PREV | WINDOW_BUTTONTYPE_OK;
 					if (page<0) {
 						page=0;
 						buttontype=WINDOW_BUTTONTYPE_NEXT | WINDOW_BUTTONTYPE_OK;
 					}
 					if (page>MAX_SCHEDULE-MAXSCHEDULEINONEWINDOW) {
- 						page=MAX_SCHEDULE-MAXSCHEDULEINONEWINDOW;
+						page=MAX_SCHEDULE-MAXSCHEDULEINONEWINDOW;
 						buttontype=WINDOW_BUTTONTYPE_PREV | WINDOW_BUTTONTYPE_OK;
-					} 
+					}
                     CHAR_talkToCli(talkerindex, meindex,
 						"你的家族已经接受挑战。", CHAR_COLORWHITE);
                     // 重新送出 list
-      				NPC_LIST_gendata(meindex, talkerindex, page, buf, sizeof(buf));
+				NPC_LIST_gendata(meindex, talkerindex, page, buf, sizeof(buf));
 					GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULELIST,
-        			   buttontype,
-        			   CHAR_WINDOWTYPE_SCHEDULEMAN_START,
+				   buttontype,
+				   CHAR_WINDOWTYPE_SCHEDULEMAN_START,
 				    CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 				    buf);
 				}
-              } 
+              }
               break;
             case FMPKS_FLAG_SETTING:
               { // 主队族长可以重设条件
@@ -264,12 +263,12 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
                   CHAR_setWorkInt(talkerindex, CHAR_WORK_DUELTIME, dt);
                   NPC_DETAIL_gendata(meindex, buf, sizeof(buf), dt);
                   GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULEDETAIL,
-        	  		   WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_CANCEL,
-        	 		   CHAR_WINDOWTYPE_SCHEDULEMAN_DETAIL,
+				   WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_CANCEL,
+				   CHAR_WINDOWTYPE_SCHEDULEMAN_DETAIL,
 				   CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 				   buf);
 				}
-              }    
+              }
               // WON ADD 修正家族pk场的约战问题
 			  break;
 			}
@@ -278,11 +277,11 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
         }
         NPC_SavePKSchedule(meindex);
 	} else {
-#ifdef _FMVER21      
+#ifdef _FMVER21
         if (CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)!=FMMEMBER_LEADER) {
 #else
         if (CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)!=FMMEMBER_MEMBER) {
-#endif         
+#endif
           CHAR_talkToCli(talkerindex, meindex,
             "只有族长才能预约家族ＰＫ喔。", CHAR_COLORWHITE);
 		}else if (CHAR_getWorkInt(talkerindex, CHAR_WORKFMSETUPFLAG)!=1) {
@@ -313,18 +312,18 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
       // Send WN
       NPC_SELECT_gendata(meindex, talkerindex, page, buf, sizeof(buf));
       GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULESELECTFAMILY,
-        		   buttontype,
-        		   CHAR_WINDOWTYPE_SCHEDULEMAN_SELECT,
+			   buttontype,
+			   CHAR_WINDOWTYPE_SCHEDULEMAN_SELECT,
 			   CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 			   buf);
       break;
     case WINDOW_BUTTONTYPE_OK:
 
-#ifdef _FMVER21    
+#ifdef _FMVER21
       if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_LEADER) &&
 #else
       if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_MEMBER) &&
-#endif       
+#endif
           (CHAR_getWorkInt(talkerindex, CHAR_WORKFMSETUPFLAG)==1)) {
 
         dt=CHAR_getWorkInt(talkerindex, CHAR_WORK_DUELTIME);
@@ -343,8 +342,8 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
                     // 送出 detail 编辑窗
                     NPC_DETAIL_gendata(meindex, buf, sizeof(buf), dt);
                     GmsvServer_WN_send(fd, WINDOW_MESSAGETYPE_PKSCHEDULEDETAIL,
-        	  		   WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_CANCEL,
-        	 		   CHAR_WINDOWTYPE_SCHEDULEMAN_DETAIL,
+				   WINDOW_BUTTONTYPE_OK | WINDOW_BUTTONTYPE_CANCEL,
+				   CHAR_WINDOWTYPE_SCHEDULEMAN_DETAIL,
 				   CHAR_getWorkInt(meindex, CHAR_WORKOBJINDEX),
 				   buf);
                   } else fmpks[fmpks_pos+i].flag=FMPKS_FLAG_NONE;
@@ -359,11 +358,11 @@ void NPC_SchedulemanWindowTalked(int meindex, int talkerindex,
     break;
   case CHAR_WINDOWTYPE_SCHEDULEMAN_DETAIL:
 
-#ifdef _FMVER21  
+#ifdef _FMVER21
     if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_LEADER) &&
 #else
     if ((CHAR_getInt(talkerindex,CHAR_FMLEADERFLAG)==FMMEMBER_MEMBER) &&
-#endif    
+#endif
         (CHAR_getWorkInt(talkerindex, CHAR_WORKFMSETUPFLAG)==1)) {
 
       dt=CHAR_getWorkInt(talkerindex, CHAR_WORK_DUELTIME);
@@ -455,7 +454,7 @@ void NPC_RemoveExpiredBattle(int meindex)
     expired=i;
     i++;
   }
-  
+
   // 如果第一项排程与目前时间差异太大, 则整个排程全部无效
   if (expired==-1) {
     for (i=0; i<3; i++) {	  // tolerance 是 3 个 fight interval
@@ -497,7 +496,7 @@ void NPC_RemoveExpiredBattle(int meindex)
       }
       fmpks[fmpks_pos+i].dueltime=d+h;
     }
-    
+
     // 检查第一项排程, 如果不在排定的状况下则设为『无排程』
     if (fmpks[fmpks_pos].flag < FMPKS_FLAG_SCHEDULED) {
       fmpks[fmpks_pos].flag = FMPKS_FLAG_NONE;
@@ -506,7 +505,7 @@ void NPC_RemoveExpiredBattle(int meindex)
       fmpks[fmpks_pos+i].guest_index=-1;
       strcpy(fmpks[fmpks_pos+i].guest_name,"");
     }
-    
+
   }
 }
 
@@ -649,7 +648,7 @@ void NPC_LoadPKSchedule(int meindex)
   fmpks[fmpks_pos].max_player=-1;
   fmpks[fmpks_pos].flag=-1;
   fmpks[fmpks_pos].win=-1;
-  
+
   NPC_RemoveExpiredBattle(meindex);
 }
 
@@ -664,27 +663,27 @@ void NPC_SavePKSchedule(int meindex)
            SCHEDULEFILEDIR, CHAR_getInt(meindex, CHAR_FLOOR),
            CHAR_getInt(meindex, CHAR_X),
            CHAR_getInt(meindex, CHAR_Y) );
-           
+
   f=fopen(filename, "w");	// create new
 
   for( i = 0; i < MAX_SCHEDULE; i++ ){
     makeEscapeString(fmpks[fmpks_pos+i].host_name,n1,sizeof(n1));
     makeEscapeString(fmpks[fmpks_pos+i].guest_name,n2,sizeof(n2));
-/*  
+/*
     print("SavePK:%s %s %s %s\n",fmpks[fmpks_pos+i].host_name,n1,
                                  fmpks[fmpks_pos+i].guest_name,n2);
 */
     sprintf(tmp, "%d|%d|%s|%d|%s|%d|%d|%d|%d\n",
-    	fmpks[fmpks_pos+i].dueltime,
-    	fmpks[fmpks_pos+i].host_index,
-    	n1,
-    	fmpks[fmpks_pos+i].guest_index,
-    	n2,
-    	fmpks[fmpks_pos+i].prepare_time,
-    	fmpks[fmpks_pos+i].max_player,
-    	fmpks[fmpks_pos+i].flag,
-    	fmpks[fmpks_pos+i].win);
-  
+	fmpks[fmpks_pos+i].dueltime,
+	fmpks[fmpks_pos+i].host_index,
+	n1,
+	fmpks[fmpks_pos+i].guest_index,
+	n2,
+	fmpks[fmpks_pos+i].prepare_time,
+	fmpks[fmpks_pos+i].max_player,
+	fmpks[fmpks_pos+i].flag,
+	fmpks[fmpks_pos+i].win);
+
     fwrite(tmp, strlen(tmp), 1, f);
   }
   fclose(f);
@@ -706,7 +705,7 @@ void NPC_LIST_gendata(int meindex, int talkerindex, int page, char *buf, int siz
   // 记录目前的时间
   memcpy( &tm1, localtime( (time_t *)&NowTime.tv_sec), sizeof( tm1));
   sprintf(buf, "%d|", tm1.tm_hour*100 + tm1.tm_min);
-  
+
   for (i=page; i<MAX_SCHEDULE && i<page+4; i++) {
     if (i!=page) strcat(buf, "|");
     makeEscapeString(fmpks[fmpks_pos+i].host_name,n1,sizeof(n1));
@@ -715,17 +714,17 @@ void NPC_LIST_gendata(int meindex, int talkerindex, int page, char *buf, int siz
     switch (fmpks[fmpks_pos+i].flag) {
     case FMPKS_FLAG_CHALLENGE:
       if (tkfmindex==fmpks[fmpks_pos+i].host_index) {
-#ifdef _FMVER21      
+#ifdef _FMVER21
         if (tkfmleader==FMMEMBER_LEADER) flag=FLAG_MODIFY; else flag=FLAG_CONFIRM;
 #else
         if (tkfmleader==1) flag=FLAG_MODIFY; else flag=FLAG_CONFIRM;
-#endif        
+#endif
       } else if (tkfmindex==fmpks[fmpks_pos+i].guest_index) {
-#ifdef _FMVER21      
+#ifdef _FMVER21
         if (tkfmleader==FMMEMBER_LEADER) flag=FLAG_ACCEPT; else flag=FLAG_CONFIRM;
 #else
         if (tkfmleader==1) flag=FLAG_ACCEPT; else flag=FLAG_CONFIRM;
-#endif        
+#endif
       } else flag=FLAG_CONFIRM;
       break;
     case FMPKS_FLAG_SETTING:
@@ -743,13 +742,13 @@ void NPC_LIST_gendata(int meindex, int talkerindex, int page, char *buf, int siz
     }
 
     sprintf(tmp, "%d|%s|%s|%d|%d|%d|%d",
-    	fmpks[fmpks_pos+i].dueltime,
-    	n1,
-    	n2,
-    	fmpks[fmpks_pos+i].prepare_time,
-    	fmpks[fmpks_pos+i].max_player,
-    	flag,
-    	fmpks[fmpks_pos+i].win);
+	fmpks[fmpks_pos+i].dueltime,
+	n1,
+	n2,
+	fmpks[fmpks_pos+i].prepare_time,
+	fmpks[fmpks_pos+i].max_player,
+	flag,
+	fmpks[fmpks_pos+i].win);
     if (strlen(buf)+strlen(tmp)<size) {
       strcat(buf, tmp);
     } else {
@@ -766,7 +765,7 @@ void NPC_SELECT_gendata(int meindex, int talkerindex, int page, char *buf, int s
   char fmindex[256];
   char fmname[256];
   int tkfmindex = CHAR_getWorkInt(talkerindex, CHAR_WORKFMINDEXI);
-  
+
   memset(buf, 0, size);		// clear buffer
   strcpy(buf,"8");
   for (i=0,j=0; i<MAXFAMILYINONEWINDOW; i++,j++) {
@@ -792,9 +791,9 @@ void NPC_DETAIL_gendata(int meindex, char *buf, int size, int dueltime)
   char n1[256], n2[256];
   int i=0;
   int fmpks_pos = CHAR_getWorkInt(meindex, NPC_WORK_ID)*MAX_SCHEDULE;
-  
+
 //  print("DETAIL: dueltime=%d\n",dueltime);
-  
+
   while ((i<MAX_SCHEDULE)&&(fmpks[fmpks_pos+i].dueltime!=dueltime))
 	  i++;
 
@@ -802,12 +801,12 @@ void NPC_DETAIL_gendata(int meindex, char *buf, int size, int dueltime)
     makeEscapeString(fmpks[fmpks_pos+i].host_name,n1,sizeof(n1));
     makeEscapeString(fmpks[fmpks_pos+i].guest_name,n2,sizeof(n2));
     sprintf(buf, "%d|%s|%s|%d|%d|%d",
-    	fmpks[fmpks_pos+i].dueltime,
-    	n1,
-    	n2,
-    	fmpks[fmpks_pos+i].prepare_time,
-    	fmpks[fmpks_pos+i].max_player,
-    	fmpks[fmpks_pos+i].win);
+	fmpks[fmpks_pos+i].dueltime,
+	n1,
+	n2,
+	fmpks[fmpks_pos+i].prepare_time,
+	fmpks[fmpks_pos+i].max_player,
+	fmpks[fmpks_pos+i].win);
   } else {
     strcpy(buf, "-1|??|??|0|0");
     print("scheduleman: gen DETAIL error (%d).",dueltime);

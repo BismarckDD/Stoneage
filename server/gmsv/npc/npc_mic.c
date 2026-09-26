@@ -23,36 +23,32 @@ enum {
 	CHAR_WORK_FMFL = CHAR_NPCWORKINT9,
 };
 
-
 BOOL NPC_MicInit( int meindex )
 {
 	int		i;
 	int	 	arg_param[8];
 	char 	argstr[256];
 	char	buf[64];
-	
-	
+
 	NPC_Util_GetArgStr( meindex, argstr, sizeof(argstr));
 
-
     if( strstr(argstr, "FREE")!=NULL){
-   		CHAR_setWorkInt(meindex,CHAR_WORK_TYPE,1);
-   	}
+		CHAR_setWorkInt(meindex,CHAR_WORK_TYPE,1);
+	}
     if( strstr(argstr, "WIND")!=NULL){
-   		CHAR_setWorkInt(meindex,CHAR_WORK_WIND,1);
-   	}
-   	
+		CHAR_setWorkInt(meindex,CHAR_WORK_WIND,1);
+	}
 
 	if( strstr( argstr , "|" ) != NULL){
 		for( i = 1; i < 9; i ++ ) {
 		    if( getDelimitedField(argstr, "|" , i , buf,sizeof(buf) )
-	    		== FALSE ) 
-	    	    {
-	    		printf( "NPC_MIC:省略参数\n");
-	    		arg_param[i-1] = 0;
-	    		continue;
-	    	    }
-	   	    arg_param[i-1] = atoi(buf);
+			== FALSE )
+		    {
+			printf( "NPC_MIC:省略参数\n");
+			arg_param[i-1] = 0;
+			continue;
+		    }
+		    arg_param[i-1] = atoi(buf);
 		}
 		CHAR_setWorkInt( meindex, CHAR_WORK_FLOOR, arg_param[0]);
 		CHAR_setWorkInt( meindex, CHAR_WORK_LX, min( arg_param[1],arg_param[3]));
@@ -60,7 +56,7 @@ BOOL NPC_MicInit( int meindex )
 		CHAR_setWorkInt( meindex, CHAR_WORK_RX, max( arg_param[1],arg_param[3]));
 		CHAR_setWorkInt( meindex, CHAR_WORK_RY, max( arg_param[2],arg_param[4]));
 		CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_TYPEMIC);
-		
+
 		CHAR_setWorkInt( meindex, CHAR_WORK_FMFL, arg_param[7]);
 		return TRUE;
 
@@ -77,38 +73,38 @@ void NPC_MicTalked( int meindex , int talkerindex , char *msg ,int color )
 {
 
 	int	i;
-    	int     playernum;
+	int     playernum;
 	int	x,y;
 	char	message[4096];
-	char	buf[2048];	
+	char	buf[2048];
 
-   	if( CHAR_getInt(talkerindex,CHAR_WHICHTYPE) != CHAR_TYPEPLAYER) return;
+	if( CHAR_getInt(talkerindex,CHAR_WHICHTYPE) != CHAR_TYPEPLAYER) return;
 	if(CHAR_getWorkInt(meindex,CHAR_WORK_TYPE) == 0){
 		if(NPC_Util_isFaceToChara(talkerindex,meindex,1 ) ==FALSE) return;
 	}
-		
+
 	snprintf( buf, sizeof( buf), "%s\n%s",
 				CHAR_getChar( talkerindex, CHAR_NAME),
 				msg);
-	
+
 	// Robin 0621 族长广播
 	print(" MIC_FL:%d ", CHAR_getWorkInt( meindex, CHAR_WORK_FMFL ));
 	if( CHAR_getWorkInt( meindex, CHAR_WORK_FMFL ) != 0 )
 	{
-#ifdef _FMVER21	
-		if( CHAR_getInt( talkerindex, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER) 
+#ifdef _FMVER21
+		if( CHAR_getInt( talkerindex, CHAR_FMLEADERFLAG ) == FMMEMBER_LEADER)
 #else
-		if( CHAR_getInt( talkerindex, CHAR_FMLEADERFLAG ) == FMMEMBER_MEMBER) 
-#endif		
+		if( CHAR_getInt( talkerindex, CHAR_FMLEADERFLAG ) == FMMEMBER_MEMBER)
+#endif
 		    // && ( CHAR_getWorkInt( talkerindex, CHAR_WORKFMFLOOR) == CHAR_getWorkInt( meindex, CHAR_WORK_FLOOR ) ) )
 		{
 			print(" FMLeaderTalk_send:%s,%d,%d,%s ",
 				CHAR_getChar( talkerindex, CHAR_FMNAME), CHAR_getInt( talkerindex, CHAR_FMINDEX),
 				CHAR_getWorkInt( talkerindex, CHAR_WORKFMINDEXI), buf);
-			
+
 			sprintf(message, "[族长广播]%s", buf);
-			SaacClient_ACFMAnnounce_send( acfd, 
-						CHAR_getChar( talkerindex, CHAR_FMNAME), 
+			SaacClient_ACFMAnnounce_send( acfd,
+						CHAR_getChar( talkerindex, CHAR_FMNAME),
 						CHAR_getInt( talkerindex, CHAR_FMINDEX),
 						CHAR_getWorkInt( talkerindex, CHAR_WORKFMINDEXI),
 						message,
@@ -116,9 +112,9 @@ void NPC_MicTalked( int meindex , int talkerindex , char *msg ,int color )
 					);
 			return;
 		}
-	    	
+
 	}
-	    	
+
 	makeEscapeString( buf, message, sizeof(buf));
 
 	playernum = CHAR_getPlayerMaxNum();
@@ -126,14 +122,14 @@ void NPC_MicTalked( int meindex , int talkerindex , char *msg ,int color )
 	for( i = 0; i < playernum; i ++ ) {
 		BOOL flg = FALSE;
 	        if( CHAR_getCharUse(i) == FALSE ) continue;
-            	if( CHAR_getInt( i, CHAR_WHICHTYPE) != CHAR_TYPEPLAYER ) continue;
+		if( CHAR_getInt( i, CHAR_WHICHTYPE) != CHAR_TYPEPLAYER ) continue;
 		if( CHAR_getInt( i, CHAR_FLOOR) != CHAR_getWorkInt( meindex, CHAR_WORK_FLOOR) ){
 			continue;
 		}
 		if( CHAR_getWorkInt( meindex, CHAR_WORK_MODE) == 0 ) {
 			x = CHAR_getInt( i, CHAR_X);
 			y = CHAR_getInt( i, CHAR_Y);
-			if( x >= CHAR_getWorkInt( meindex, CHAR_WORK_LX) && 
+			if( x >= CHAR_getWorkInt( meindex, CHAR_WORK_LX) &&
 				x <= CHAR_getWorkInt( meindex, CHAR_WORK_RX) &&
 				y >= CHAR_getWorkInt( meindex, CHAR_WORK_LY) &&
 				y <= CHAR_getWorkInt( meindex, CHAR_WORK_RY)){
@@ -145,13 +141,13 @@ void NPC_MicTalked( int meindex , int talkerindex , char *msg ,int color )
 		if( flg) {
 			CHAR_talkToCli( i, talkerindex, msg, CHAR_COLORYELLOW);
 			if( CHAR_getWorkInt( meindex, CHAR_WORK_WIND) == 1 ) {
-				if( CHAR_getWorkInt( i, CHAR_WORKBATTLEMODE) 
-					== BATTLE_CHARMODE_NONE) 
+				if( CHAR_getWorkInt( i, CHAR_WORKBATTLEMODE)
+					== BATTLE_CHARMODE_NONE)
 				{
 					int fd = getfdFromCharaIndex( i);
 					if( fd != -1 ) {
 						GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
-										WINDOW_BUTTONTYPE_OK, 
+										WINDOW_BUTTONTYPE_OK,
 										CHAR_WINDOWTYPE_MICMESSAGE,
 										CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 										message);

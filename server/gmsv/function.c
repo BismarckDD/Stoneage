@@ -56,7 +56,6 @@
 #include "npc_fmpkman.h"
 #include "npc_fmwarpman.h"
 
-
 // Arminius 7.7 Airplane
 #include "npc_airplane.h"
 
@@ -69,7 +68,6 @@
 // Robin 0725
 #include "npc_fmletter.h"
 #include "npc_riderman.h"
-
 
 #ifdef _GAMBLE_BANK
 #include "npc_gamblebank.h"

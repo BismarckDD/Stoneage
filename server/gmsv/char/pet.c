@@ -59,9 +59,9 @@ int PET_DEBUG_initPetOne(int char_index) {
 }
 
 static int _PET_dropPet(int char_index,   // 当前角色
-                        int havepetindex, // 
-                        int tofl,         // 
-                        int tox,          // 
+                        int havepetindex, //
+                        int tofl,         //
+                        int tox,          //
                         int toy) {        //
   char szPet[128];
   int dirx[9], diry[9];
@@ -254,7 +254,6 @@ int PET_dropPetFLXY(int char_index, int havepetindex, int fl, int x, int y) {
   return _PET_dropPet(char_index, havepetindex, fl, x, y);
 }
 
-
 const char *cInitTable[CHAR_FUNCTABLENUM] = {
     "",              /* CHAR_INITFUNC */
     "",              /* CHAR_WALKPREFUNC */
@@ -411,8 +410,6 @@ int PET_createPetFromCharaIndex(int char_index, int enemy_index) {
   return newindex;
 }
 
-
-
 BOOL PET_SelectBattleEntryPet(int char_index, int petarray) {
   int pindex;
   if (!CHAR_CHECKINDEX(char_index))
@@ -566,7 +563,6 @@ int PET_dropPetFollow(int char_index, int havepetindex, int tofl, int tox,
          CHAR_getChar(petindex, CHAR_UNIQUECODE));
   return 1;
 }
-
 
 /**
  * @Param work: output 参数

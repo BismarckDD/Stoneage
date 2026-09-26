@@ -1478,8 +1478,6 @@ int NPC_Lua_NLG_SetPetTransRange(lua_State *_NLL)
 
         CheckEx(_NLL, 3);
 
-
-
         int TM_X = (int)lua_tointeger(_NLL, 1);
 
         int TM_Y = (int)lua_tointeger(_NLL, 2);
@@ -1495,10 +1493,6 @@ int NPC_Lua_NLG_SetPetTransRange(lua_State *_NLL)
         LRetNull(_NLL);
 
 }
-
-
-
-
 
 int NPC_Lua_NLG_GetPetTransRange(lua_State *_NLL)
 

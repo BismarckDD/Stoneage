@@ -33,7 +33,6 @@
 #include "pet_skill.h"
 #include "readmap.h"
 
-
 struct MissionInfo missionlist[MAXMISSION];
 int mission_num = 0;
 struct MissionTable missiontable[MAXMISSIONTABLE];

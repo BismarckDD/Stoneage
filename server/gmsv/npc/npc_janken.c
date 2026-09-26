@@ -29,11 +29,10 @@ BOOL NPC_JankenInit( int meindex )
 
 	//正奶皿毛本永玄
     CHAR_setInt( meindex , CHAR_WHICHTYPE , CHAR_TYPEJANKEN );
-	
+
 	return TRUE;
 
 }
-
 
 BOOL NPC_JankenItemGet(int meindex,int talker, char *wl)
 {
@@ -52,8 +51,6 @@ BOOL NPC_JankenItemGet(int meindex,int talker, char *wl)
 	return TRUE;
 }
 
-
-
 /*********************************
 *   仄井仃日木凶凛及质
 *********************************/
@@ -64,18 +61,13 @@ void NPC_JankenTalked( int meindex , int talkerindex , char *szMes ,
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
 		return;
 	}
-	
+
 	/* ㄠ弘伉永玉动  及心 */
 	if( NPC_Util_CharDistance( talkerindex, meindex ) > 1) return;
 
 	NPC_Janken_selectWindow(meindex, talkerindex, 0);
 
-	
-	
-
 }
-
-
 
 /******************************
  *	公木冗木及质  卞坌仃月
@@ -89,11 +81,10 @@ static void NPC_Janken_selectWindow( int meindex, int talker, int num)
 	int buttontype=0;
 	int windowtype=0;
 	int windowno=0;
-   	char argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
-	
+	char argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
 
 	/*--它奶件玉它正奶皿丢永本□斥互云云中及匹燮卞涩烂--*/
-  	windowtype=WINDOW_MESSAGETYPE_MESSAGE;
+	windowtype=WINDOW_MESSAGETYPE_MESSAGE;
 
 	/*--涩烂白央奶伙毛  心  心--*/
 	if(NPC_Util_GetArgStr( meindex, argstr, sizeof(argstr))==NULL){
@@ -101,30 +92,28 @@ static void NPC_Janken_selectWindow( int meindex, int talker, int num)
 		return ;
 	}
 
-
 	switch( num)
 	{
 	  case 0:
 
-	  	/*-- 旦正□玄及丢永本□斥互  仃木壬巨仿□  憎 --*/
+		/*-- 旦正□玄及丢永本□斥互  仃木壬巨仿□  憎 --*/
 		if(NPC_Util_GetStrFromStrWithDelim( argstr, "MainMsg", token, sizeof( token))	== NULL)
 		{
 			print("Janken:MainMsg:%s", CHAR_getChar( meindex, CHAR_NAME));
 			return ;
 		}
 
-  		/*--蓟      --*/
-	  	buttontype = WINDOW_BUTTONTYPE_YESNO;
-	  	windowtype = WINDOW_MESSAGETYPE_MESSAGE;
-	  	windowno = CHAR_WINDOWTYPE_JANKEN_START; 
-	  	break;
-	
-	
+		/*--蓟      --*/
+		buttontype = WINDOW_BUTTONTYPE_YESNO;
+		windowtype = WINDOW_MESSAGETYPE_MESSAGE;
+		windowno = CHAR_WINDOWTYPE_JANKEN_START;
+		break;
+
 	case 1:
-		
+
 		//失奶  丞及民尼永弁
 		if(NPC_Util_GetStrFromStrWithDelim( argstr, "EntryItem", buf, sizeof( buf))!= NULL) {
-	
+
 			if(NPC_JankenEntryItemCheck(talker,buf) == FALSE)
 			{
 				NPC_Janken_selectWindow(meindex, talker, 3);
@@ -136,7 +125,6 @@ static void NPC_Janken_selectWindow( int meindex, int talker, int num)
 			}
 		}
 
-
 		/*--蓟      --*/
 		sprintf(token,"              剪刀石头布！！\n"
 			      "\n\n               《  石头  》"
@@ -146,7 +134,7 @@ static void NPC_Janken_selectWindow( int meindex, int talker, int num)
 
 		buttontype=WINDOW_BUTTONTYPE_NONE;
 		windowtype=WINDOW_MESSAGETYPE_SELECT;
-	  	windowno=CHAR_WINDOWTYPE_JANKEN_MAIN; 
+		windowno=CHAR_WINDOWTYPE_JANKEN_MAIN;
 	  break;
 
 	case 2:
@@ -158,42 +146,37 @@ static void NPC_Janken_selectWindow( int meindex, int talker, int num)
 				  "\n\n               《  布  》"
 		);
 
-	  	buttontype=WINDOW_BUTTONTYPE_NONE;
-	  	windowtype=WINDOW_MESSAGETYPE_SELECT;
- 		windowno=CHAR_WINDOWTYPE_JANKEN_MAIN; 
-	  	break;
+		buttontype=WINDOW_BUTTONTYPE_NONE;
+		windowtype=WINDOW_MESSAGETYPE_SELECT;
+		windowno=CHAR_WINDOWTYPE_JANKEN_MAIN;
+		break;
 
-  	case 3:
-	  	/*-- 旦正□玄及丢永本□斥互  仃木壬巨仿□  憎 --*/
+	case 3:
+		/*-- 旦正□玄及丢永本□斥互  仃木壬巨仿□  憎 --*/
 		NPC_Util_GetStrFromStrWithDelim( argstr, "NoItem", token, sizeof( token));
 
-	  	buttontype=WINDOW_BUTTONTYPE_OK;
-	  	windowtype=WINDOW_MESSAGETYPE_MESSAGE;
-  		windowno=CHAR_WINDOWTYPE_JANKEN_END; 
+		buttontype=WINDOW_BUTTONTYPE_OK;
+		windowtype=WINDOW_MESSAGETYPE_MESSAGE;
+		windowno=CHAR_WINDOWTYPE_JANKEN_END;
 
-  	break;
+	break;
 
 	}
 
-
 //	makeEscapeString( token, escapedname, sizeof(escapedname));
 	/*-仇仇匹霜耨允月--*/
-	GmsvServer_WN_send( fd, windowtype, 
-					buttontype, 
+	GmsvServer_WN_send( fd, windowtype,
+					buttontype,
 					windowno,
 					CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 					token);
 
-
-
 }
-
-
 
 /*********************************
 * 它奴件玉它丢永本□斥卞覆允月质
 *********************************/
-void NPC_JankenWindowTalked( int meindex, int talkerindex, 
+void NPC_JankenWindowTalked( int meindex, int talkerindex,
 								int seqno, int select, char *data)
 {
 	/* ㄠ弘伉永玉动  及心 */
@@ -201,12 +184,12 @@ void NPC_JankenWindowTalked( int meindex, int talkerindex,
 
 	switch( seqno){
 	  case CHAR_WINDOWTYPE_JANKEN_START:
-	
-	  	if(select==WINDOW_BUTTONTYPE_YES){
+
+		if(select==WINDOW_BUTTONTYPE_YES){
 			NPC_Janken_selectWindow(meindex, talkerindex, 1);
 		}
-		break;	
-	
+		break;
+
 	case CHAR_WINDOWTYPE_JANKEN_MAIN:
 		if (atoi(data) >= 3){
 			NPC_JnakenJudge(meindex,talkerindex,atoi(data) );
@@ -214,7 +197,6 @@ void NPC_JankenWindowTalked( int meindex, int talkerindex,
 		break;
 	}
 }
-
 
 /*
  *斥乓件弗件及  烂
@@ -228,8 +210,7 @@ void NPC_JnakenJudge(int meindex,int talker,int sel)
 	int shouhai = 0;
 	int fd = getfdFromCharaIndex( talker);
 	int fl=0,x=0,y=0;
-	
-	
+
 	if(sel == 3) player = 0; //弘□
 	if(sel == 5) player = 1; //民亦平
 	if(sel == 7) player = 2; //由□
@@ -244,7 +225,7 @@ void NPC_JnakenJudge(int meindex,int talker,int sel)
 				shouhai = 2;
 			}
 		break;
-		
+
 		case 1:
 			if(player == 0){
 				shouhai = 1;
@@ -252,7 +233,7 @@ void NPC_JnakenJudge(int meindex,int talker,int sel)
 				shouhai = 2;
 			}
 		break;
-		
+
 		case 2:
 			if(player == 1){
 				shouhai = 1;
@@ -267,7 +248,7 @@ void NPC_JnakenJudge(int meindex,int talker,int sel)
 		NPC_JankenItemGet( meindex, talker, "WinItem" );
 
 		 NPC_WarpPointGet(meindex, talker, &fl, &x, &y, 0);
-		
+
 		snprintf( token, sizeof( token ) ,
 						"              ～　结  果　～      \n\n"
 						"  %16s      %-16s\n"
@@ -301,31 +282,27 @@ void NPC_JnakenJudge(int meindex,int talker,int sel)
 			    CHAR_sendWatchEvent( CHAR_getWorkInt( talker, CHAR_WORKOBJINDEX),	CHAR_ACTSAD,NULL,0,TRUE);
 				CHAR_setWorkInt( talker, CHAR_WORKACTION, CHAR_ACTSAD);
 
-
 	}else{
 		//仇仇卞仁月午丐中仇
 		NPC_Janken_selectWindow( meindex, talker, 2);
 		return;
 	}
-	
+
 	//霜耨
-	GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE, 
-					WINDOW_BUTTONTYPE_OK, 
+	GmsvServer_WN_send( fd, WINDOW_MESSAGETYPE_MESSAGE,
+					WINDOW_BUTTONTYPE_OK,
 					CHAR_WINDOWTYPE_JANKEN_END,
 					CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 					token);
 
-
-	
 }
-
 
 /*
  *伐□皿燮毛GET允月［
  */
 void NPC_WarpPointGet(int meindex,int talker,int *fl,int *x,int *y,int judge)
 {
-   	char argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
+	char argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
 	char *strbuf[2] = {"WinWarp","LoseWarp"};
 	char buf[64];
 	char buf2[32];
@@ -336,7 +313,6 @@ void NPC_WarpPointGet(int meindex,int talker,int *fl,int *x,int *y,int judge)
 		return ;
 	}
 
-
 	/*--伐□皿燮毛潸  --*/
 	NPC_Util_GetStrFromStrWithDelim( argstr, strbuf[judge], buf, sizeof( buf));
 	getDelimitedField(buf,",",1,buf2,sizeof(buf2));
@@ -345,8 +321,7 @@ void NPC_WarpPointGet(int meindex,int talker,int *fl,int *x,int *y,int judge)
 	*x=atoi(buf2);
 	getDelimitedField(buf,",",3,buf2,sizeof(buf2));
 	*y=atoi(buf2);
-	
-	
+
 }
 
 /*
@@ -365,20 +340,20 @@ BOOL NPC_JankenEntryItemCheck(int talker,char *buf)
 	int kosuu;
 	int cnt=0;
 	int k=1;
-	
+
 	while(getDelimitedField(buf , "," , k, buf2, sizeof(buf2))
 	 !=FALSE )
 	{
 		flg = FALSE;
 		k++;
-		
+
 		if(strstr(buf2,"*") != NULL){
 			cnt = 0;
 			getDelimitedField(buf2,"*",1,buf3,sizeof(buf3));
 			itemno = atoi(buf3);
 			getDelimitedField(buf2,"*",2,buf3,sizeof(buf3));
 			kosuu = atoi(buf3);
-		
+
 			for( i=0 ; i < CheckCharMaxItem(talker);i++ ){
 				item_index = CHAR_getItemIndex( talker , i );
 				if( ITEM_CHECKINDEX(item_index) ){
@@ -394,7 +369,7 @@ BOOL NPC_JankenEntryItemCheck(int talker,char *buf)
 			}
 			if(flg == FALSE)
 			{
-				return FALSE;	
+				return FALSE;
 			}
 		}else{
 			itemno = atoi(buf2);
@@ -413,7 +388,7 @@ BOOL NPC_JankenEntryItemCheck(int talker,char *buf)
 					}
 				}
 			}
-	
+
 			if(flg == FALSE)
 			{
 				return FALSE;
@@ -461,7 +436,7 @@ BOOL NPC_JankenEntryItemDel(int talker,char *buf)
 							"QuizDelItem(猜谜->交出道具)",
 							CHAR_getInt( talker, CHAR_FLOOR),
 							CHAR_getInt( talker, CHAR_X ),
- 							CHAR_getInt( talker, CHAR_Y ),
+							CHAR_getInt( talker, CHAR_Y ),
 							ITEM_getChar( item_index, ITEM_UNIQUECODE),
 							ITEM_getChar( item_index, ITEM_NAME),
 							ITEM_getInt( item_index, ITEM_ID)
@@ -472,7 +447,7 @@ BOOL NPC_JankenEntryItemDel(int talker,char *buf)
 						}
 					}
 				}
-			}		
+			}
 		}else{
 #ifdef _NEW_ITEM_
 			int itemMax = CheckCharMaxItem(talker);

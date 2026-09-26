@@ -1,6 +1,5 @@
 #include "version.h"
 #include <string.h>
-#include <math.h>
 #include "char.h"
 #include "object.h"
 #include "char_base.h"
@@ -38,7 +37,7 @@ enum {
 	NPC_WORK_ROUTEPOINT = CHAR_NPCWORKINT3,
 	NPC_WORK_ROUNDTRIP = CHAR_NPCWORKINT4,
 	NPC_WORK_MODE = CHAR_NPCWORKINT5,
-	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6, 
+	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6,
 	NPC_WORK_ROUTEMAX = CHAR_NPCWORKINT7,
 	NPC_WORK_WAITTIME = CHAR_NPCWORKINT8,
 	NPC_WORK_CURRENTTIME = CHAR_NPCWORKINT9,
@@ -47,7 +46,7 @@ enum {
 };
 #define _GAMBLEBANK_U_NOLOCK	//同时对多人
 #define GAMBLEBANK_LOOPTIME 80
-#define GAMBLEBANK_STANDBY	5000 
+#define GAMBLEBANK_STANDBY	5000
 #define GAMBLEBANK_DEF		3	//手续费 / 100
 #define GAMBLEBANK_GETMAX	1000000
 #define GAMBLEBANK_GETMIN	100
@@ -100,13 +99,13 @@ void NPC_GambleBankTalked( int meindex , int talkerindex , char *szMes ,int colo
 	if( !CHAR_CHECKINDEX( talkerindex) || !CHAR_CHECKINDEX( meindex) )
 		return;
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    		return;
+		return;
 	}
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE)	{
 			return;
 		}
-	}    
+	}
 	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg)) == NULL)	{
 		print("GambleBank:GetArgStrErr");
 		return;
@@ -123,7 +122,6 @@ void NPC_GambleBankTalked( int meindex , int talkerindex , char *szMes ,int colo
 
 	CHAR_setWorkInt( meindex, NPC_WORK_WORKTYPE, atoi( buf1) );
 	work_type = CHAR_getWorkInt( meindex, NPC_WORK_WORKTYPE);
-
 
 	if( work_type < 1 || work_type > 4 )	{	// 0 or -1
 		strcpy( buf1,"暂时停止服务。");
@@ -168,7 +166,7 @@ static void NPC_GambleBank_selectWindow( int meindex, int toindex, int num, int 
 		return;
 	}
 
-  	windowtype = WINDOW_MESSAGETYPE_MESSAGE;
+	windowtype = WINDOW_MESSAGETYPE_MESSAGE;
 	switch( num)	{
 	case GAMBLE_START:
 		if( NPC_Util_GetStrFromStrWithDelim( npcarg,"gamble_start", token, sizeof( token) ) == NULL) {
@@ -178,7 +176,7 @@ static void NPC_GambleBank_selectWindow( int meindex, int toindex, int num, int 
 		buttontype = WINDOW_BUTTONTYPE_YESNO;
 		windowno = NPC_GambleBank_START;
 	break;
-		
+
 	case GAMBLE_SELET:
 		i = 1;
 		strcpy( token, "\0");
@@ -193,10 +191,10 @@ static void NPC_GambleBank_selectWindow( int meindex, int toindex, int num, int 
 			i++;
 			sprintf( buf2,"%s%d", "gamble_msg0", i);
 		}
-	  	windowtype=WINDOW_MESSAGETYPE_SELECT;
-	  	windowno = NPC_GambleBank_SELECT; 
+		windowtype=WINDOW_MESSAGETYPE_SELECT;
+		windowno = NPC_GambleBank_SELECT;
 		break;
-	
+
 	case GAMBLE_MAN_BANK:	//银行
 		sprintf( token,"%d", CHAR_getInt( toindex, CHAR_PERSONAGOLD ) );
 		windowtype = WINDOW_MESSAGETYPE_BANK;
@@ -233,7 +231,7 @@ static void NPC_GambleBank_selectWindow( int meindex, int toindex, int num, int 
 
 			windowtype = WINDOW_MESSAGETYPE_SELECT;
 			buttontype = WINDOW_BUTTONTYPE_NONE;
-	  		windowno = NPC_GambleBank_CHANG1;
+			windowno = NPC_GambleBank_CHANG1;
 		}
 	break;
 	case GAMBLE_END:
@@ -255,8 +253,8 @@ static void NPC_GambleBank_selectWindow( int meindex, int toindex, int num, int 
 	break;
 	}
 
-	GmsvServer_WN_send( fd, windowtype, 
-					buttontype, 
+	GmsvServer_WN_send( fd, windowtype,
+					buttontype,
 					windowno,
 					CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX),
 					token);
@@ -278,7 +276,7 @@ void NPC_GambleBankWindowTalked ( int meindex, int talkerindex, int seqno, int s
 		return;
 	}
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER ) {
-    		return;
+		return;
 	}
 #ifdef _GAMBLEBANK_U_NOLOCK
 #else
@@ -295,7 +293,7 @@ void NPC_GambleBankWindowTalked ( int meindex, int talkerindex, int seqno, int s
 
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE) return;
-	}    
+	}
 	if( NPC_Util_CharDistance( talkerindex, meindex ) > 2) {
 		return;
 	}
@@ -307,7 +305,7 @@ void NPC_GambleBankWindowTalked ( int meindex, int talkerindex, int seqno, int s
 		  }else	{
 			  NPC_GambleBank_selectWindow( meindex, talkerindex, GAMBLE_END, flg);
 		  }
-	  	break;
+		break;
 	  case NPC_GambleBank_SELECT:
 		  if( type == 1 )	{	//银行
 			CHAR_setWorkInt( talkerindex, CHAR_WORKSHOPRELEVANT, 2);
@@ -382,7 +380,6 @@ void NPC_GambleBankWindowTalked ( int meindex, int talkerindex, int seqno, int s
 	}
 }
 
-
 int NPC_GambleBank_DoGold( int meindex, int toindex, int Gold, int flg)
 {
 	//flg = 1 正常 flg = 2 钱不够 flg <= 0 错误 3 = 个人存款将满 4 = 个人银行将满 5 = 单次最高金额
@@ -396,7 +393,7 @@ int NPC_GambleBank_DoGold( int meindex, int toindex, int Gold, int flg)
 	if( Gold == 0 )	{
 		return 0;
 	}
-	
+
 	if( Gold < 0 )	{	//取款
 		Gold *=-1;
 		//stone_def = (Gold * def) /100;
@@ -411,7 +408,7 @@ int NPC_GambleBank_DoGold( int meindex, int toindex, int Gold, int flg)
 		}else	if( (Gold + stone_def)> CHAR_getInt( toindex, CHAR_PERSONAGOLD ) )	{	//银行存款不够
 			return 2;
 		}
-		
+
 		CHAR_setInt( toindex, CHAR_PERSONAGOLD, (CHAR_getInt( toindex, CHAR_PERSONAGOLD )-(Gold+stone_def)));
 
 		CHAR_AddGold( toindex, Gold);
@@ -419,7 +416,7 @@ int NPC_GambleBank_DoGold( int meindex, int toindex, int Gold, int flg)
 		sprintf( buf1,"取款：%d ，手续费：%d，银行剩余：%d 。", Gold, stone_def, CHAR_getInt( toindex, CHAR_PERSONAGOLD ));
 		CHAR_talkToCli( toindex, meindex, buf1,  CHAR_COLORYELLOW);
 		LogBankStone(    CHAR_getChar( toindex, CHAR_NAME ), CHAR_getChar( toindex, CHAR_CDKEY ),
-					toindex, Gold, 
+					toindex, Gold,
 					"GB_Bank_Get(银行取款)",
 					CHAR_getInt( toindex, CHAR_FLOOR),
 		            CHAR_getInt( toindex, CHAR_X ), CHAR_getInt( toindex, CHAR_Y ) ,
@@ -440,7 +437,7 @@ int NPC_GambleBank_DoGold( int meindex, int toindex, int Gold, int flg)
 		sprintf( buf1,"存款：%d ，银行剩余：%d 。", Gold, CHAR_getInt( toindex, CHAR_PERSONAGOLD ));
 		CHAR_talkToCli( toindex, meindex, buf1,  CHAR_COLORYELLOW);
 		LogBankStone(    CHAR_getChar( toindex, CHAR_NAME ), CHAR_getChar( toindex, CHAR_CDKEY ),
-					toindex, Gold, 
+					toindex, Gold,
 					"GB_Bank_save(银行存款)",
 					CHAR_getInt( toindex, CHAR_FLOOR),
 		            CHAR_getInt( toindex, CHAR_X ), CHAR_getInt( toindex, CHAR_Y ),
@@ -457,7 +454,7 @@ BOOL NPC_GambleBank_AddItem( int meindex, int toindex, int itemId, int count)
 	int i=-1,item_index=-1;
 	int ret=-1;
 	char token[256];
- 	strcpy( token,"\0");
+	strcpy( token,"\0");
 	if( count < 0 || itemId < 0 )
 		return FALSE;
 
@@ -512,8 +509,4 @@ BOOL NPC_GambleBank_AddItem( int meindex, int toindex, int itemId, int count)
 }
 
 #endif
-
-
-
-
 

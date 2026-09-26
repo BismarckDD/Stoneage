@@ -10,8 +10,7 @@ BOOL NPC_StoryTellerInit( int meindex )
     return TRUE;
 }
 
-
 void NPC_StoryTellerTalked( int meindex , int talker , char *msg , int col )
 {
-    
+
 }

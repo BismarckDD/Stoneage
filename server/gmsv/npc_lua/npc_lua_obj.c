@@ -17,7 +17,7 @@ int NPC_Lua_Obj_GetType(lua_State *_NLL)
 	CheckEx(_NLL, 1);
 	CheckObjIndexNull(_NLL, 1);
 	int TM_index = (int)lua_tointeger(_NLL, 1);
-	
+
 	int TM_Ret = OBJECT_getType(TM_index);
 
 	LRetInt(_NLL, TM_Ret);
@@ -28,7 +28,7 @@ int NPC_Lua_Obj_GetCharType(lua_State *_NLL)
 	CheckEx(_NLL, 1);
 	CheckObjIndexNull(_NLL, 1);
 	int TM_index = (int)lua_tointeger(_NLL, 1);
-	
+
 	int TM_Ret = OBJECT_getchartype(TM_index);
 
 	LRetInt(_NLL, TM_Ret);
@@ -39,7 +39,7 @@ int NPC_Lua_Obj_GetCharIndex(lua_State *_NLL)
 	CheckEx(_NLL, 1);
 	CheckObjIndexNull(_NLL, 1);
 	int TM_index = (int)lua_tointeger(_NLL, 1);
-	
+
 	int TM_Ret = OBJECT_getIndex(TM_index);
 
 	LRetInt(_NLL, TM_Ret);
@@ -50,7 +50,7 @@ int NPC_Lua_Obj_GetX(lua_State *_NLL)
 	CheckEx(_NLL, 1);
 	CheckObjIndexNull(_NLL, 1);
 	int TM_index = (int)lua_tointeger(_NLL, 1);
-	
+
 	int TM_Ret = OBJECT_getX(TM_index);
 
 	LRetInt(_NLL, TM_Ret);
@@ -61,7 +61,7 @@ int NPC_Lua_Obj_GetY(lua_State *_NLL)
 	CheckEx(_NLL, 1);
 	CheckObjIndexNull(_NLL, 1);
 	int TM_index = (int)lua_tointeger(_NLL, 1);
-	
+
 	int TM_Ret = OBJECT_getY(TM_index);
 
 	LRetInt(_NLL, TM_Ret);
@@ -72,7 +72,7 @@ int NPC_Lua_Obj_GetFloor(lua_State *_NLL)
 	CheckEx(_NLL, 1);
 	CheckObjIndexNull(_NLL, 1);
 	int TM_index = (int)lua_tointeger(_NLL, 1);
-	
+
 	int TM_Ret = OBJECT_getFloor(TM_index);
 
 	LRetInt(_NLL, TM_Ret);

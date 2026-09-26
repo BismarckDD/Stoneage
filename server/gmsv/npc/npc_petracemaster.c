@@ -7,7 +7,7 @@
 #include "npcutil.h"
 #include "gmsv_server.h"
 #include "handletime.h"
- 
+
 #ifdef _PETRACE
 #include "npc_petracemaster.h"
 
@@ -184,7 +184,7 @@ static void NPC_PetRaceMaster_selectWindow(int meindex, int toindex, int num, in
 			break;
 		case 1:
 #ifdef _DROPSTAKENEW
-			sprintf(token, 
+			sprintf(token,
 				"\n竞速场规则："
 				"\n参加竞速的宠物总共有三只，您可以依照宠物"
 				"\n的状况或个人喜好下注，请将兑换得到的彩券"
@@ -193,7 +193,7 @@ static void NPC_PetRaceMaster_selectWindow(int meindex, int toindex, int num, in
 				"\n请注意：当您离开此房间或登出时，下注的彩"
 				"\n卷及积分将无法取回唷！");
 #else
-			sprintf(token, 
+			sprintf(token,
 				"\n竞速场规则：参加竞速的宠物共有三只，您可"
 				"\n以依照宠物状况或个人喜好下注，每个宠物有"
 				"\n自己的赔率。请将石币丢置於欲下注的号码前"
@@ -311,7 +311,7 @@ void NPC_PetRaceMasterLoop( int meindex)
 	time(&t1);
 	switch(CHAR_getWorkInt(meindex, NPC_WORK_STATE))
 	{
-		case NPC_State_Init:	
+		case NPC_State_Init:
 				// 寻找宠物index
 				NPC_findRacePetIndex(meindex, floor);
 			break;
@@ -431,7 +431,7 @@ void NPC_PetRaceMasterLoop( int meindex)
 				char tmpbuf[256];
 				int winpetindex = CHAR_getWorkInt(meindex, NPC_WORK_WINPET);
 				int petgroup = CHAR_getWorkInt(meindex, NPC_WORK_PETGROUP);
-				snprintf(tmpbuf, sizeof(tmpbuf), "竞赛结束，胜利的宠物是：%s\n", 
+				snprintf(tmpbuf, sizeof(tmpbuf), "竞赛结束，胜利的宠物是：%s\n",
 					CHAR_getChar(winpetindex, CHAR_NAME));
 				CHAR_talkToFloor(floor, meindex, tmpbuf, CHAR_COLORYELLOW);
 				// 设定输赢，以计算赔率
@@ -443,7 +443,7 @@ void NPC_PetRaceMasterLoop( int meindex)
 					petracegra[petgroup].pet3win = petracegra[petgroup].pet3win + 1;
 				CHAR_setWorkInt(meindex, NPC_WORK_STATE, NPC_State_ShowWinPet);
 				CHAR_setInt(meindex, CHAR_LOOPINTERVAL, PETRACEMASTER_SHOWWINPET_LOOPTIME);
-				CHAR_setWorkInt(meindex, NPC_WORK_STATECHANGE, t1 + PETRACESHOWWINPET);	
+				CHAR_setWorkInt(meindex, NPC_WORK_STATECHANGE, t1 + PETRACESHOWWINPET);
 				// 发奖金
 				NPC_givePriceToPlayer(meindex, floor, winpetindex);
 			}
@@ -577,7 +577,7 @@ void NPC_givePriceToPlayer(int meindex, int floor, int winpetindex)
 	else if (CHAR_getWorkInt(meindex, NPC_WORK_PET3) == winpetindex)
 		wincasinotype = PET_RACE3;
 	if (wincasinotype == 0) return;
-	else 
+	else
 		CasinoPay(meindex, wincasinotype);
 }
 #endif

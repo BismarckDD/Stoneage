@@ -537,7 +537,7 @@ void NPC_createIncreaseEnemynum(int index) {
   NPC_create[index].workdata[NPC_CREATEWORKENEMYNUM]++;
 }
 /*------------------------------------------------------------
- * 
+ *
  * 参数
  *  index int
  * 返回值

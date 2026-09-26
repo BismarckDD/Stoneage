@@ -13,7 +13,6 @@
 #include "saac_client.h"
 #include "util.h"
 
-
 int NPC_Lua_Game_FMPOINT_ACSetFMPoint(lua_State *lua)
 
 {

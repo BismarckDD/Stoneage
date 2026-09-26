@@ -1,7 +1,6 @@
 #include "version.h"
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "object.h"
 #include "char_base.h"
@@ -19,7 +18,6 @@ int NPC_CostCheck(int talker);
 void NPC_CharCheckPoint(int meindex,int talker);
 int NPC_WorkInput(int meindex,int talker);
 
-
 /**********************************
 赓渝祭
 ************************************/
@@ -27,7 +25,7 @@ BOOL NPC_HealerInit( int meindex )
 {
 	//正奶皿毛甲□仿□卞涩烂
     CHAR_setInt( meindex , CHAR_WHICHTYPE , CHAR_TYPEHEALER );
-    //  猾匹五卅中    邰卅中井手  
+    //  猾匹五卅中    邰卅中井手
     CHAR_setFlg( meindex , CHAR_ISATTACKED , 0 );
     //晓卞昙木卅中
 //    CHAR_setFlg( meindex , CHAR_ISOVERED , 0 );
@@ -35,9 +33,6 @@ BOOL NPC_HealerInit( int meindex )
 	return TRUE;
 
 }
-
-
-
 
 /*-------------------------------------------
  *
@@ -50,7 +45,6 @@ void NPC_HealerTalked( int meindex , int talker , char *msg ,int color )
     char*   npcarg;
     char    token[32];
 	int msgNo;
-
 
 	npcarg = CHAR_getChar(meindex,CHAR_NPCARGUMENT);
 
@@ -75,7 +69,7 @@ void NPC_HealerTalked( int meindex , int talker , char *msg ,int color )
 
 		}else if(msgNo == 2) {
 		    CHAR_talkToCli( talker, meindex,
-		    	"由於你很诚实，让我帮你回复吧！",CHAR_COLORWHITE);
+			"由於你很诚实，让我帮你回复吧！",CHAR_COLORWHITE);
 		}
 
 	}else{
@@ -90,17 +84,16 @@ void NPC_HealerTalked( int meindex , int talker , char *msg ,int color )
 				NPC_HealerAllHeal( otherindex);
 				if(msgNo == 1) {
 				    CHAR_talkToCli( otherindex, meindex,
-				    	"已经全部回复。请在下次的比赛中加油唷！",CHAR_COLORWHITE);
+					"已经全部回复。请在下次的比赛中加油唷！",CHAR_COLORWHITE);
 
 				}else if(msgNo == 2) {
-					CHAR_talkToCli( otherindex, meindex, 
+					CHAR_talkToCli( otherindex, meindex,
 						"由於你很诚实，让我帮你回复吧！",CHAR_COLORWHITE);
 				}
 			}
 		}
 	}
 }
-
 
 /*----------------------*/
 /* 荚汊 */
@@ -109,13 +102,11 @@ void NPC_HealerAllHeal( int talker )
 {
 	int i;
 	int petindex;
-	char petsend[3];	
+	char petsend[3];
 	char msgbuf[5];
-	
+
     CHAR_setInt( talker , CHAR_HP ,CHAR_getWorkInt( talker, CHAR_WORKMAXHP ) );
     CHAR_setInt( talker , CHAR_MP ,CHAR_getWorkInt( talker, CHAR_WORKMAXMP ) );
-
-
 
 	for(i = 0 ; i < CHAR_MAXPETHAVE; i ++) {
 		petindex = CHAR_getCharPet( talker, i);
@@ -138,16 +129,16 @@ void NPC_HealerAllHeal( int talker )
 		sprintf( petsend, "K%d", i );
 		CHAR_sendStatusString( talker , petsend );
 	}
-	
+
 	/*---醮棉互中木壬醮棉卞手霜耨--*/
 	if(CHAR_getWorkInt( talker, CHAR_WORKPARTYMODE) != CHAR_PARTY_NONE )
 	{
 		int	topartyarray = -1;
 		int	oyaindex = CHAR_getWorkInt( talker	, CHAR_WORKPARTYINDEX1);
-	
+
 		if( CHAR_CHECKINDEX( oyaindex )) {
 			int	i;
-	
+
 			/* 愤坌午怂仄凶支勾及醮棉及    及桦赭毛潸   */
 			for( i = 0; i < getPartyNum(oyaindex  ); i ++ ) {
 				int workindex = CHAR_getWorkInt( oyaindex, CHAR_WORKPARTYINDEX1 + i);
@@ -158,7 +149,7 @@ void NPC_HealerAllHeal( int talker )
 					}
 				}
 			}
-			
+
 			for( i = 0; i < getPartyNum(talker  ); i ++ ) {
 				int otherindex = CHAR_getPartyIndex( talker, i);
 				/* 醮棉由仿丢□正毛霜月 */

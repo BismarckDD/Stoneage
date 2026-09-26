@@ -13,27 +13,21 @@
 #include "log.h"
 #include "handletime.h"
 
-
-
-
-
 enum {
 	E_INT_GRAPHIC = CHAR_NPCWORKINT1,		/*   褥蟆及  飓 */
 	E_INT_GRAPHIC2 = CHAR_NPCWORKINT2,		/*   褥  及  飓 */
 	E_INT_BORN = CHAR_NPCWORKINT3,			/* 藕戏凛棉 */
-	E_INT_DEAD = CHAR_NPCWORKINT4,			/* 壅尹月凛棉*/ 
+	E_INT_DEAD = CHAR_NPCWORKINT4,			/* 壅尹月凛棉*/
 	E_INT_MODE = CHAR_NPCWORKINT5,			/* 蜇箕及乒□玉 */
 	E_INT_NOWGRAPHIC = CHAR_NPCWORKINT6,	/* 蜇箕及弘仿白奴永弁瓜件田□ */
 
 };
-
 
 typedef struct {
 	char	arg[32];
 	int		born;
 	int 	dead;
 }NPC_TimeMan;
-
 
 #define YOAKE 700
 #define NICHIBOTU 300
@@ -53,16 +47,13 @@ static NPC_TimeMan	TimeTble[] = {
 	{"FREE",		0,				1024},
 };
 
-
-
-
 BOOL NPC_TimeManInit( int meindex )
 {
 
 	int i=0;
 	char	argstr[NPC_UTIL_GETARGSTR_BUFSIZE];
 	char buf[32];
-	
+
 	if(NPC_Util_GetArgStr( meindex, argstr, sizeof(argstr))==NULL){
 		print("GetArgStrErr");
 		return FALSE;
@@ -90,11 +81,10 @@ BOOL NPC_TimeManInit( int meindex )
 			}
 		}
 	}
-	
+
 	return FALSE;
 
 }
-
 
 void NPC_TimeManTalked( int meindex , int talkerindex , char *msg ,int color )
 {
@@ -103,7 +93,6 @@ void NPC_TimeManTalked( int meindex , int talkerindex , char *msg ,int color )
 	char buf[512];
 	int tokennum=0;
 	int i;
-
 
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex ,2)==FALSE){
 		if( NPC_Util_CharDistance( talkerindex ,meindex ) > 1) return;
@@ -115,36 +104,31 @@ void NPC_TimeManTalked( int meindex , int talkerindex , char *msg ,int color )
 	}
 
 	if(NPC_Util_GetArgStr( meindex, argstr, sizeof(argstr))==NULL){
-		print("GetArgStrErr");	
+		print("GetArgStrErr");
 		return;
 	}
-	
 
 	if( CHAR_getInt(talkerindex,CHAR_WHICHTYPE) != CHAR_TYPEPLAYER )return;
-	
+
 	if( NPC_Util_charIsInFrontOfChar( talkerindex, meindex, 3 ) ==FALSE) return;
-
-
-
 
 	if(CHAR_getWorkInt(meindex,E_INT_MODE)==0){
 		/*--丢永本□斥毛忒允 */
 		NPC_Util_GetStrFromStrWithDelim(argstr,"main_msg",buf,sizeof( buf) );
- 	
- 	}else{
-		NPC_Util_GetStrFromStrWithDelim(argstr,"change_msg",buf,sizeof( buf) );
- 	}
 
-   	tokennum = 1;
-   	/* 戊件穴匹嗉濠日木凶玄□弁件互窒仇丐月井醒尹月 */
+	}else{
+		NPC_Util_GetStrFromStrWithDelim(argstr,"change_msg",buf,sizeof( buf) );
+	}
+
+	tokennum = 1;
+	/* 戊件穴匹嗉濠日木凶玄□弁件互窒仇丐月井醒尹月 */
 	 for( i=0;buf[i]!='\0';i++ ){
           if( buf[i] == ',' ) tokennum++;
      }
- 
+
     getDelimitedField( buf,",", rand()%tokennum+1,token, sizeof(token));
 	/*--仄扎屯月--*/
 	CHAR_talkToCli( talkerindex, meindex, token, CHAR_COLORWHITE );
-
 
 }
 
@@ -157,7 +141,7 @@ void NPC_TimeManWatch( int meobjindex, int objindex, CHAR_ACTION act,
 	LSTIME	nowlstime;
 	int born;
 	int dead;
-	
+
 	if( OBJECT_getType( objindex) != OBJTYPE_CHARA) return;
 	index = OBJECT_getIndex( objindex);
 
@@ -168,7 +152,7 @@ void NPC_TimeManWatch( int meobjindex, int objindex, CHAR_ACTION act,
 	dead = CHAR_getWorkInt( meindex , E_INT_DEAD );
 
 //	print("now_hour=%d",nowlstime.hour);
-	
+
 	/* 凛棉毛苇化橇谪毛瑁户月 */
 	if(born < dead){
 		RealTimeToLSTime( NowTime.tv_sec, &nowlstime);
@@ -179,7 +163,7 @@ void NPC_TimeManWatch( int meobjindex, int objindex, CHAR_ACTION act,
 			CHAR_setInt(meindex,CHAR_IMAGENUMBER,
 							CHAR_getWorkInt( meindex, E_INT_GRAPHIC));
 			CHAR_sendCToArroundCharacter( CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX ) );
-			CHAR_setWorkInt(meindex,E_INT_MODE,0);		
+			CHAR_setWorkInt(meindex,E_INT_MODE,0);
 			CHAR_setWorkInt(meindex,E_INT_NOWGRAPHIC,
 								CHAR_getInt(meindex,CHAR_IMAGENUMBER));
 		}else{
@@ -192,33 +176,33 @@ void NPC_TimeManWatch( int meobjindex, int objindex, CHAR_ACTION act,
 			CHAR_sendCToArroundCharacter( CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX ) );
 			CHAR_setWorkInt(meindex,E_INT_MODE,1);
 			CHAR_setWorkInt(meindex,E_INT_NOWGRAPHIC,
-								CHAR_getInt(meindex,CHAR_IMAGENUMBER));		
+								CHAR_getInt(meindex,CHAR_IMAGENUMBER));
 
 		}
 	}else{
 		RealTimeToLSTime( NowTime.tv_sec, &nowlstime);
-		if( (born < nowlstime.hour && 1024 > nowlstime.hour) 
-			|| ( 0 < nowlstime.hour && dead > nowlstime.hour) 
+		if( (born < nowlstime.hour && 1024 > nowlstime.hour)
+			|| ( 0 < nowlstime.hour && dead > nowlstime.hour)
 		){
 			if(CHAR_getWorkInt(meindex,E_INT_NOWGRAPHIC)
 				==CHAR_getWorkInt( meindex, E_INT_GRAPHIC)) return;
-	
+
 			CHAR_setInt(meindex,CHAR_IMAGENUMBER,
 							CHAR_getWorkInt( meindex, E_INT_GRAPHIC));
 			CHAR_sendCToArroundCharacter( CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX ) );
 			CHAR_setWorkInt(meindex,E_INT_MODE,0);
 			CHAR_setWorkInt(meindex,E_INT_NOWGRAPHIC,
-							CHAR_getInt(meindex,CHAR_IMAGENUMBER));		
+							CHAR_getInt(meindex,CHAR_IMAGENUMBER));
 		}else{
 			if(CHAR_getWorkInt(meindex,E_INT_NOWGRAPHIC)
 				==CHAR_getWorkInt( meindex, E_INT_GRAPHIC2)) return;
-			
+
 			CHAR_setInt(meindex,CHAR_IMAGENUMBER,
 							CHAR_getWorkInt( meindex, E_INT_GRAPHIC2));
 			CHAR_sendCToArroundCharacter( CHAR_getWorkInt( meindex, CHAR_WORKOBJINDEX ) );
 			CHAR_setWorkInt(meindex,E_INT_MODE,1);
 			CHAR_setWorkInt(meindex,E_INT_NOWGRAPHIC,
-							CHAR_getInt(meindex,CHAR_IMAGENUMBER));		
+							CHAR_getInt(meindex,CHAR_IMAGENUMBER));
 		}
 	}
 

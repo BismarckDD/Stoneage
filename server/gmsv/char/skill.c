@@ -5,7 +5,6 @@
 #include "char.h"
 #include "skill.h"
 
-
 #ifdef _CHAR_PROFESSION // WON ADD 人物职业
 #include "battle.h"
 #include "profession_skill.h"

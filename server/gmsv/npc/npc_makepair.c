@@ -40,7 +40,7 @@ enum {
 	NPC_WORK_ROUTEPOINT = CHAR_NPCWORKINT3,
 	NPC_WORK_ROUNDTRIP = CHAR_NPCWORKINT4,
 	NPC_WORK_MODE = CHAR_NPCWORKINT5,
-	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6, 
+	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6,
 	NPC_WORK_ROUTEMAX = CHAR_NPCWORKINT7,
 	NPC_WORK_WAITTIME = CHAR_NPCWORKINT8,
 	NPC_WORK_CURRENTTIME = CHAR_NPCWORKINT9,
@@ -58,7 +58,6 @@ int NPC_getPairCode( int toindex);
 int NPC_getTitleMsg( int meindex, int toindex, char *arg, char *token, int title);
 int NPC_getNextTitle( int meindex, int toindex, char *arg, int title, int select);
 
-
 BOOL NPC_MakePairManInit( int meindex )
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
@@ -67,11 +66,11 @@ BOOL NPC_MakePairManInit( int meindex )
 		print("err NPC_MakePairMan: GetArgStrErr!!");
 		return FALSE;
 	}
-   	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_MAKEPAIR);
+	CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_MAKEPAIR);
 	CHAR_setInt( meindex, CHAR_LOOPINTERVAL, MAKEPAIR_STANDBY);
 	CHAR_setWorkInt( meindex, NPC_WORK_CURRENTTIME, NowTime.tv_sec);
 	CHAR_setWorkInt( meindex, NPC_WORK_PAIRTEAMS, 0);
-	
+
 	for( i=0; i<MAXPAIRNUMS; i++)	{
 		PairList[0][i].use = -1;
 		PairList[0][i].forindex = -1;
@@ -84,7 +83,7 @@ BOOL NPC_MakePairManInit( int meindex )
 void NPC_MakePairManTalked( int meindex, int talkerindex, char *msg, int color )
 {
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    		return;
+		return;
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE)
 			return;
@@ -222,7 +221,7 @@ void NPC_MakePairManWindowTalked( int meindex, int talkerindex, int seqno, int s
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
 
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    	return;
+	return;
 	memset( npcarg, 0, sizeof( npcarg));
 	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg))==NULL){
 		print("err NPC_MakePairMan: GetArgStrErr!!");
@@ -296,7 +295,7 @@ BOOL MakePairMan_GetMenuStr( int meindex, int toindex, char *npcarg, char *token
 	BOOL FINDS=FALSE;
 	int talkNo=1;
 	if( npcarg == NULL ) return FALSE;
-	
+
 	if( NPC_Util_GetStrFromStrWithDelim( npcarg, "MenuHead", buf1, sizeof( buf1) ) == NULL){
 		return FALSE;
 	}
@@ -331,7 +330,6 @@ BOOL NPC_PairForage( int meindex, int toindex, char *arg, char *token)
 	int codes = CHAR_getWorkInt( toindex, CHAR_MYPAIRCODE);
 	int Psex = CHAR_getSexInt( CHAR_getInt( toindex, CHAR_BASEIMAGENUMBER) );
 	Psex = (Psex==1)?1:0;
-
 
 	for( i=0; i<MAXPAIRNUMS; i++)	{//forindex
 		char *name;
@@ -532,7 +530,7 @@ int NPC_getTitleMsg( int meindex, int toindex, char *arg, char *token, int title
 			return -1;
 		}
 		sprintf( token, "%s", buf2);
-		return 2;	
+		return 2;
 	}
 
 	sprintf( token, "%s", buf2);

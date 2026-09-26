@@ -275,7 +275,7 @@ static void NPC_WindowHealer_selectWindow(int meindex, int toindex, int scenario
     windowtype = WINDOW_MESSAGETYPE_MESSAGE;
     windowno = CHAR_WINDOWTYPE_WINDOWHEALER_OKALLMSG;
     break;
-  case WINDOWHEALER_NOT_ENOUGH_MONEY: // 身上金钱不够 
+  case WINDOWHEALER_NOT_ENOUGH_MONEY: // 身上金钱不够
     sprintf(token, "\n\n\n\n 真可惜似乎所带的金钱不够唷！");
     buttontype = WINDOW_BUTTONTYPE_OK;
     windowtype = WINDOW_MESSAGETYPE_MESSAGE;

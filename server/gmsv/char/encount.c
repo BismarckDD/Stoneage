@@ -12,11 +12,6 @@
 #include "enemy.h"
 #include <math.h>
 
-
-#ifdef _ADD_ENCOUNT // WON ADD 增加敌遭遇触发修件
-#include "encount.h"
-#endif
-
 #ifndef _ADD_ENCOUNT // WON ADD 增加敌遭遇触发修件
 typedef struct tagENCOUNT_Table {
   int index;

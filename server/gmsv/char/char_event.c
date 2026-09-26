@@ -9,7 +9,6 @@
 #include "char_data.h"
 #include "readmap.h"
 #include "map_deal.h"
-#include "item.h"
 //
 #include "gmsv_server.h"
 #include "saac_client.h"

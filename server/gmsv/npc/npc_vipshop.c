@@ -32,7 +32,7 @@ enum {
 	NPC_WORK_ROUTEPOINT = CHAR_NPCWORKINT3,
 	NPC_WORK_ROUNDTRIP = CHAR_NPCWORKINT4,
 	NPC_WORK_MODE = CHAR_NPCWORKINT5,
-	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6, 
+	NPC_WORK_CURRENTROUTE = CHAR_NPCWORKINT6,
 	NPC_WORK_ROUTEMAX = CHAR_NPCWORKINT7,
 	NPC_WORK_WAITTIME = CHAR_NPCWORKINT8,
 	NPC_WORK_CURRENTTIME = CHAR_NPCWORKINT9,
@@ -51,14 +51,14 @@ int page;
 BOOL NPC_VipshopInit( int meindex )
 {
 	char npcarg[NPC_UTIL_GETARGSTR_BUFSIZE];
-		
+
 	if(NPC_Util_GetArgStr( meindex, npcarg, sizeof(npcarg))==NULL){
 		print("TRANSER_MAN: GetArgStrErr!!");
 		return FALSE;
 	}
 
   CHAR_setInt( meindex, CHAR_WHICHTYPE, CHAR_TRANSERMANS);
-  
+
   CHAR_setWorkInt( meindex, NPC_WORK_MAXPAGE, VipShop_ShowMenulist(npcarg));
 
 	//CHAR_setInt( meindex, CHAR_LOOPINTERVAL, NEWNPCMAN_STANDBY);
@@ -69,7 +69,7 @@ BOOL NPC_VipshopInit( int meindex )
 void NPC_VipshopTalked( int meindex, int talkerindex, char *msg, int color )
 {
 	if( CHAR_getInt( talkerindex , CHAR_WHICHTYPE ) != CHAR_TYPEPLAYER )
-    		return;
+		return;
 	if(NPC_Util_isFaceToFace( meindex ,talkerindex , 2) == FALSE) {
 		if(NPC_Util_isFaceToChara( talkerindex, meindex, 1) == FALSE)
 			return;
@@ -148,7 +148,7 @@ static void NPC_VipShop_selectWindow( int meindex, int toindex, int num,int sele
 		break;
 	case WINDOW_SELECT:
 		CHAR_setWorkInt( toindex, CHAR_WORK_LISTPAGE, 0);
-		
+
 		if( VipShop_GetMenuStr( meindex, toindex, npcarg, token,CHAR_getWorkInt( toindex, CHAR_WORK_LISTPAGE)) == FALSE )	{
 			print( "VipShop GetMenu ERROR !!");
 			return;
@@ -198,7 +198,7 @@ static void NPC_VipShop_selectWindow( int meindex, int toindex, int num,int sele
 		if(getDelimitedField( npcarg,"}",select1, buf2, sizeof( buf2)) != FALSE)
 			NPC_Util_GetStrFromStrWithDelim( buf2, "MenuStr", buf3, sizeof( buf3));
 		sprintf( token, "\n%s\n\n        %s\n",buf1, buf3);
-		
+
 		windowtype = WINDOW_MESSAGETYPE_MESSAGE;
 		buttontype = WINDOW_BUTTONTYPE_YESNO;
 		windowno = NPC_TRANSERMAN_END;
@@ -219,7 +219,7 @@ BOOL VipShop_GetMenuStr( int meindex, int toindex, char *npcarg, char *token,int
 	BOOL FINDS=FALSE;
 	int talkNo=index*7+1;
 	if( npcarg == NULL ) return FALSE;
-	
+
 	sprintf( token, "你当前的积分点数是:%d        %d/%d页\n",CHAR_getInt( toindex , CHAR_AMPOINT), index+1, CHAR_getWorkInt( meindex, NPC_WORK_MAXPAGE));
 	while( getDelimitedField( npcarg,"}",talkNo, buf1, sizeof( buf1)) != FALSE )	{
 		talkNo++;
@@ -250,5 +250,4 @@ int VipShop_ShowMenulist( char *npcarg )
 }
 
 #endif
-
 

@@ -26,7 +26,6 @@ void des_setparity(char *key)
 	}
 }
 
-
 ulong Keys[16][2];
 
 void des_setkey(char *key)
@@ -81,7 +80,7 @@ void des_setkey(char *key)
 	for (i = 0; i < 16; i++) {
 		uchar *k, mask, w[8];
 		uint n = nshifts[i];
-		
+
 		c = (c << n | c >> (28 - n)) & 0x0fffffff;
 		d = (d << n | d >> (28 - n)) & 0x0fffffff;
 		/* PC-2 (Permuted Choice 2) */
@@ -1418,7 +1417,6 @@ unsigned long Ip_inv_r[] = {
 	0x80808080,
 };
 
-
 void des_crypt(char *block, int dflag)
 {
 	ulong l, r, l2, r2;
@@ -1511,7 +1509,6 @@ void des_crypt(char *block, int dflag)
 }
 #endif /* ASSEMBLY */
 
-
 int ecb_crypt(char *key, char *buf, unsigned len, unsigned mode)
 {
 	des_setkey(key);
@@ -1520,7 +1517,6 @@ int ecb_crypt(char *key, char *buf, unsigned len, unsigned mode)
 	return ((mode & DES_DEVMASK) == DES_SW ? DESERR_NONE
 					       : DESERR_NOHWDEVICE);
 }
-
 
 int cbc_crypt(char *key, char *buf, unsigned len, unsigned mode, char *ivec)
 {
@@ -1547,7 +1543,7 @@ int cbc_crypt(char *key, char *buf, unsigned len, unsigned mode, char *ivec)
 			ivec[5] = *buf++;
 			ivec[6] = *buf++;
 			ivec[7] = *buf++;
-		} 
+		}
 		break;
 	case DES_DECRYPT:
 		for (len = (len + 7) & ~7; len != 0; len -= 8) {

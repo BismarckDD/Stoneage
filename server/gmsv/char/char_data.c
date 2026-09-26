@@ -14,7 +14,6 @@
 #include "log.h"
 #include "pet.h"
 #include "readmap.h"
-#include <math.h>
 #ifdef _PERSONAL_FAME // Arminius:
 #include "char_base.h"
 #include "config_file.h"
@@ -1139,7 +1138,6 @@ static int LevelUpTbl[] = {
 };
 
 int CHAR_GetLevel() { return arraysizeof(LevelUpTbl) - 1; }
-
 
 // 2026.09.01 获得下一级所需的经验值
 int CHAR_GetLevelExp(int char_index, int level) {

@@ -102,7 +102,6 @@ enum{
 	NPC_SYSINFO_ARG_SHUTDOWN_MSG,
 };
 
-
 static void NPC_Sysinfo_SendMsg( int meindex, int pindex, int tblnum);
 static char *NPC_Sysinfo_GetMsg( int meindex, char *msgindexstr,
 								char *out,int outlen, int num );
@@ -156,7 +155,6 @@ static void NPC_Sysinfo_Msg_Info(int meindex, int tindex, char*msg)
 	CHAR_CHAT_DEBUG_info( tindex, msg);
 }
 
-
 typedef void	(*FUNC)(int,int,char *);
 static FUNC		functbl[] = {
 	NULL,
@@ -186,7 +184,7 @@ static FUNC		functbl[] = {
     NPC_Sysinfo_TitleRestart,
     NPC_Sysinfo_SetSaacwrite,
     NPC_Sysinfo_SetSaacread,
-    
+
 };
 
 /*********************************
@@ -199,7 +197,6 @@ BOOL NPC_SysinfoInit( int meindex )
 
     NPC_Util_GetArgStr( meindex, argstr, sizeof( argstr));
 
-
 	CHAR_setWorkInt( meindex, CHAR_WORK_MODE, 0);
 
 	/* 由旦伐□玉本永玄 */
@@ -208,7 +205,6 @@ BOOL NPC_SysinfoInit( int meindex )
 		strcpy( buff, NPC_SYSINFO_PASSWD_DEFAULT);
 	}
 	CHAR_setWorkChar( meindex, CHAR_WORKCHAR_PASSWD, buff);
-
 
 	tmp = NPC_Util_GetNumFromStrWithDelim( argstr, "time");
 	if( tmp == -1 ) tmp = NPC_SYSINFO_TIMELIMIT_DEFAULT;
@@ -347,7 +343,7 @@ static void NPC_Sysinfo_Msg_EndInfo( int meindex, int tindex, char *msg)
 
 }
 /*------------------------------------------------------------------------
- * HELP 
+ * HELP
  *----------------------------------------------------------------------*/
 static void NPC_Sysinfo_Msg_Help( int meindex, int tindex, char *msg)
 {
@@ -390,9 +386,9 @@ static void NPC_Sysinfo_Msg_Player( int meindex, int tindex, char *msg)
     char	buff[64];
     for( i=0 ; i<playernum ; i++ ){
         if( CHAR_getCharUse(i) != FALSE ) {
-        	if( CHAR_getInt( i, CHAR_WHICHTYPE) == CHAR_TYPEPLAYER ) {
-        		cnt ++;
-        	}
+		if( CHAR_getInt( i, CHAR_WHICHTYPE) == CHAR_TYPEPLAYER ) {
+			cnt ++;
+		}
         }
 	}
 	snprintf( buff, sizeof( buff), "玩家有%d人。", cnt);
@@ -567,8 +563,6 @@ static void NPC_Sysinfo_SendMsgToAll( int meindex, char *msg)
 	}
 }
 
-
-
 /* 蝈衬平乓仿毛 NO_SEE 卞允月井升丹井 */
 static void NPC_Sysinfo_All_NoSee( int meindex, int tindex, char *msg ){
 	char	buff[256];
@@ -631,7 +625,6 @@ static void NPC_Sysinfo_All_NoBody( int meindex, int tindex, char *msg ){
 	}
 }
 
-
 static void NPC_Sysinfo_Move_Num( int meindex, int tindex, char *msg ){
 	char	buff[256];
 	int		work;
@@ -679,8 +672,6 @@ static void NPC_Sysinfo_Born_Num( int meindex, int tindex, char *msg ){
 	}
 }
 
-
-
 static void NPC_Sysinfo_Enemy_State( int meindex, int tindex, char *msg ){
 	char	buff[256];
 
@@ -714,7 +705,6 @@ static void NPC_Sysinfo_Enemy_State( int meindex, int tindex, char *msg ){
 	CHAR_talkToCli( tindex, meindex, buff,
 			CHAR_getWorkInt( meindex, CHAR_WORK_MSGCOLOR));
 
-
 }
 static void NPC_Sysinfo_SetWalkTime( int meindex, int tindex, char *msg)
 {
@@ -730,7 +720,7 @@ static void NPC_Sysinfo_SetWalkTime( int meindex, int tindex, char *msg)
 	snprintf( msgbuf, sizeof(msgbuf),"WalkInterval = %d 氂秒",getWalksendinterval());
 	CHAR_talkToCli( tindex, meindex, msgbuf,
 			CHAR_getWorkInt( meindex, CHAR_WORK_MSGCOLOR));
-	
+
 }
 static void NPC_Sysinfo_SetCATime( int meindex, int tindex, char *msg)
 {
@@ -784,7 +774,7 @@ static void NPC_Sysinfo_TitleRestart( int meindex, int tindex, char *msg)
 {
 	int		rc;
 	char	msgbuf[256];
-	
+
 	rc = TITLE_reinitTitleName();
 	if( rc) {
 		snprintf( msgbuf, sizeof(msgbuf),"读取完毕。" );
@@ -795,7 +785,6 @@ static void NPC_Sysinfo_TitleRestart( int meindex, int tindex, char *msg)
 	CHAR_talkToCli( tindex, meindex, msgbuf,
 			CHAR_getWorkInt( meindex, CHAR_WORK_MSGCOLOR));
 }
-
 
 static void NPC_Sysinfo_SetSaacwrite( int meindex, int tindex, char *msg)
 {

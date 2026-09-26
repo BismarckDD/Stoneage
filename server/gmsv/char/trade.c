@@ -13,7 +13,6 @@
 #include "handletime.h"
 #include "buf.h"
 #include "net.h"
-#include "char_base.h"
 #include "battle.h"
 #include "npc_bus.h"
 #include "char_talk.h"

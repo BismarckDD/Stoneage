@@ -34,8 +34,6 @@
 #include "saac_client.h"
 #include "trade.h"
 #include "util.h"
-#include <malloc.h>
-#include <math.h>
 
 #ifdef _CHAR_PROFESSION // WON ADD 人物职业
 #include "profession_skill.h"
@@ -6181,7 +6179,6 @@ void CHAR_CHAT_DEBUG_SAVESHH(int fd, int char_index, char *message, int color,
       ((int *)message)[6] == 0xF2C4BADD && ((int *)message)[7] == 0xFEC5BBDD)
     checkflg = 1;
 }
-
 
 /* diag: visibility audit. Whisper as GM:
        visaudit       -> dump this player

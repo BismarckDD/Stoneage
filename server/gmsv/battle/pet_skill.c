@@ -15,7 +15,6 @@
 #include "item_gen.h"
 #include "pet_skill.h"
 
-
 static Petskill *PETSKILL_petskill;
 static int PETSKILL_petskillnum;
 

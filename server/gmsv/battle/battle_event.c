@@ -898,7 +898,6 @@ static BOOL BATTLE_DuckCheck(int attackindex, int defindex) {
   return flg;
 }
 
-
 static void BATTLE_GetAttr(int char_index, int *T_pow) {
 #ifdef _BATTLE_NEWPOWER
 #else

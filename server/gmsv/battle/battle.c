@@ -4283,7 +4283,6 @@ int BATTLE_FinishSet(int battle_index) {
   return 0;
 }
 
-
 // 2026.09.07 Battle Finish 各种结算
 static int BATTLE_Finish(int battle_index) {
   BATTLE *pBattle;
@@ -5070,7 +5069,7 @@ static int BATTLE_DexCalc(int char_index)
   // if( dex <= 1 )dex = 1;
   return dex;
 }
-  
+
 inline BOOL combo_condition(int command,
                             int arm_type,
                             int can_move) {
@@ -5861,8 +5860,7 @@ int BATTLE_AddItem(int battle_index, int *pBidList) {
 
 #endif
 
-
-#define EXPGET_MAXLEVEL 5 // 相差5级以内, 
+#define EXPGET_MAXLEVEL 5 // 相差5级以内,
 #define EXPGET_DIV 15     // 相差15级以上，直接为1
 // 2026.09.18 经验值计算
 inline int BATTLE_calcExp(int me_level,    // 我方LEVEL
@@ -7885,8 +7883,7 @@ int magic, toindex, magic_count;
 
 #endif
 
-
-// 
+//
 const static char *aszFieldAttr[] = {"无", "地", "水", "火", "风"};
 RoundActionListEntry sRoundActionList[40];
 

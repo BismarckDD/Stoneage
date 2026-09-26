@@ -244,10 +244,10 @@ lua_const M_Lua_RegConstList[] = {
   {"对像_整数存储2%", sizeof("对像_整数存储2%"), LUA_DATALINE0 + CHAR_LUASAVE_INT_2},      //整数存储，保存至存档内
   {"对像_整数存储3%", sizeof("对像_整数存储3%"), LUA_DATALINE0 + CHAR_LUASAVE_INT_3},      //整数存储，保存至存档内
  // {"对像_IP%",sizeof("对像_IP%"),LUA_DATALINE1 + CHAR_CHARPLAYIP},
- 
+
   {"对像_会员等级%", sizeof("对像_会员等级%"), LUA_DATALINE0 + CHAR_VIPRIDE},
   {"对像_会员时间%", sizeof("对像_会员时间%"), LUA_DATALINE0 + CHAR_VIPTIME},
-  
+
 //  {"对像_NPC时间%", sizeof("对像_NPC时间%"), LUA_DATALINE0 + CHAR_NPCTIME},
 
   {"对像_原名%", sizeof("对像_原名%"), LUA_DATALINE1 + CHAR_NAME},
@@ -440,7 +440,7 @@ lua_const M_Lua_RegConstList[] = {
   {"宠栏_3%", sizeof("宠栏_3%"), 2},
   {"宠栏_4%", sizeof("宠栏_4%"), 3},
   {"宠栏_5%", sizeof("宠栏_5%"), 4},
-  
+
   {"队员_1%", sizeof("队员_1%"), 1},
   {"队员_2%", sizeof("队员_2%"), 2},
   {"队员_3%", sizeof("队员_3%"), 3},
@@ -479,7 +479,7 @@ lua_const M_Lua_RegConstList[] = {
   {"IT_盾牌%", sizeof("IT_盾牌%"), ITEM_WSHIELD},
   {"IT_鞋子%", sizeof("IT_鞋子%"), ITEM_WSHOES},
 #endif
-#ifdef _EQUIT_NEWGLOVE 
+#ifdef _EQUIT_NEWGLOVE
   {"IT_手套%", sizeof("IT_手套%"), ITEM_WGLOVE},
 #endif
 #ifdef _JZ_PETEQU
@@ -684,7 +684,7 @@ lua_const M_Lua_RegConstList[] = {
   {"队更新_HP%", sizeof("队更新_HP%"), CHAR_N_STRING_HP},
   {"队更新_MP%", sizeof("队更新_MP%"), CHAR_N_STRING_MP},
   {"队更新_名字%", sizeof("队更新_名字%"), CHAR_N_STRING_NAME},
-  
+
   {"更新3_HP%", sizeof("更新3_HP%"), CHAR_P_STRING_HP},
   {"更新3_MAXHP%", sizeof("更新3_MAXHP%"), CHAR_P_STRING_MAXHP},
   {"更新3_MP%", sizeof("更新3_MP%"), CHAR_P_STRING_MP},

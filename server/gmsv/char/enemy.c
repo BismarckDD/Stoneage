@@ -16,7 +16,6 @@
 #include "pet_skillinfo.h"
 #include "petmail.h"
 #ifdef _ADD_ENCOUNT // WON ADD 增加敌遭遇触发修件
-#include "encount.h"
 #include "npcutil.h"
 #endif
 
@@ -257,7 +256,6 @@ BOOL ENEMYTEMP_initEnemy(const char *filename) {
   print("有效宠物模板数量是 %d......", ENEMYTEMP_enemynum);
   return TRUE;
 }
-
 
 BOOL ENEMYTEMP_reinitEnemy(void) {
   freeMemory(ENEMYTEMP_enemy);
@@ -630,8 +628,8 @@ int ENEMY_getRank(int idx, int t_idx) {
   int i;
   int *p = ENEMY_enemy[idx].intdata;
   int *tp = ENEMYTEMP_enemy[t_idx].intdata;
-  int param_sum = *(tp + E_T_BASESTR) + *(tp + E_T_BASETGH) 
-                + *(tp + E_T_BASEDEX) + *(tp + E_T_BASEVITAL); 
+  int param_sum = *(tp + E_T_BASESTR) + *(tp + E_T_BASETGH)
+                + *(tp + E_T_BASEDEX) + *(tp + E_T_BASEVITAL);
   int pet_rank = 0;
   for (i = 0; i < arraysizeof(petRankTable); i++) {
     if (param_sum >= petRankTable[i].num) {
@@ -1317,7 +1315,6 @@ int *ENEMY_getEnemy(int char_index, int x, int y) {
   return found > 0 ? ENEMY_indextable : NULL;
 }
 
-
 int ENEMY_createPetFromEnemyIndex(int char_index, int array) {
   Char CharNew;
   int new_index;
@@ -1476,7 +1473,7 @@ int ENEMY_createPet(int array, int vital, int str, int tgh, int dex) {
       (tp[E_T_BASEVITAL] << 24) + (tp[E_T_BASESTR] << 16) +
       (tp[E_T_BASETGH] << 8) + (tp[E_T_BASEDEX] << 0);
 
-  // 2026.09.23 
+  // 2026.09.23
   randomAssign(tp + E_T_BASEVITAL);
   /* 计算初始能力值 */
   CharNew.data[CHAR_VITAL] = PARAM_CAL(E_T_BASEVITAL);
@@ -1577,7 +1574,7 @@ int ENEMY_TEST_createPetIndex(int array) {
   CharNew.data[CHAR_ALLOCPOINT] =
       (tp[E_T_BASEVITAL] << 24) + (tp[E_T_BASESTR] << 16) +
       (tp[E_T_BASETGH] << 8) + (tp[E_T_BASEDEX] << 0);
-  // 2026.09.23 
+  // 2026.09.23
   randomAssign(tp + E_T_BASEVITAL);
   CharNew.data[CHAR_VITAL] = PARAM_CAL(E_T_BASEVITAL);
   CharNew.data[CHAR_STR] = PARAM_CAL(E_T_BASESTR);

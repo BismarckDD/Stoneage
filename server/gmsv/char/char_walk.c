@@ -143,7 +143,6 @@ static void CHAR_sendMapAtWalk(int index, int fl, int ox, int oy, int fx,
   }
 }
 
-
 static const POINT scOffset[5] = {
   {0, -1}, {-1, 0}, {0, 0}, {1, 0}, {0, 1},
 };
@@ -449,7 +448,7 @@ static CHAR_WALKRET CHAR_walk_move(int char_index, int dir) {
       }
       // print("\n encount_fd=%d,eqNoEncount=%d,noEncount=%d", encount_fd, eqNoEncount, noEncount);
       // Arminius 7.2 Ra's amulet
-      if (eqNoEncount >= 200) { // 
+      if (eqNoEncount >= 200) { //
         noEncount = 1;
       } else if (eqNoEncount >= 120) {
         if ((ff == 100) || (ff == 200) || (ff == 300) || (ff == 400) ||

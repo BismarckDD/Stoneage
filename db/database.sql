@@ -1,84 +1,8 @@
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+08:00";
-
-
--- 数据库: `stoneage(sa)`
--- DROP DATABASE IF EXISTS sa;
+-- Optional MySQL schema. Default SAAC backend: SQLite (database.sqlite.sql).
 CREATE DATABASE IF NOT EXISTS sa;
 USE sa;
 
--- 表的结构 `capture_pet`
-CREATE TABLE IF NOT EXISTS `capture_pet` (
-  `unicode` varchar(32) NOT NULL,
-  `id` int(11) NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `type` int(11) NOT NULL,
-  `lv` int(11) NOT NULL,
-  `hp` int(11) NOT NULL,
-  `attack` int(11) NOT NULL,
-  `def` int(11) NOT NULL,
-  `quick` int(11) NOT NULL,
-  `sum` double NOT NULL,
-  `author` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `cdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `check` tinyint(1) NOT NULL DEFAULT '0',
-  `created_time` timestamp NOT NULL,
-  PRIMARY KEY (`unicode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 表的结构 `cash_draw`
-CREATE TABLE IF NOT EXISTS `cash_draw` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(16) NOT NULL,
-  `point` int(11) NOT NULL,
-  `fixtime` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 表的结构 `check`
-CREATE TABLE IF NOT EXISTS `check` (
-  `itemcode` varchar(64) NOT NULL,
-  `cdkey` varchar(32) NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `mac` varchar(64) NOT NULL,
-  `type` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `value` int(11) NOT NULL,
-  `time` datetime NOT NULL,
-  `check` tinyint(4) NOT NULL DEFAULT '0',
-  `usecdkey` varchar(32) DEFAULT NULL,
-  `usename` varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `usemac` varchar(64) DEFAULT NULL,
-  `usetime` datetime DEFAULT NULL,
-  PRIMARY KEY (`itemcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 表的结构 `consignment` 委托
-CREATE TABLE IF NOT EXISTS `consignment` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alive` int(11) NOT NULL,
-  `vippoint` int(11) NOT NULL,
-  `time` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 表的结构 `counter`
-CREATE TABLE IF NOT EXISTS `counter` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `type` int(11) NOT NULL,
-  `vippoint` int(11) NOT NULL,
-  `alive` int(11) NOT NULL,
-  `fame` int(11) NOT NULL,
-  `fixtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 表的结构 `CSAinfo`
-CREATE TABLE IF NOT EXISTS `CSAinfo` (
+CREATE TABLE IF NOT EXISTS `character_info` (
   `cdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
   `saveindex` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1个账号可以建2个人物.',
   `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色名称',
@@ -86,7 +10,6 @@ CREATE TABLE IF NOT EXISTS `CSAinfo` (
   `level` int(11) NOT NULL DEFAULT 1 COMMENT '',
   `trans` int(11) NOT NULL DEFAULT 0 COMMENT '',
   `alive` int(11) NOT NULL DEFAULT 0 COMMENT '',
-  `cameo` int(11) NOT NULL DEFAULT 0 COMMENT '石器币数量',
   `fame` int(11) NOT NULL,
   `TITLE_LV` int(11) NOT NULL,
   `DUELBATTLECOUNT` int(11) NOT NULL,
@@ -95,26 +18,11 @@ CREATE TABLE IF NOT EXISTS `CSAinfo` (
   `DUELSTWINCOUNT` int(11) NOT NULL,
   `DUELSTLOSECOUNT` int(11) NOT NULL,
   `DUELMAXSTWINCOUNT` int(11) NOT NULL,
-  `RESETPETCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '洗宠次数',
-  `AWAKEPETCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '变异次数',
-  `SEALEVNTCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '任务封印次数',
-  `TRANSPETCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '转宠次数',
-  `KILLBOSSCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '击杀BOSS次数',
-  `BOSSKILLCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '被BOSS杀次数',
-  `CAPPETCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '抓宠次数',
-  `FEEDMMCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '练MM次数',
-  `EQUIPUPCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '强化成功次数',
-  `EQUIPFAILCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '强化失败次数',
-  `MAGICADDCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '附魔次数',
-  `HORSEWINCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '跑马押中次数',
-  `HUNTFISHCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '捕鱼次数',
-  `HUNTBIGFISHCOUNT` int(16) NOT NULL DEFAULT '0' COMMENT '大鱼次数',
   `vip` int(11) NOT NULL,
   `time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 表的结构 `CSAlogin`
-CREATE TABLE IF NOT EXISTS `CSAlogin` (
+CREATE TABLE IF NOT EXISTS `account` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL COMMENT '用户名称',
   `password` varchar(32) NOT NULL COMMENT '用户密码',
@@ -123,277 +31,176 @@ CREATE TABLE IF NOT EXISTS `CSAlogin` (
   `RegTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '用户注册的时间',
   `LoginTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '用户上一次登录的时间',
   `OnlineName` varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `OnlineName1` varchar(30) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `OnlineName2` varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL,
   `Online` tinyint(4) DEFAULT '0',
   `Path` varchar(16) DEFAULT '',
   `VipPoint` int(11) DEFAULT '0',
   `PayPoint` int(11) DEFAULT '0',
-  `GamblePoint` int(11) DEFAULT '0',
-  `TrialPoint` int(16) NOT NULL DEFAULT '0',
-  `GoldPoint` int(16) NOT NULL DEFAULT '0',
-  `SQLPoint` int(16) NOT NULL DEFAULT '0',
   `SafePasswd` varchar(32) DEFAULT '',
   `ServerId` int(4) NOT NULL DEFAULT '0',
-  `Regip` varchar(32) NOT NULL DEFAULT '' COMMENT '用户注册时的IP',
-  `qq` varchar(32) NOT NULL DEFAULT '' COMMENT '',
-  `tel` varchar(32) NOT NULL DEFAULT '' COMMENT '',
   `ServerName` varchar(32) NOT NULL DEFAULT '' COMMENT '???',
-  `Recommender` int(11) NOT NULL DEFAULT '0' COMMENT '推荐人',
-  `Lock` int(4) NOT NULL DEFAULT '0',
-  `LockTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
-  `LockInfo` varchar(32) NOT NULL DEFAULT '',
   `Offline` tinyint(4) NOT NULL DEFAULT '0',
-  `Trust` tinyint(4) NOT NULL DEFAULT '0',
+  `PKPoint` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
--- 赌博
--- 表的结构 `dice`
-CREATE TABLE IF NOT EXISTS `dice` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `type` int(11) NOT NULL,
-  `vippoint` int(11) NOT NULL,
-  `alive` int(11) NOT NULL,
-  `fame` int(11) NOT NULL,
-  `dicenum` int(11) NOT NULL,
-  `fixtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `dicelog`
-CREATE TABLE IF NOT EXISTS `dicelog` (
-  `type` int(11) NOT NULL DEFAULT '0',
-  `winpoint` int(11) NOT NULL DEFAULT '0',
-  `losepoint` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `loan`
-CREATE TABLE IF NOT EXISTS `loan` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `PetName` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `PetInfo` varchar(512) CHARACTER SET utf8mb4 NOT NULL,
-  `PetString` varchar(2048) CHARACTER SET utf8mb4 NOT NULL,
-  `day` int(11) NOT NULL,
-  `vippoint` int(11) NOT NULL,
-  `stat` int(11) NOT NULL DEFAULT '0',
-  `loancdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `loanname` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `fixtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- lock: 用于记录锁定的用户.
-CREATE TABLE IF NOT EXISTS `lock` (
+CREATE TABLE IF NOT EXISTS `account_lock` (
   `Name` varchar(64) NOT NULL,
-  `LockTime` datetime NOT NULL,
   PRIMARY KEY (`Name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 表的结构 `OnlineBuy`
-CREATE TABLE IF NOT EXISTS `OnlineBuy` (
+CREATE TABLE IF NOT EXISTS `online_buy` (
   `CostPasswd` varchar(32) NOT NULL,
   `CostStr` varchar(64) DEFAULT NULL,
   `cdkey` varchar(32) DEFAULT NULL,
   `CostTime` datetime DEFAULT NULL,
   `check` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`CostPasswd`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 表的结构 `OnlineCard`
-CREATE TABLE IF NOT EXISTS `OnlineCard` (
-  `CostPasswd` varchar(32) NOT NULL,
-  `CostStr` varchar(64) DEFAULT NULL,
-  `cdkey` varchar(32) DEFAULT NULL,
-  `CostTime` datetime DEFAULT NULL,
-  `check` tinyint(1) DEFAULT '1',
-  PRIMARY KEY (`CostPasswd`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `OnlineCost`
-CREATE TABLE IF NOT EXISTS `OnlineCost` (
+CREATE TABLE IF NOT EXISTS `online_cost` (
   `CostPasswd` varchar(32) NOT NULL,
   `CostVal` int(11) NOT NULL,
   `PayVal` int(11) NOT NULL,
   `cdkey` varchar(32) DEFAULT '',
-  `CostTime` datetime NOT NULL,
+  `CostTime` datetime DEFAULT NULL,
   `check` tinyint(1) NOT NULL DEFAULT '1',
-  `creator` varchar(32) DEFAULT NULL,
   UNIQUE KEY `CostPasswd` (`CostPasswd`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `OnlinePlayer`
-CREATE TABLE IF NOT EXISTS `OnlinePlayer` (
-  `cdkey` varchar(32) NOT NULL,
-  `MAC` varchar(64) NOT NULL,
-  `Name` varchar(32) NOT NULL,
-  `LoginTime` datetime NOT NULL,
-  `ServerId` int(11) NOT NULL,
-  PRIMARY KEY (`cdkey`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 表的结构 `PauctionInfo`
-CREATE TABLE IF NOT EXISTS `PauctionInfo` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `effect` varchar(1024) CHARACTER SET utf8mb4 NOT NULL,
-  `cost` int(11) NOT NULL,
-  `type` int(11) NOT NULL,
-  `info` varchar(1024) CHARACTER SET utf8mb4 NOT NULL,
-  `string` varchar(1024) CHARACTER SET utf8mb4 NOT NULL,
-  `day` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `petbilling`
-CREATE TABLE IF NOT EXISTS `petbilling` (
-  `id` int(11) NOT NULL,
-  `type` tinyint(4) NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `lv` int(11) NOT NULL,
-  `hp` int(11) NOT NULL,
-  `attack` int(11) NOT NULL,
-  `def` int(11) NOT NULL,
-  `quick` int(11) NOT NULL,
-  `author` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  PRIMARY KEY (`id`,`type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `pklist`
-CREATE TABLE IF NOT EXISTS `pklist` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `player1` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `player2` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `player3` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `player4` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `player5` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `seesion` int(11) NOT NULL,
-  `stat` int(11) NOT NULL DEFAULT '0',
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `safedata`
-CREATE TABLE IF NOT EXISTS `safedata` (
+CREATE TABLE IF NOT EXISTS `safe_data` (
   `cdkey` varchar(32) NOT NULL DEFAULT '',
   `newsafe` varchar(64) DEFAULT NULL,
   `oldsafe` varchar(64) DEFAULT NULL,
   `flg` int(1) NOT NULL,
   `FixTime` datetime NOT NULL,
   PRIMARY KEY (`cdkey`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `SaleVipPoint`
-CREATE TABLE IF NOT EXISTS `SaleVipPoint` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `Vippoint` int(11) NOT NULL,
-  `rate` int(11) NOT NULL,
-  `price` int(11) NOT NULL,
-  `stat` int(11) NOT NULL,
-  `CreateTime` datetime NOT NULL,
-  `PayTime` datetime NOT NULL,
-  `banktype` varchar(32) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
-  `bankcdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `bankname` varchar(8) CHARACTER SET utf8mb4 NOT NULL,
-  `QQ` varchar(11) CHARACTER SET utf8mb4 NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `SuperStar`
-CREATE TABLE IF NOT EXISTS `SuperStar` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `award` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `check` int(11) NOT NULL,
-  `datatime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `transpointlog`
-CREATE TABLE IF NOT EXISTS `transpointlog` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `incdkey` varchar(32) DEFAULT NULL,
-  `outcdkey` varchar(32) DEFAULT NULL,
-  `type` varchar(32) DEFAULT NULL,
-  `inpoint` int(11) DEFAULT '0',
-  `outpoint` int(11) DEFAULT '0',
-  `datetime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `VipShop`
-CREATE TABLE IF NOT EXISTS `VipShop` (
-  `cdkey` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `itemid` int(11) NOT NULL,
-  `itemname` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `itemnum` int(11) NOT NULL,
-  `totalcost` int(16) NOT NULL,
-  `time` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 表的结构 `weekpay`
-CREATE TABLE IF NOT EXISTS `weekpay` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `term` int(11) NOT NULL,
-  `cdkey` varchar(32) NOT NULL,
-  `itemid` int(11) NOT NULL,
-  `check` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `YamaKing`
-CREATE TABLE IF NOT EXISTS `YamaKing` (
-  `index` int(13) NOT NULL AUTO_INCREMENT,
-  `cdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `floor` int(16) NOT NULL,
-  `itemid` int(16) NOT NULL,
-  `itemname` varchar(16) CHARACTER SET utf8mb4 NOT NULL,
-  `time` datetime NOT NULL,
-  `mac` varchar(64) CHARACTER SET utf8mb4 NOT NULL,
-  `servername` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  PRIMARY KEY (`index`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `yuxiaxie`
-CREATE TABLE IF NOT EXISTS `yuxiaxie` (
-  `date` date NOT NULL,
-  `cdkey` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
-  `type` int(11) NOT NULL,
-  `vippoint` int(11) NOT NULL,
-  `fame` int(11) NOT NULL,
-  `alive` int(11) NOT NULL,
-  `fixtime` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 表的结构 `yuxiaxielog`
-CREATE TABLE IF NOT EXISTS `yuxiaxielog` (
-  `date` date NOT NULL,
-  `type` int(11) NOT NULL,
-  `vippoint` int(11) NOT NULL,
-  `alive` int(11) NOT NULL,
-  `fame` int(11) NOT NULL,
-  `sumvippoint` int(11) NOT NULL,
-  `sumalive` int(11) NOT NULL,
-  `sumfame` int(11) NOT NULL,
-  `fixtime` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-INSERT INTO CSAlogin (username, password) values ('aaa', 'aaa');
-INSERT INTO CSAlogin (username, password) values ('aaaa', 'aaaa');
-INSERT INTO CSAlogin (username, password) values ('user1', 'aaa');
-INSERT INTO CSAlogin (username, password) values ('user2', 'aaa');
-INSERT INTO CSAlogin (username, password) values ('user3', 'aaa');
+-- Full character saves and account-wide warehouses. slot is 0=item, 1=pet in account_storage.
+CREATE TABLE IF NOT EXISTS character_save (
+  account_name VARCHAR(64) NOT NULL,
+  slot INTEGER NOT NULL,
+  save_data LONGBLOB NOT NULL,
+  format_version INTEGER NOT NULL DEFAULT 1,
+  revision INTEGER NOT NULL DEFAULT 1,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (account_name, slot)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+CREATE TABLE IF NOT EXISTS account_storage (
+  account_name VARCHAR(64) NOT NULL,
+  slot INTEGER NOT NULL,
+  save_data LONGBLOB NOT NULL,
+  revision INTEGER NOT NULL DEFAULT 1,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (account_name, slot)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+CREATE TABLE IF NOT EXISTS character_archive (
+  archive_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  account_name VARCHAR(64) NOT NULL,
+  slot INTEGER NOT NULL,
+  save_data LONGBLOB NOT NULL,
+  revision INTEGER NOT NULL,
+  archived_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS family (
+  family_id INTEGER NOT NULL,
+  legacy_index INTEGER NOT NULL DEFAULT 0,
+  leader_image INTEGER NOT NULL DEFAULT 0,
+  member_count INTEGER NOT NULL DEFAULT 0,
+  joined_count INTEGER NOT NULL DEFAULT 0,
+  accept_members INTEGER NOT NULL DEFAULT 0,
+  established INTEGER NOT NULL DEFAULT 0,
+  sprite INTEGER NOT NULL DEFAULT 0,
+  manor_index INTEGER NOT NULL DEFAULT 0,
+  reputation INTEGER NOT NULL DEFAULT 0,
+  gold INTEGER NOT NULL DEFAULT 0,
+  member_limit INTEGER NOT NULL DEFAULT 0,
+  apply_time INTEGER NOT NULL DEFAULT 0,
+  setup_time INTEGER NOT NULL DEFAULT 0,
+  delete_time INTEGER NOT NULL DEFAULT 0,
+  message_cursor INTEGER NOT NULL DEFAULT 0,
+  message_count INTEGER NOT NULL DEFAULT 0,
+  adventure_reputation INTEGER NOT NULL DEFAULT 0,
+  breeding_reputation INTEGER NOT NULL DEFAULT 0,
+  craft_reputation INTEGER NOT NULL DEFAULT 0,
+  cooking_reputation INTEGER NOT NULL DEFAULT 0,
+  pk_reputation INTEGER NOT NULL DEFAULT 0,
+  momentum INTEGER NOT NULL DEFAULT 0,
+  manor_apply_time INTEGER NOT NULL DEFAULT 0,
+  pay_point INTEGER NOT NULL DEFAULT 0,
+  badge INTEGER NOT NULL DEFAULT 0,
+  name TEXT NOT NULL,
+  leader_name TEXT NOT NULL,
+  leader_account TEXT NOT NULL,
+  guardian_name TEXT NOT NULL,
+  guardian_data TEXT NOT NULL,
+  rules TEXT NOT NULL,
+  totem varchar(649) NOT NULL DEFAULT '',
+  PRIMARY KEY (family_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS family_member (
+  family_id INTEGER NOT NULL,
+  member_slot INTEGER NOT NULL,
+  level INTEGER NOT NULL DEFAULT 0,
+  role INTEGER NOT NULL DEFAULT 0,
+  delete_time INTEGER NOT NULL DEFAULT 0,
+  reputation INTEGER NOT NULL DEFAULT 0,
+  leader_eligible INTEGER NOT NULL DEFAULT 0,
+  momentum INTEGER NOT NULL DEFAULT 0,
+  character_name TEXT NOT NULL,
+  account_name TEXT NOT NULL,
+  PRIMARY KEY (family_id, member_slot)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS family_message (
+  family_id INTEGER NOT NULL,
+  message_slot INTEGER NOT NULL,
+  content TEXT NOT NULL,
+  PRIMARY KEY (family_id, message_slot)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS family_public_message (
+  board_id INTEGER NOT NULL,
+  message_slot INTEGER NOT NULL,
+  content TEXT NOT NULL,
+  PRIMARY KEY (board_id, message_slot)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS family_message_board (
+  board_id INTEGER NOT NULL,
+  message_count INTEGER NOT NULL DEFAULT 0,
+  message_cursor INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (board_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS family_manor (
+  manor_id INTEGER NOT NULL,
+  map_id INTEGER NOT NULL DEFAULT 0,
+  x INTEGER NOT NULL DEFAULT 0,
+  y INTEGER NOT NULL DEFAULT 0,
+  leader_map_id INTEGER NOT NULL DEFAULT 0,
+  village_id INTEGER NOT NULL DEFAULT 0,
+  owner_family_id INTEGER NOT NULL DEFAULT 0,
+  owner_name TEXT NOT NULL,
+  owner_reputation INTEGER NOT NULL DEFAULT 0,
+  occupied_at INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (manor_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS family_pk_schedule (
+  schedule_kind VARCHAR(32) NOT NULL,
+  schedule_slot INTEGER NOT NULL,
+  flag INTEGER NOT NULL DEFAULT 0,
+  schedule_data TEXT NOT NULL,
+  PRIMARY KEY (schedule_kind, schedule_slot)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS schema_migration (
+  version INTEGER PRIMARY KEY,
+  applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+INSERT INTO schema_migration(version) SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM schema_migration WHERE version=1);

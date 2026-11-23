@@ -34,9 +34,7 @@ BOOL PetTalk_AddItem(int meindex, int talker, char *buf);
 BOOL PetTalk_DelItem(int meindex, int talker, char *buf);
 BOOL PetTalk_RunEvent(int meindex, int talker, char *buf);
 BOOL PetTalk_CheckMyFloor(int meindex, int talker, char *buf, int flg);
-#ifdef _PET_TALKBBI
 BOOL PET_CheckPlayerBBI(int meindex, int charindex, int BBI, int flg);
-#endif
 #ifndef _PET_TALKPRO
 char *Pet_TalkGetFunStr(char *temp, char *buf, int len) {
   char filename[56];
@@ -592,6 +590,7 @@ BOOL PetTalk_BSCheck(int meindex, int talker, char *buf) {
   return FALSE;
 }
 
+// 2026.09.26 打开了TALKBBI, 有可能有问题
 BOOL PetTalk_FreeIfCheck(int meindex, int talker, char *buf, int kosuu, int flg,
                          int temp) {
   int Type = -1;
@@ -600,7 +599,6 @@ BOOL PetTalk_FreeIfCheck(int meindex, int talker, char *buf, int kosuu, int flg,
       return TRUE;
     }
   }
-
   if (strcmp(buf, "TRANS") == 0) {
     if (PetTalk_CheckTrans(meindex, talker, kosuu, flg) == TRUE)
       return TRUE;
@@ -639,13 +637,11 @@ BOOL PetTalk_FreeIfCheck(int meindex, int talker, char *buf, int kosuu, int flg,
       return TRUE;
     }
   }
-#ifdef _PET_TALKBBI
   if (strcmp(buf, "BBI") == 0) {
     if (PET_CheckPlayerBBI(meindex, talker, kosuu, flg) == TRUE) {
       return TRUE;
     }
   }
-#endif
   return FALSE;
 }
 BOOL PetTalk_CheckMyType(int meindex, int toindex, int kosuu, int flg,
@@ -963,23 +959,16 @@ void PET_Watchfunc(int objmeindex, int objmoveindex, CHAR_ACTION act, int x,
   return;
 }
 
-#ifdef _PET_TALKBBI
-BOOL PET_CheckPlayerBBI(int meindex, int to_index, int BBI, int flg) {
-  if (!CHAR_CHECKINDEX(to_index))
+BOOL PET_CheckPlayerBBI(int fromIndex, int toIndex, int baseImageNo, int flg) {
+  if (!CHAR_CHECKINDEX(toIndex))
     return FALSE;
-  if (BBI < 0)
+  if (baseImageNo < 0)
     return FALSE;
-  const int MyBBI = CHAR_getInt(to_index, CHAR_IMAGENUMBER);
-  if (flg == 0) {
-    if (BBI == MyBBI)
-      return TRUE;
-  } else if (flg == 1) {
-    if (BBI < MyBBI)
-      return TRUE;
-  } else if (flg == 2) {
-    if (BBI > MyBBI)
-      return TRUE;
-  }
+  const int imageNo = CHAR_getInt(toIndex, CHAR_IMAGENUMBER);
+  if (flg == 0 && baseImageNo == imageNo
+    || flg == 1 && baseImageNo < imageNo
+    || flg == 2 && baseImageNo > imageNo) {
+    return FALSE;
+  } 
   return FALSE;
 }
-#endif

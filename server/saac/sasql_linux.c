@@ -9,6 +9,7 @@
 
 // third_party
 #include "sa_db.h"
+#include "sa_store.h"
 
 SA_DB *mysql;
 SA_DB_RESULT *mysql_result;
@@ -87,7 +88,7 @@ static int readSqlConfig(char *path) {
 }
 
 BOOL sasql_init(void) {
-  snprintf(config.sql_Backend, sizeof(config.sql_Backend), "mysql");
+  snprintf(config.sql_Backend, sizeof(config.sql_Backend), "sqlite");
   snprintf(config.sql_SQLitePath, sizeof(config.sql_SQLitePath), "saac.sqlite3");
   if (readSqlConfig("acserv.cf")) {
     printf("\n数据库初始化失败！");
@@ -126,6 +127,11 @@ BOOL sasql_init(void) {
    */
   if (strcmp(config.sql_Backend, "sqlite") != 0)
     sa_db_query(mysql, "SET NAMES 'utf8mb4'");
+  sa_store_attach(mysql);
+  if (sa_store_initialize() < 0) {
+    fprintf(stderr, "Storage initialization failed: %s\n", sa_db_error(mysql));
+    sasql_close(); return FALSE;
+  }
   printf("\n数据库连接成功！\n");
   return TRUE;
 }
@@ -135,6 +141,7 @@ int sasql_mysql_query(char *sqlstr) {
 }
 
 void sasql_close(void) {
+  sa_store_attach(NULL);
   sa_db_free_result(mysql_result);
   mysql_result = NULL;
   sa_db_close(mysql);
@@ -617,7 +624,7 @@ char *sasql_OnlineCost(char *id, char *costpasswd, int fmindex, char *fmname) {
   char sqlstr[256];
   static char token[256] = "";
   sprintf(sqlstr,
-          "select `CostVal`, `PayVal`, `check` from `OnlineCost` where "
+          "select `CostVal`, `PayVal`, `check` from `online_cost` where "
           "CostPasswd = BINARY'%s'",
           costpasswd);
   if (!sasql_mysql_query(sqlstr)) {
@@ -637,7 +644,7 @@ char *sasql_OnlineCost(char *id, char *costpasswd, int fmindex, char *fmname) {
         int vippoint = sasql_add_vippoint(id, costval);
         int paypoint = sasql_add_Paypoint(id, payval);
         sprintf(sqlstr,
-                "update OnlineCost set cdkey=BINARY'%s', CostTime=NOW(), "
+                "update online_cost set cdkey=BINARY'%s', CostTime=NOW(), "
                 "`check`=0  where CostPasswd=BINARY'%s'",
                 id, costpasswd);
         if (!sasql_mysql_query(sqlstr)) {
@@ -663,7 +670,7 @@ char *sasql_TransOnlineCost() {
   char sqlstr[256];
   static char token[256] = "";
   sprintf(sqlstr,
-          "select `PayVal`, `cdkey` from `OnlineCost` where `check` = 0");
+          "select `PayVal`, `cdkey` from `online_cost` where `check` = 0");
   if (!sasql_mysql_query(sqlstr)) {
     int num_row = 0;
     sa_db_free_result(mysql_result);
@@ -704,7 +711,7 @@ void sasql_OnlineCost_add(int cost, int num, int point) {
       }
     }
     sprintf(sqlstr,
-            "INSERT INTO OnlineCost (CostPasswd, CostVal, PayVal) VALUES "
+            "INSERT INTO online_cost (CostPasswd, CostVal, PayVal) VALUES "
             "(BINARY'%s', %d, %d)",
             CostPasswd, cost, point);
     if (!sasql_mysql_query(sqlstr)) {
@@ -732,7 +739,7 @@ char *sasql_OnlineBuy(char *id, char *costpasswd) {
   char sqlstr[256];
   static char token[256] = "";
   sprintf(sqlstr,
-          "select `CostStr`, `check` from `OnlineBuy` where CostPasswd = "
+          "select `CostStr`, `check` from `online_buy` where CostPasswd = "
           "BINARY'%s'",
           costpasswd);
   if (!sasql_mysql_query(sqlstr)) {
@@ -752,7 +759,7 @@ char *sasql_OnlineBuy(char *id, char *costpasswd) {
 #ifdef _SQL_BUY_FUNC_ONE_CDKEY
         if (costpasswd[0] == '1') {
           sprintf(sqlstr,
-                  "select count(*) from OnlineBuy where `CostStr`='%s' and "
+                  "select count(*) from online_buy where `CostStr`='%s' and "
                   "`cdkey`=BINARY'%s'",
                   coststr, id);
           if (!sasql_mysql_query(sqlstr)) {
@@ -775,7 +782,7 @@ char *sasql_OnlineBuy(char *id, char *costpasswd) {
 #endif
 
         sprintf(sqlstr,
-                "update OnlineBuy set cdkey=BINARY'%s', CostTime=NOW(), "
+                "update online_buy set cdkey=BINARY'%s', CostTime=NOW(), "
                 "`check`=0  where CostPasswd=BINARY'%s'",
                 id, costpasswd);
         if (!sasql_mysql_query(sqlstr)) {
@@ -810,7 +817,7 @@ void sasql_OnlineBuy_add(char *coststr, int type, int num) {
     }
     sprintf(
         sqlstr,
-        "INSERT INTO OnlineBuy (CostPasswd, CostStr) VALUES (BINARY'%s', '%s')",
+        "INSERT INTO online_buy (CostPasswd, CostStr) VALUES (BINARY'%s', '%s')",
         CostPasswd, coststr);
     if (!sasql_mysql_query(sqlstr)) {
       k++;
@@ -919,105 +926,55 @@ void sasql_OldpsToMd5ps() {
 }
 #endif
 
-void sasql_CleanCdkey(int date) {
-  char sqlstr[256];
 
-  sprintf(sqlstr,
-          "select `%s` from `%s` where TO_DAYS( NOW( ) ) - TO_DAYS( LoginTime "
-          ") > %d",
-          config.sql_NAME, config.sql_Table, date);
-
-  if (!sa_db_query(mysql, sqlstr)) {
-    int num_row = 0;
-    int GroupNum = 0;
-    int ServerMaxNum = 0;
-    mysql_result = sa_db_store_result(mysql);
-    if (mysql_result == NULL) {
-      printf("\n数据库查询失败！%s\n", sa_db_error(mysql));
-      return;
-    }
-    num_row = sa_db_num_rows(mysql_result);
-    if (num_row > 0) {
-      while ((mysql_row = sa_db_fetch_row(mysql_result))) {
-        char tmp[256] = "";
-        char charId[256];
-
-        strcpy(charId, mysql_row[0]);
-
-        int hash = 0;
-        int i;
-        for (i = 0; i < strlen(charId); i++) {
-          hash += (int)charId[i];
-          hash = hash % 256;
-        }
-
-        sprintf(tmp, "rm char/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-        sprintf(tmp, "rm char_sleep/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-        sprintf(tmp, "rm log/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-        sprintf(tmp, "rm mail/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-      }
+static void sasql_clean_accounts(const char *predicate, int date) {
+  SA_DB_RESULT *accounts = NULL;
+  SA_DB_ROW row;
+  char query[1024];
+  int failed = 0;
+  if (sa_db_begin(mysql)) return;
+  snprintf(query, sizeof(query),
+      "SELECT a.`%s` FROM `%s` a WHERE (%s) AND COALESCE(a.Online,0)=0 "
+      "AND NOT EXISTS (SELECT 1 FROM family_member f WHERE f.account_name=a.`%s`)",
+      config.sql_NAME, config.sql_Table, predicate, config.sql_NAME);
+  if (sa_db_query(mysql, query)) failed = 1;
+  if (!failed) accounts = sa_db_store_result(mysql);
+  if (!accounts) failed = 1;
+  while (!failed && (row = sa_db_fetch_row(accounts))) {
+    SA_DB_PARAM param = sa_store_text(row[0]);
+    static const char *statements[] = {
+      "INSERT INTO character_archive(account_name,slot,save_data,revision) SELECT account_name,slot,save_data,revision FROM character_save WHERE account_name=?",
+      "DELETE FROM character_save WHERE account_name=?",
+      "DELETE FROM account_storage WHERE account_name=?",
+      "DELETE FROM character_info WHERE cdkey=?",
+      "DELETE FROM safe_data WHERE cdkey=?"
+    };
+    int i;
+    for (i = 0; i < (int)(sizeof(statements)/sizeof(statements[0])); ++i)
+      if (sa_db_run(mysql, statements[i], &param, 1, NULL, NULL)) { failed = 1; break; }
+    if (!failed) {
+      snprintf(query, sizeof(query), "DELETE FROM `%s` WHERE `%s`=?", config.sql_Table, config.sql_NAME);
+      failed = sa_db_run(mysql, query, &param, 1, NULL, NULL);
     }
   }
-
-  sprintf(
-      sqlstr,
-      "DELETE FROM `%s` WHERE TO_DAYS( NOW( ) ) - TO_DAYS( LoginTime ) > %d",
-      config.sql_Table, date);
-  sa_db_query(mysql, sqlstr);
-  printf("完成\n");
-  return;
+  sa_db_free_result(accounts);
+  if (failed || sa_db_commit(mysql)) {
+    sa_db_rollback(mysql); fprintf(stderr, "Account cleanup failed: %s\n", sa_db_error(mysql));
+  }
+  (void)date;
 }
 
-void sasql_CleanLockCdkey() {
-  char sqlstr[256];
+void sasql_CleanCdkey(int date) {
+  char predicate[160];
+  if (date < 0) return;
+  snprintf(predicate, sizeof(predicate), "TO_DAYS(NOW())-TO_DAYS(a.LoginTime)>%d", date);
+  sasql_clean_accounts(predicate, date);
+}
 
-  sprintf(sqlstr, "select `%s` from `%s` where `%s` LIKE '%!%'",
-          config.sql_NAME, config.sql_Table, config.sql_PASS);
-
-  if (!sa_db_query(mysql, sqlstr)) {
-    int num_row = 0;
-    int GroupNum = 0;
-    int ServerMaxNum = 0;
-    mysql_result = sa_db_store_result(mysql);
-    if (mysql_result == NULL) {
-      printf("\n数据库查询失败！%s\n", sa_db_error(mysql));
-      return;
-    }
-    num_row = sa_db_num_rows(mysql_result);
-    if (num_row > 0) {
-      while ((mysql_row = sa_db_fetch_row(mysql_result))) {
-        char tmp[256] = "";
-        char charId[256];
-
-        strcpy(charId, mysql_row[0]);
-
-        int hash = 0;
-        int i;
-        for (i = 0; i < strlen(charId); i++) {
-          hash += (int)charId[i];
-          hash = hash % 256;
-        }
-        sprintf(tmp, "rm char/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-        sprintf(tmp, "rm char_sleep/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-        sprintf(tmp, "rm log/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-        sprintf(tmp, "rm mail/0x%x/%s.* >& /dev/null\n", hash, charId);
-        system(tmp);
-      }
-    }
-  }
-
-  sprintf(sqlstr, "DELETE FROM `%s` WHERE `%s` LIKE '%!%'", config.sql_Table,
-          config.sql_PASS);
-  sa_db_query(mysql, sqlstr);
-  printf("完成\n");
-  return;
+void sasql_CleanLockCdkey(void) {
+  char predicate[128];
+  snprintf(predicate, sizeof(predicate), "a.`%s` LIKE '%%!%%'", config.sql_PASS);
+  sasql_clean_accounts(predicate, 0);
 }
 
 BOOL sasql_craete_userinfo(void) { return FALSE; }

@@ -59,7 +59,7 @@ void sasql_CleanCdkey(int date);
 void sasql_CleanLockCdkey(void);
 
 typedef struct tagConfig {
-  char sql_Backend[16];   // mysql (default) or sqlite
+  char sql_Backend[16];   // sqlite (default) or mysql
   char sql_SQLitePath[256]; // Local SQLite database file
   char sql_IP[32];        // Server Host
   int sql_Port;           // Server Port

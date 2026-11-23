@@ -5,6 +5,7 @@
 #include "saac_config.h"
 #include "saac_server.h"
 #include "util.h"
+#include "sa_store.h"
 
 
 // CoolFish: Family 2001/6/12
@@ -21,10 +22,6 @@ char nm_work[CHARDATASIZE];
 
 static void getCharNameFromString(const char *in, char *output);
 static void getCharOptionFromString(const char *in, char *output);
-static void makeCharFileName(char *idstring, char *output, int outputlen,
-                             int num);
-static void makeDeletCharFileName(char *id, char *output, int outputlen,
-                                  int num);
 // Nuke *1*1
 static int makeSaveCharString(char *output, int outputlen, char *nm, char *opt,
                               char *info);
@@ -32,15 +29,8 @@ static int findBlankCharIndex(char *id);
 
 static int unlinkCharFile(char *id, int num);
 #ifdef _SLEEP_CHAR // 取得非活跃人物档名
-static void makeSleepCharFileName(char *id, char *output, int outputlen,
-                                  int num);
-static void makeSleepCharPoolItemFileName(char *id, char *output,
-                                          int outputlen);
-static void makeSleepCharPoolPetFileName(char *id, char *output, int outputlen);
-static void makeCharPoolPetFileName(char *id, char *output, int outputlen);
 #endif
 #ifdef _CHAR_POOLITEM
-static void makeCharPoolItemFileName(char *id, char *output, int outputlen);
 #endif
 #define SPACE '|'
 #define SPACESTRING "|"
@@ -185,19 +175,6 @@ int charSave(int ti, char *id, char *charname, char *opt, char *charinfo,
     logErr("err add batpetstring.txt:%s[%s] !\n", id, charname);
   }
 
-  if (unlock) {
-    char result[100];
-    char retdata[100];
-#ifdef _LOCK_ADD_NAME
-    if ((ret = lockUser(gs[ti].name, id, "", "0", 0, result, sizeof(result),
-                        retdata, sizeof(retdata), "0", "0")) < 0) {
-#else
-    if ((ret = lockUser(gs[ti].name, id, "0", 0, result, sizeof(result),
-                        retdata, sizeof(retdata), "0", "0")) < 0) {
-#endif
-      logErr("解锁:%s 失败!!\n", id);
-    }
-  }
   // Nuke *1 add escape
   if (makeSaveCharString(savebuf, sizeof(savebuf), charname, opt, charinfo) <
       0) {
@@ -213,6 +190,10 @@ int charSave(int ti, char *id, char *charname, char *opt, char *charinfo,
   // Nuke *1-
   char_index = getCharIndexByName(id, charname);
 #endif
+  if (char_index == -2) {
+    SaacServer_ACCharSave_send(ti, FAILED, "database read failed", mesgid);
+    return -1;
+  }
   if (char_index < 0) {
     int blank_index = findBlankCharIndex(id);
     if (blank_index < 0) {
@@ -229,6 +210,20 @@ int charSave(int ti, char *id, char *charname, char *opt, char *charinfo,
     logErr("\n ACCharSave:disk I/O error or a bug  ");
     SaacServer_ACCharSave_send(ti, FAILED, "disk I/O error or a bug", mesgid);
     return ret;
+  }
+
+  if (unlock) {
+    char result[100];
+    char retdata[100];
+#ifdef _LOCK_ADD_NAME
+    if ((ret = lockUser(gs[ti].name, id, "", "0", 0, result, sizeof(result),
+                        retdata, sizeof(retdata), "0", "0")) < 0) {
+#else
+    if ((ret = lockUser(gs[ti].name, id, "0", 0, result, sizeof(result),
+                        retdata, sizeof(retdata), "0", "0")) < 0) {
+#endif
+      logErr("解锁:%s 失败!!\n", id);
+    }
   }
 
   SaacServer_ACCharSave_send(ti, SUCCESSFUL, "", mesgid);
@@ -259,68 +254,10 @@ void charListCallback(int ti, int auth, char *c0, char *c1, char *c2, char *c3,
     total_ng_charlist++;
     return;
   }
-#ifdef _SLEEP_CHAR // 如果无新档, 将旧档移至新档
-  {
-    char fn_old[256], fn_new[256];
-    FILE *fp_old, *fp_new;
-    int i;
-
-    // 移人物档
-    for (i = 0; i < MAXCHAR_PER_USER; i++) {
-      makeCharFileName(id, fn_new, sizeof(fn_new), i);
-      fp_new = fopen(fn_new, "r");
-      if (fp_new == NULL) {
-        makeSleepCharFileName(id, fn_old, sizeof(fn_old), i);
-        fp_old = fopen(fn_old, "r");
-        if (fp_old != NULL) {
-          fclose(fp_old);
-          rename(fn_old, fn_new); // 搬移
-          // filecopy( fn_old, fn_new); // 复制
-          logErr(" 移档_%s ", fn_new);
-        }
-      } else {
-        fclose(fp_new);
-      }
-    }
-#ifdef _CHAR_POOLITEM
-    // 移仓物品库档
-    makeCharPoolItemFileName(id, fn_new, sizeof(fn_new));
-    fp_new = fopen(fn_new, "r");
-    if (fp_new == NULL) {
-      makeSleepCharPoolItemFileName(id, fn_old, sizeof(fn_old));
-      fp_old = fopen(fn_old, "r");
-      if (fp_old != NULL) {
-        fclose(fp_old);
-        rename(fn_old, fn_new); // 搬移
-        // filecopy( fn_old, fn_new); // 复制
-        logErr(" 移档_%s ", fn_new);
-      }
-    } else {
-      fclose(fp_new);
-    }
-#endif
-#ifdef _CHAR_POOLPET
-    // 移仓宠物库档
-    makeCharPoolPetFileName(id, fn_new, sizeof(fn_new));
-    fp_new = fopen(fn_new, "r");
-    if (fp_new == NULL) {
-      makeSleepCharPoolPetFileName(id, fn_old, sizeof(fn_old));
-      fp_old = fopen(fn_old, "r");
-      if (fp_old != NULL) {
-        fclose(fp_old);
-        rename(fn_old, fn_new); // 搬移
-        // filecopy( fn_old, fn_new); // 复制
-        logErr(" 移档_%s ", fn_new);
-      }
-    } else {
-      fclose(fp_new);
-    }
-
-#endif
+  if (loadCharNameAndOption(id, listbuf, sizeof(listbuf)) < 0) {
+    SaacServer_ACCharList_send(ti, FAILED, "database read failed", mesgid);
+    return;
   }
-#endif
-
-  loadCharNameAndOption(id, listbuf, sizeof(listbuf));
   // Arminius
   SaacServer_ACCharList_send(ti, SUCCESSFUL, listbuf, mesgid);
   total_ok_charlist++;
@@ -478,40 +415,13 @@ void getCharInfoFromString(char *input, char *output) {
   }
 }
 
-static void makeDeletCharFileName(char *id, char *output, int outputlen,
-                                  int num) {
-  char body[1024];
-  if (strlen(id) < 1)
-    return;
-  struct tm tm1;
-  time_t timep;
-  time(&timep);
-  memcpy(&tm1, localtime(&timep), sizeof(tm1));
-  snprintf(body, sizeof(body), "%s.%d.char.%d.%d.%d.%d.%d.%d", id, num,
-           tm1.tm_year + 1900, tm1.tm_mon + 1, tm1.tm_mday, tm1.tm_hour,
-           tm1.tm_min, tm1.tm_sec);
-  makeDirFilename(output, outputlen, "char_delet", getHash(id), body);
-}
+
 
 // 2026.08.24 在output里填入dir_path
-static void makeCharFileName(char *id, char *output, int outputlen, int num) {
-  char body[1024];
-  if (strlen(id) < 1)
-    return;
-  snprintf(body, sizeof(body), "%s.%d.char", id, num);
-  makeDirFilename(output, outputlen, g_saac_config.chardir, getHash(id), body);
-}
+
 
 #ifdef _SLEEP_CHAR // 取得非活跃人物档名
-static void makeSleepCharFileName(char *id, char *output, int outputlen,
-                                  int num) {
-  char body[1024];
-  if (strlen(id) < 1)
-    return;
-  snprintf(body, sizeof(body), "%s.%d.char", id, num);
-  makeDirFilename(output, outputlen, g_saac_config.sleepchardir, getHash(id),
-                  body);
-}
+
 #endif
 
 int loadCharNameAndOption(char *id, char *output, int outputlen) {
@@ -523,7 +433,7 @@ int loadCharNameAndOption(char *id, char *output, int outputlen) {
     int l;
     char delim[2];
     char_buf[i][0] = 0;
-    loadCharOne(id, i, char_buf[i], sizeof(char_buf[i]));
+    if (loadCharOne(id, i, char_buf[i], sizeof(char_buf[i])) == -2) return -1;
     getCharNameFromString(char_buf[i], name_work);
     getCharOptionFromString(char_buf[i], option_work);
     if (char_buf[i][0] == 0)
@@ -546,79 +456,21 @@ int loadCharNameAndOption(char *id, char *output, int outputlen) {
   return count;
 }
 
-int loadCharOne(char *id,     // username
-                int num,      // 在当前SAAC的第几个角色(最多两个)
-                char *output,  // 角色信息,
-                int outputlen) {
-  char fn[1024];
-  FILE *fp;
-  char c_temp, *c_ptr;
-  c_ptr = output;
-  makeCharFileName(id, fn, sizeof(fn), num);
-  fp = fopen(fn, "r");
-  if (fp == NULL) {
-    return -1;
-  }
-
-  do {
-    c_temp = fgetc(fp);
-    *c_ptr = c_temp;
-    c_ptr++;
-  } while (c_temp != EOF);
-  *c_ptr = '\0';
-
-  if (output[0] == '|' && output[1] == '|') {
-    return -1;
-  }
-
-#ifdef _FIX_CAHR_VERSION
-  {
-    char *strp;
-    while ((strp = strstr(output, "\\a")) != NULL) {
-      *(strp + 1) = 'n';
-    }
-  }
-#endif
-
-  fclose(fp);
+int loadCharOne(char *id, int num, char *output, int outputlen) {
+  int size;
+  if (num < 0 || num >= MAXCHAR_PER_USER || outputlen <= 0) return -2;
+  size = sa_store_blob_get("character_save", id, num, output, (size_t)outputlen);
+  if (size < 0) return size;
+  if (!size || (output[0] == '|' && output[1] == '|')) { output[0] = 0; return -2; }
   return 0;
 }
 
 int saveCharOne(char *id, int num, char *input) {
-  char fn[1024];
-  FILE *fp;
-  char *strp;
-  char *strp1; // Won 修正 hp 为负的人
-
-  makeCharFileName(id, fn, sizeof(fn), num);
-  fp = fopen(fn, "w");
-  if (fp == NULL) {
-    logErr("save error 01: %d", errno); // Change add errno
-    return -1;
+  if (!input || !input[0] || num < 0 || num >= MAXCHAR_PER_USER) return -1;
+  if (sa_db_begin(sa_store_db())) return -1;
+  if (sa_store_blob_put("character_save", id, num, input, strlen(input)) < 0 || sa_db_commit(sa_store_db())) {
+    sa_db_rollback(sa_store_db()); return -1;
   }
-  // Won 修正 hp 为负的人
-  if ((strp = strstr(input, "\\nhp=-")) != NULL) {
-    strp1 = strstr(input, "\\nmp=");
-    *(strp + 5) = '1';
-    strcpy((strp + 6), strp1);
-  }
-
-  // Arminius
-  if ((strp = strstr(input, "\\nhp=0\\n")) != NULL)
-    *(strp + 5) = '1';
-
-#ifdef _FIX_CAHR_VERSION
-  {
-    char *strp;
-    while ((strp = strstr(input, "\\n")) != NULL) {
-      *(strp + 1) = 'a';
-    }
-  }
-#endif
-  fprintf(fp, "%s", input);
-  fclose(fp);
-  logErr("写入 %s 档案文件:%s\n", id, fn);
-  sa_chmod(fn, 0777);
   return 0;
 }
 
@@ -653,7 +505,9 @@ int getCharIndexByName(char *id, char *charname) {
   int i;
   for (i = 0; i < MAXCHAR_PER_USER; i++) {
     // 如果没有读取到角色，就跳过
-    if (loadCharOne(id, i, output, sizeof(output)) < 0) {
+    int rc = loadCharOne(id, i, output, sizeof(output));
+    if (rc == -2) return -2;
+    if (rc < 0) {
       continue;
     } else {
       // 如果读取到角色信息，比对角色数据中的角色名称和传入的charname
@@ -670,7 +524,9 @@ static int findBlankCharIndex(char *id) {
   int i;
   static char output[CHARDATASIZE];
   for (i = 0; i < MAXCHAR_PER_USER; i++) {
-    if (loadCharOne(id, i, output, sizeof(output)) < 0) {
+    int rc = loadCharOne(id, i, output, sizeof(output));
+    if (rc == -2) return -2;
+    if (rc == -1) {
       return i;
     }
   }
@@ -678,16 +534,7 @@ static int findBlankCharIndex(char *id) {
 }
 
 static int unlinkCharFile(char *id, int num) {
-  char fname[1024];
-  char dname[1024];
-#ifdef _SLEEP_CHAR // 删除人物时旧档也删
-  makeSleepCharFileName(id, fname, sizeof(fname), num);
-  unlink(fname);
-#endif
-  makeCharFileName(id, fname, sizeof(fname), num);
-  makeDeletCharFileName(id, dname, sizeof(dname), num);
-
-  return rename(fname, dname);
+  return sa_store_character_delete(id, num);
 }
 
 #ifdef _LOCK_ADD_NAME
@@ -762,237 +609,94 @@ int checkValidCharName(char *a) {
 }
 
 #ifdef _CHAR_POOLITEM
-static void makeCharPoolItemFileName(char *id, char *output, int outputlen) {
-  char poolitem[256];
-  if (strlen(id) < 1)
-    return;
-  snprintf(poolitem, sizeof(poolitem), "%s.item", id);
-  makeDirFilename(output, outputlen, g_saac_config.chardir, getHash(id),
-                  poolitem);
-}
+
 
 #ifdef _SLEEP_CHAR // 取得非活跃人物仓库档名
-static void makeSleepCharPoolItemFileName(char *id, char *output,
-                                          int outputlen) {
-  char poolitem[256];
-  if (strlen(id) < 1)
-    return;
-  snprintf(poolitem, sizeof(poolitem), "%s.item", id);
-  makeDirFilename(output, outputlen, g_saac_config.sleepchardir, getHash(id),
-                  poolitem);
-}
+
 #endif
 
 int InsertCharPoolItem(char *id, char *input, int sizes) {
-  char fn[256];
-  FILE *fp;
-
-  if (sizes <= 0)
-    return sizes;
-  makeCharPoolItemFileName(id, fn, sizeof(fn));
-
-  fp = fopen(fn, "a+");
-  if (fp == NULL) {
-    fp = fopen(fn, "w");
-    if (fp == NULL) {
-      logErr("保存 %s 错误.\n", fn);
-      return -1;
-    }
+  char *data; int length, rc = -1;
+  if (sizes <= 0) return sizes;
+  if (!input || strlen(input) >= CHARDATASIZE) return -1;
+  data = malloc(CHARDATASIZE);
+  if (!data) return -1;
+  if (sa_db_begin(sa_store_db())) { free(data); return -1; }
+  length = sa_store_blob_get("account_storage", id, 0, data, CHARDATASIZE);
+  if (length == -1) length = 0;
+  if (length >= 0 && (size_t)length + strlen(input) < CHARDATASIZE) {
+    strcpy(data + length, input);
+    if (sa_store_blob_put("account_storage", id, 0, data, strlen(data)) == 0 && !sa_db_commit(sa_store_db())) rc = sizes;
   }
-
-  fprintf(fp, "%s", input);
-  fclose(fp);
-
-  logErr("添加 %s 物品仓库文件:%s\n", id, fn);
-  return sizes;
+  if (rc < 0) sa_db_rollback(sa_store_db());
+  free(data); return rc;
 }
 
 int saveCharPoolItem(char *id, char *input, int sizes) {
-  char fn[256];
-  FILE *fp;
-
-  if (sizes < 0)
-    return sizes;
-  if (input == NULL)
-    return -1;
-  makeCharPoolItemFileName(id, fn, sizeof(fn));
-
-  fp = fopen(fn, "w");
-  if (fp == NULL) {
-    logErr("保存 %s 错误.\n", fn);
-    return -1;
+  if (sizes < 0 || !input) return -1;
+  if (sa_db_begin(sa_store_db())) return -1;
+  if (sa_store_blob_put("account_storage", id, 0, input, strlen(input)) < 0 || sa_db_commit(sa_store_db())) {
+    sa_db_rollback(sa_store_db()); return -1;
   }
-
-  fprintf(fp, "%s", input);
-  fclose(fp);
-
-  logErr("写入 %s 道具档案文件:%s\n", id, fn);
   return sizes;
 }
 
 int loadCharPoolItemOne(char *id, char *output, int outputlen) {
-  char fn[256];
-  FILE *fp;
-  char c_temp, *c_ptr;
-  int sizes = 0;
-  c_ptr = output;
-
-  makeCharPoolItemFileName(id, fn, sizeof(fn));
-
-  fp = fopen(fn, "r");
-  if (fp == NULL) {
-    if ((fp = fopen(fn, "w")) == NULL)
-      return -1;
-    return 0;
-  }
-
-  do {
-    c_temp = fgetc(fp);
-    *c_ptr = c_temp;
-    c_ptr++;
-    sizes++;
-    if (sizes >= (outputlen - 1))
-      break;
-  } while (c_temp != EOF);
-  *c_ptr = '\0';
-  fclose(fp);
-  return sizes;
+  int size;
+  if (outputlen <= 0) return -1;
+  size = sa_store_blob_get("account_storage", id, 0, output, (size_t)outputlen);
+  return size == -1 ? 0 : (size < 0 ? -1 : size);
 }
 
 int checkCharPoolItem(char *id) {
-  char fn[256];
-  FILE *fp;
-
-  makeCharPoolItemFileName(id, fn, sizeof(fn));
-  fp = fopen(fn, "r");
-  if (fp == NULL) {
-    if (saveCharPoolItem(id, "", 0) < 0) {
-      logErr("\n 无法建立档案:%s 物品仓库文件!!", id);
-      return -1;
-    }
-  } else {
-    fclose(fp);
-  }
-
-  return 1;
+  /* A missing warehouse is empty; the first save creates it. */
+  return id && id[0] ? 1 : -1;
 }
 #endif
 
 #ifdef _CHAR_POOLPET
-static void makeCharPoolPetFileName(char *id, char *output, int outputlen) {
-  char poolpet[256];
-  if (strlen(id) < 1)
-    return;
-  snprintf(poolpet, sizeof(poolpet), "%s.pet", id);
-  makeDirFilename(output, outputlen, g_saac_config.chardir, getHash(id),
-                  poolpet);
-}
+
 
 #ifdef _SLEEP_CHAR // 取得非活跃人物仓库档名
-static void makeSleepCharPoolPetFileName(char *id, char *output,
-                                         int outputlen) {
-  char poolpet[256];
-  if (strlen(id) < 1)
-    return;
-  snprintf(poolpet, sizeof(poolpet), "%s.pet", id);
-  makeDirFilename(output, outputlen, g_saac_config.sleepchardir, getHash(id),
-                  poolpet);
-}
+
 #endif
 
 int InsertCharPoolPet(char *id, char *input, int sizes) {
-  char fn[256];
-  FILE *fp;
-
-  if (sizes <= 0)
-    return sizes;
-  makeCharPoolPetFileName(id, fn, sizeof(fn));
-
-  fp = fopen(fn, "a+");
-  if (fp == NULL) {
-    fp = fopen(fn, "w");
-    if (fp == NULL) {
-      logErr("保存 %s 错误.\n", fn);
-      return -1;
-    }
+  char *data; int length, rc = -1;
+  if (sizes <= 0) return sizes;
+  if (!input || strlen(input) >= CHARDATASIZE) return -1;
+  data = malloc(CHARDATASIZE);
+  if (!data) return -1;
+  if (sa_db_begin(sa_store_db())) { free(data); return -1; }
+  length = sa_store_blob_get("account_storage", id, 1, data, CHARDATASIZE);
+  if (length == -1) length = 0;
+  if (length >= 0 && (size_t)length + strlen(input) < CHARDATASIZE) {
+    strcpy(data + length, input);
+    if (sa_store_blob_put("account_storage", id, 1, data, strlen(data)) == 0 && !sa_db_commit(sa_store_db())) rc = sizes;
   }
-
-  fprintf(fp, "%s", input);
-  fclose(fp);
-
-  logErr("添加 %s 宠物仓库文件:%s\n", id, fn);
-  return sizes;
+  if (rc < 0) sa_db_rollback(sa_store_db());
+  free(data); return rc;
 }
 
 int saveCharPoolPet(char *id, char *input, int sizes) {
-  char fn[256];
-  FILE *fp;
-
-  if (sizes < 0)
-    return sizes;
-  if (input == NULL)
-    return -1;
-  makeCharPoolPetFileName(id, fn, sizeof(fn));
-
-  fp = fopen(fn, "w");
-  if (fp == NULL) {
-    logErr("保存 %s 错误.\n", fn);
-    return -1;
+  if (sizes < 0 || !input) return -1;
+  if (sa_db_begin(sa_store_db())) return -1;
+  if (sa_store_blob_put("account_storage", id, 1, input, strlen(input)) < 0 || sa_db_commit(sa_store_db())) {
+    sa_db_rollback(sa_store_db()); return -1;
   }
-
-  fprintf(fp, "%s", input);
-  fclose(fp);
-
-  logErr("写入 %s 宠物档案文件:%s\n", id, fn);
   return sizes;
 }
 
 int loadCharPoolPetOne(char *id, char *output, int outputlen) {
-  char fn[256];
-  FILE *fp;
-
-  char c_temp, *c_ptr;
-  int sizes = 0;
-  c_ptr = output;
-
-  makeCharPoolPetFileName(id, fn, sizeof(fn));
-
-  fp = fopen(fn, "r");
-  if (fp == NULL) {
-    if ((fp = fopen(fn, "w")) == NULL)
-      return -1;
-    return 0;
-  }
-
-  do {
-    c_temp = fgetc(fp);
-    *c_ptr = c_temp;
-    c_ptr++;
-    sizes++;
-    if (sizes >= (outputlen - 1))
-      break;
-  } while (c_temp != EOF);
-  *c_ptr = '\0';
-  fclose(fp);
-  return sizes;
+  int size;
+  if (outputlen <= 0) return -1;
+  size = sa_store_blob_get("account_storage", id, 1, output, (size_t)outputlen);
+  return size == -1 ? 0 : (size < 0 ? -1 : size);
 }
 
 int checkCharPoolPet(char *id) {
-  char fn[256];
-  FILE *fp;
-
-  makeCharPoolPetFileName(id, fn, sizeof(fn));
-  fp = fopen(fn, "r");
-  if (fp == NULL) {
-    if (saveCharPoolPet(id, "", 0) < 0) {
-      logErr("\n 无法建立档案:%s 宠物仓库文件!!", id);
-      return -1;
-    }
-  } else {
-    fclose(fp);
-  }
-
-  return 1;
+  /* A missing warehouse is empty; the first save creates it. */
+  return id && id[0] ? 1 : -1;
 }
 #endif
 

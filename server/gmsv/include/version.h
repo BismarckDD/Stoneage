@@ -285,7 +285,6 @@
 // 2004/02/25
 #define _PETSKILL_BECOMEPIG      // (可开) Change 宠技:乌力化
 #define _ITEM_UNBECOMEPIG        // (可开) Change 乌力化的解药
-#define _PET_TALKBBI             // (可开) Change 增加判断bbi
 #define _ITEM_USEMAGIC           // (可开) Change 由道具使用魔法
 // 2004/04/07
 #define _ITEM_PROPERTY           // (可开) Change 改变四属性道具

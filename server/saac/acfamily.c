@@ -4,6 +4,7 @@
 #include "saac_config.h"
 #include "saac_server.h"
 #include "util.h"
+#include "sa_store.h"
 
 
 // 家族 Int 资料
@@ -206,6 +207,142 @@ int fmpkindex[MAX_FAMILY];
 FMPOINT fmpoint[MAX_FMPOINT];
 FMSMEMO fmsmemo;
 char fm_pk_list[FMPKLIST_MAXNUM][255];
+
+static const SA_STORE_FIELD family_fields[] = {
+  STORE_INT(struct FAMILY, fmindex, "legacy_index"),
+  STORE_INT(struct FAMILY, fmleadergrano, "leader_image"),
+  STORE_INT(struct FAMILY, fmnum, "member_count"),
+  STORE_INT(struct FAMILY, fmjoinnum, "joined_count"),
+  STORE_INT(struct FAMILY, fmacceptflag, "accept_members"),
+  STORE_INT(struct FAMILY, fmsetupflag, "established"),
+  STORE_INT(struct FAMILY, fmsprite, "sprite"),
+  STORE_INT(struct FAMILY, fmpointindex, "manor_index"),
+  STORE_INT(struct FAMILY, fmpopular, "reputation"),
+  STORE_INT(struct FAMILY, fmgold, "gold"),
+  STORE_INT(struct FAMILY, fmmemberindexmaxnum, "member_limit"),
+  STORE_INT(struct FAMILY, apply_time, "apply_time"),
+  STORE_INT(struct FAMILY, setup_time, "setup_time"),
+  STORE_INT(struct FAMILY, predel_time, "delete_time"),
+  STORE_INT(struct FAMILY, memonowwritenum, "message_cursor"),
+  STORE_INT(struct FAMILY, memonum, "message_count"),
+  STORE_INT(struct FAMILY, fmadv, "adventure_reputation"),
+  STORE_INT(struct FAMILY, fmfeed, "breeding_reputation"),
+  STORE_INT(struct FAMILY, fmsynthesize, "craft_reputation"),
+  STORE_INT(struct FAMILY, fmdealfood, "cooking_reputation"),
+  STORE_INT(struct FAMILY, fmpk, "pk_reputation"),
+#ifdef _NEW_MANOR_LAW
+  STORE_INT(struct FAMILY, fmmomentum, "momentum"),
+#endif
+#ifdef _SET_FMPOINT
+  STORE_INT(struct FAMILY, fmpointtime, "manor_apply_time"),
+#endif
+#ifdef _FAMILY_PAY_POINT
+  STORE_INT(struct FAMILY, fmpaypoint, "pay_point"),
+#endif
+#ifdef _FAMILYBADGE_
+  STORE_INT(struct FAMILY, fmbadge, "badge"),
+#endif
+  STORE_TEXT(struct FAMILY, fmname, "name"),
+  STORE_TEXT(struct FAMILY, fmleadername, "leader_name"),
+  STORE_TEXT(struct FAMILY, fmleaderid, "leader_account"),
+  STORE_TEXT(struct FAMILY, petname, "guardian_name"),
+  STORE_TEXT(struct FAMILY, petattr, "guardian_data"),
+  STORE_TEXT(struct FAMILY, fmrule, "rules"),
+#ifdef _FAMILY_TOTEM
+  STORE_TEXT(struct FAMILY, familytotem, "totem"),
+#endif
+};
+static const SA_STORE_FIELD member_fields[] = {
+  STORE_INT(MEMBERDATA, charlv, "level"),
+  STORE_INT(MEMBERDATA, charflag, "role"),
+  STORE_INT(MEMBERDATA, predeltime, "delete_time"),
+  STORE_INT(MEMBERDATA, popular, "reputation"),
+#ifdef _FMVER21
+  STORE_INT(MEMBERDATA, eventflag, "leader_eligible"),
+#endif
+#ifdef _NEW_MANOR_LAW
+  STORE_INT(MEMBERDATA, momentum, "momentum"),
+#endif
+  STORE_TEXT(MEMBERDATA, charname, "character_name"),
+  STORE_TEXT(MEMBERDATA, charid, "account_name"),
+};
+static const SA_STORE_LAYOUT family_layout = STORE_LAYOUT("family", "family_id", NULL, family_fields);
+static const SA_STORE_LAYOUT member_layout = STORE_LAYOUT("family_member", "family_id", "member_slot", member_fields);
+typedef struct { char content[FAMILY_MEMOLEN]; } StoredMessage;
+static const SA_STORE_FIELD message_fields[] = { STORE_TEXT(StoredMessage, content, "content") };
+static const SA_STORE_LAYOUT message_layout = STORE_LAYOUT("family_message", "family_id", "message_slot", message_fields);
+static const SA_STORE_LAYOUT public_layout = STORE_LAYOUT("family_public_message", "board_id", "message_slot", message_fields);
+static const SA_STORE_FIELD board_fields[] = { STORE_INT(FMSMEMO, num, "message_count"), STORE_INT(FMSMEMO, fmsnowwritenum, "message_cursor") };
+static const SA_STORE_LAYOUT board_layout = STORE_LAYOUT("family_message_board", "board_id", NULL, board_fields);
+static const SA_STORE_FIELD manor_fields[] = {
+  STORE_INT(FMPOINT, fl, "map_id"),
+  STORE_INT(FMPOINT, x, "x"),
+  STORE_INT(FMPOINT, y, "y"),
+  STORE_INT(FMPOINT, fmfl, "leader_map_id"),
+  STORE_INT(FMPOINT, village, "village_id"),
+  STORE_INT(FMPOINT, hadfmindex, "owner_family_id"),
+  STORE_TEXT(FMPOINT, hadfmname, "owner_name"),
+  STORE_INT(FMPOINT, hadfmpopular, "owner_reputation"),
+#ifdef _FIX_FMPOINTTIME
+  STORE_INT(FMPOINT, fmpointtime, "occupied_at"),
+#endif
+};
+static const SA_STORE_LAYOUT manor_layout = STORE_LAYOUT("family_manor", "manor_id", NULL, manor_fields);
+typedef struct { int flag; char data[4096]; } StoredSchedule;
+static const SA_STORE_FIELD schedule_fields[] = { STORE_INT(StoredSchedule, flag, "flag"), STORE_TEXT(StoredSchedule, data, "schedule_data") };
+static const SA_STORE_LAYOUT schedule_layout = STORE_LAYOUT("family_pk_schedule", "schedule_kind", "schedule_slot", schedule_fields);
+
+static void family_key(int index, char key[32]) { snprintf(key, 32, "%d", index + 1); }
+static int family_read_record(int index) {
+  char key[32]; int j, rc;
+  struct FAMILY *record = calloc(1, sizeof(*record));
+  if (!record) return -1;
+  family_key(index, key);
+  rc = sa_store_get(&family_layout, key, 0, record);
+  if (rc <= 0) { free(record); return rc; }
+  if (record->fmindex != index + 1 || record->fmmemberindexmaxnum < 0 ||
+      record->fmmemberindexmaxnum > MAX_MEMBERNUM || record->memonum < 0 ||
+      record->memonum > FAMILY_MEMONUM || record->memonowwritenum < 0 ||
+      record->memonowwritenum >= FAMILY_MEMONUM) { free(record); return -1; }
+  for (j = 0; j < MAX_MEMBERNUM; ++j) {
+    if (sa_store_get(&member_layout, key, j, &record->fmmemberindex[j]) < 0) { free(record); return -1; }
+    record->fmmemberindex[j].onlineflag = 0;
+    record->fmmemberindex[j].charfdid = 0;
+  }
+  for (j = 0; j < FAMILY_MEMONUM; ++j) {
+    StoredMessage message = {{0}};
+    if (sa_store_get(&message_layout, key, j, &message) < 0) { free(record); return -1; }
+    strcpy(record->memolist[j], message.content);
+  }
+  family[index] = *record;
+  free(record);
+  return 1;
+}
+static int family_write_records(void) {
+  int i, j;
+  for (i = 0; i < MAX_FAMILY; ++i) {
+    char key[32]; int active;
+    if (!db_familyupdate[i]) continue;
+    family_key(i, key);
+    active = family[i].fmindex > 0 && family[i].fmname[0];
+    if (active && sa_store_put(&family_layout, key, 0, &family[i]) < 0) return -1;
+    for (j = 0; j < MAX_MEMBERNUM; ++j) {
+      MEMBERDATA *member = &family[i].fmmemberindex[j];
+      if (active && member->charflag != FMMEMBER_NONE && member->charid[0] && member->charname[0]) {
+        if (sa_store_put(&member_layout, key, j, member) < 0) return -1;
+      } else if (sa_store_delete(&member_layout, key, j) < 0) return -1;
+    }
+    for (j = 0; j < FAMILY_MEMONUM; ++j) {
+      StoredMessage message;
+      if (active) {
+        memcpy(message.content, family[i].memolist[j], sizeof(message.content));
+        if (sa_store_put(&message_layout, key, j, &message) < 0) return -1;
+      } else if (sa_store_delete(&message_layout, key, j) < 0) return -1;
+    }
+    if (!active && sa_store_delete(&family_layout, key, 0) < 0) return -1;
+  }
+  return 0;
+}
 
 // 用在本文件内
 static char dirname[MAX_DIRPATH_LEN];
@@ -811,54 +948,15 @@ void DelFMMaintainSort(int index) {
 
 // 从档案读取家族资料（启动时读取）
 int readFamily(const char *dir) {
-  char dirname[256];
-  DIR *p_dir;
-  /*搭配使用dirent64和readdir64,解决32位应用读取64位操作系统文件夹的问题*/
-  struct dirent64 *p_dirent;
-  int i = 0, fmnum = 0, fmmaxnum = 0;
-  {
-    char tmp[256];
-    snprintf(tmp, sizeof(tmp), "%s", dir);
-    if (sa_mkdir(tmp, 0755) == 0)
-      logErr("create %s\n", tmp);
+  int i, rc; (void)dir;
+  fmnownum = 0; fmindexmaxnum = 0;
+  memset(family, 0, sizeof(family));
+  for (i = 0; i < MAX_FAMILY; ++i) {
+    family[i].fmindex = -1;
+    rc = family_read_record(i);
+    if (rc < 0) return -1;
+    if (rc > 0) { ++fmnownum; fmindexmaxnum = i; }
   }
-  snprintf(dirname, sizeof(dirname), "%s", dir);
-  p_dir = opendir(dirname);
-  if (p_dir == NULL) {
-    logErr("[读取家族资料]无法打开目录: %s\n", dirname);
-    return -1;
-  }
-  p_dirent = readdir64(p_dir);
-  if (p_dirent == NULL) {
-    logErr("[读取家族资料]无法读取目录: %s\n", dirname);
-    return -1;
-  }
-
-  struct stat s;
-  for (i = 0; i < MAX_FAMILY; i++) {
-    // FILE *fp;
-    snprintf(filename, sizeof(filename), "%s/Family.%d", dirname, i);
-    if (stat(filename, &s) < 0)
-      continue;
-
-    if (!(s.st_mode & S_IFREG)) {
-      logErr("%s is not a regular file\n", filename);
-      continue;
-    }
-    if (readOneFamily(filename, i) != 1) {
-      if (remove(filename) == -1)
-        logErr("cannot open file %s %s\n", filename, strerror(errno));
-      continue;
-    }
-    fmnum = fmnum + 1;
-    fmmaxnum = i;
-  }
-
-  fmindexmaxnum = fmmaxnum;
-  fmnownum = fmnum;
-
-  closedir(p_dir);
-
 #ifdef _PERSONAL_FAME // Arminius: 家族个人声望
   // 计算家族总合声望 = 家族综合声望 + 家族个人声望
   {
@@ -883,305 +981,75 @@ int readFamily(const char *dir) {
 
 // 将家族资料写入档案
 int writeFamily(const char *dir) {
-  int i = 0, j = 0, k = 0;
-  FILE *fp;
-  for (i = 0; i < MAX_FAMILY; i++) {
-    if (db_familyupdate[i] == 0)
-      continue;
-    sprintf(filename, "%s/Family.%d", dir, family[i].fmindex - 1);
-    fp = fopen(filename, "w");
-    if (fp == NULL)
-      continue;
-    if ((family[i].fmindex != -1) && (strcmp(family[i].fmname, "") != 0)) {
-      fprintf(
-          fp,
-          "fmindex=%d|fmname=%s|fmleadername=%s|fmleaderid=%s|"
-          "fmleadergrano=%d|petname=%s|petattr=%s|fmnum=%d|fmjoinnum=%d|"
-          "fmacceptflag=%d|fmsetupflag=%d|fmrule=%s|fmsprite=%d|"
-          "fmpointindex=%d|fmpopular=%d|fmgold=%d|fmmemberindexmaxnum=%d|"
-          "apply_time=%d|setup_time=%d|predel_time=%d|memonowwritenum=%d|"
-          "memonum=%d|fmadv=%d|fmfeed=%d|fmsynthesize=%d|fmdealfood=%d|fmpk=%d"
-#ifdef _NEW_MANOR_LAW
-          "|fmmomentum=%d"
-#endif
-#ifdef _FAMILY_TOTEM
-          "|familytotem=%s"
-#endif
-#ifdef _FAMILY_PAY_POINT
-          "|fmpaypoint=%d"
-#endif
-#ifdef _FAMILYBADGE_
-          "|fmbadge=%d"
-#endif
-
-          ,
-          family[i].fmindex, family[i].fmname, family[i].fmleadername,
-          family[i].fmleaderid, family[i].fmleadergrano, family[i].petname,
-          family[i].petattr, family[i].fmnum, family[i].fmjoinnum,
-          family[i].fmacceptflag, family[i].fmsetupflag, family[i].fmrule,
-          family[i].fmsprite, family[i].fmpointindex, family[i].fmpopular,
-          family[i].fmgold, family[i].fmmemberindexmaxnum, family[i].apply_time,
-          family[i].setup_time, family[i].predel_time,
-          family[i].memonowwritenum, family[i].memonum, family[i].fmadv,
-          family[i].fmfeed, family[i].fmsynthesize, family[i].fmdealfood,
-          family[i].fmpk
-#ifdef _NEW_MANOR_LAW
-          ,
-          family[i].fmmomentum
-#endif
-#ifdef _FAMILY_TOTEM
-          ,
-          family[i].familytotem
-#endif
-#ifdef _FAMILY_PAY_POINT
-          ,
-          family[i].fmpaypoint
-#endif
-#ifdef _FAMILYBADGE_
-          ,
-          family[i].fmbadge
-#endif
-      );
-      for (j = 0; j < family[i].memonum; j++)
-        fprintf(fp, "|%s%d=%s", FMMEMOLIST, j, family[i].memolist[j]);
-      for (k = 0; k < family[i].fmmemberindexmaxnum; k++) {
-        if ((strcmp(family[i].fmmemberindex[k].charname, "") != 0) &&
-            (strcmp(family[i].fmmemberindex[k].charid, "") != 0) &&
-            (family[i].fmmemberindex[k].charflag != FMMEMBER_NONE)) {
-#ifdef _FMVER21
-#ifndef _NEW_MANOR_LAW
-          fprintf(fp,
-                  "|%s%d=charname=%s charid=%s charlv=%d charflag=%d "
-                  "onlineflag=%d predeltime=%d popular=%d eventflag=%d",
-#else
-          fprintf(
-              fp,
-              "|%s%d=charname=%s charid=%s charlv=%d charflag=%d onlineflag=%d "
-              "predeltime=%d popular=%d eventflag=%d momentum=%d",
-#endif
-#else
-          fprintf(fp,
-                  "|%s%d=charname=%s charid=%s charlv=%d charflag=%d "
-                  "onlineflag=%d predeltime=%d popular=%d",
-#endif
-                  FMMEMBERINDEX, k, family[i].fmmemberindex[k].charname,
-                  family[i].fmmemberindex[k].charid,
-                  family[i].fmmemberindex[k].charlv,
-                  family[i].fmmemberindex[k].charflag,
-                  family[i].fmmemberindex[k].onlineflag,
-                  family[i].fmmemberindex[k].predeltime,
-                  family[i].fmmemberindex[k].popular
-#ifdef _FMVER21
-                  ,
-                  family[i].fmmemberindex[k].eventflag
-#endif
-#ifdef _NEW_MANOR_LAW
-                  ,
-                  family[i].fmmemberindex[k].momentum
-#endif
-          );
-        }
-      } // for
-      fprintf(fp, "\n");
-    } // if
-    fclose(fp);
-    db_familyupdate[i] = 0;
+  int i, dirty = 0; (void)dir;
+  for (i = 0; i < MAX_FAMILY; ++i) dirty |= db_familyupdate[i];
+  if (!dirty) return 0;
+  if (sa_db_begin(sa_store_db())) return -1;
+  if (family_write_records() < 0 || sa_db_commit(sa_store_db())) {
+    sa_db_rollback(sa_store_db()); return -1;
   }
-
+  memset(db_familyupdate, 0, sizeof(db_familyupdate));
   return 0;
 }
 
 // 从档案读取家族庄园（启动时读取）
 int readFMPoint(const char *dir) {
-  int i = 0;
-  {
-    char tmp[256];
-    snprintf(tmp, sizeof(tmp), "%s", dir);
-    if (sa_mkdir(tmp, 0755) == 0)
-      logErr("create %s\n", tmp);
+  int i; (void)dir;
+  for (i = 0; i < MAX_FMPOINT; ++i) {
+    char key[32]; FMPOINT record = {0};
+    snprintf(key, sizeof(key), "%d", i);
+    if (sa_store_get(&manor_layout, key, 0, &record) < 0) return -1;
+    fmpoint[i] = record;
   }
-  snprintf(dirname, sizeof(dirname), "%s", dir);
-  DIR *p_dir = opendir(dirname);
-  if (p_dir == NULL) {
-    logErr("无法打开文件 %s\n", dirname);
-    return -1;
-  }
-  struct dirent64 *p_dirent;
-  while (1) {
-    p_dirent = readdir64(p_dir);
-    if (p_dirent == NULL)
-      break;
-    if (p_dirent->d_name[0] != '.') {
-      FILE *fp;
-      struct stat s;
-      snprintf(filename, sizeof(filename), "%s/%s", dirname, p_dirent->d_name);
-      if (stat(filename, &s) < 0) {
-        continue;
-      }
-      if (!(s.st_mode & S_IFREG)) {
-        logErr("%s is not a regular file\n", filename);
-        continue;
-      }
-      fp = fopen(filename, "r");
-      if (fp == NULL) {
-        logErr("无法打开文件 %s %s\n", filename, strerror(errno));
-        continue;
-      }
-      while (1) {
-        char line[1024];
-        char data[1024];
-        if (fgets(line, sizeof(line), fp) == NULL)
-          break;
-        chop(line);
-        if (strstr(line, "#") != 0)
-          continue;
-        easyGetTokenFromBuf(line, "|", 1, data, sizeof(data));
-        fmpoint[i].fl = atoi(data);
-        easyGetTokenFromBuf(line, "|", 2, data, sizeof(data));
-        fmpoint[i].x = atoi(data);
-        easyGetTokenFromBuf(line, "|", 3, data, sizeof(data));
-        fmpoint[i].y = atoi(data);
-        easyGetTokenFromBuf(line, "|", 4, data, sizeof(data));
-        fmpoint[i].fmfl = atoi(data);
-        easyGetTokenFromBuf(line, "|", 5, data, sizeof(data));
-        fmpoint[i].village = atoi(data);
-        easyGetTokenFromBuf(line, "|", 6, data, sizeof(data));
-        fmpoint[i].hadfmindex = atoi(data);
-        easyGetTokenFromBuf(line, "|", 7, data, sizeof(data));
-        strcpy(fmpoint[i].hadfmname, data);
-        easyGetTokenFromBuf(line, "|", 8, data, sizeof(data));
-        fmpoint[i].hadfmpopular = atoi(data);
-#ifdef _FIX_FMPOINTTIME
-        easyGetTokenFromBuf(line, "|", 9, data, sizeof(data));
-        fmpoint[i].fmpointtime = atoi(data);
-#endif
-        i++;
-      }
-      fclose(fp);
-    }
-  }
-  closedir(p_dir);
   return 0;
 }
 
 // 将家族庄园写入档案
 int writeFMPoint(const char *dir) {
-  int i = 0;
-  FILE *fp;
-  sprintf(filename, "%s/db_fmpoint", dir);
-  if (db_fmpointupdate == 0)
-    return 0;
-  else
-    logErr("已将更新资料db_fmpoint写入文件.\n");
-  fp = fopen(filename, "w");
-  if (fp == NULL) {
-    logErr("无法打开文件: %s %s\n", filename, strerror(errno));
-    return -1;
+  int i; (void)dir;
+  if (!db_fmpointupdate) return 0;
+  if (sa_db_begin(sa_store_db())) return -1;
+  for (i = 0; i < MAX_FMPOINT; ++i) {
+    char key[32]; snprintf(key, sizeof(key), "%d", i);
+    if (sa_store_put(&manor_layout, key, 0, &fmpoint[i]) < 0) {
+      sa_db_rollback(sa_store_db()); return -1;
+    }
   }
-  for (i = 0; i < MAX_FMPOINT; i++) {
-#ifdef _FIX_FMPOINTTIME
-    fprintf(fp, "%d|%d|%d|%d|%d|%d|%s|%d|%d\n",
-#else
-    fprintf(fp, "%d|%d|%d|%d|%d|%d|%s|%d\n",
-#endif
-            fmpoint[i].fl, fmpoint[i].x, fmpoint[i].y, fmpoint[i].fmfl,
-            fmpoint[i].village, fmpoint[i].hadfmindex, fmpoint[i].hadfmname,
-            fmpoint[i].hadfmpopular
-#ifdef _FIX_FMPOINTTIME
-            ,
-            fmpoint[i].fmpointtime
-#endif
-    );
-  } // for
-  fclose(fp);
+  if (sa_db_commit(sa_store_db())) { sa_db_rollback(sa_store_db()); return -1; }
   db_fmpointupdate = 0;
   return 0;
 }
 
 // 从档案中读取家族之间留言资料（启动时读取）
 int readFMSMemo(const char *dir) {
-  char dirname[256];
-  DIR *d;
-  struct dirent *de;
-  int i = 0;
-  {
-    char tmp[256];
-    snprintf(tmp, sizeof(tmp), "%s", dir);
-    if (sa_mkdir(tmp, 0755) == 0)
-      logErr("create %s\n", tmp);
+  int i; FMSMEMO record = {0}; (void)dir;
+  if (sa_store_get(&board_layout, "1", 0, &record) < 0) return -1;
+  if (record.num < 0 || record.num > FMSMEMONUM || record.fmsnowwritenum < 0 || record.fmsnowwritenum >= FMSMEMONUM) return -1;
+  for (i = 0; i < FMSMEMONUM; ++i) {
+    StoredMessage message = {{0}};
+    if (sa_store_get(&public_layout, "1", i, &message) < 0) return -1;
+    strcpy(record.memodata[i], message.content);
   }
-
-  snprintf(dirname, sizeof(dirname), "%s", dir);
-  d = opendir(dirname);
-  if (d == NULL) {
-    logErr("无法打开文件 %s\n", dirname);
-    return -1;
-  }
-  while (1) {
-    de = readdir(d);
-    if (de == NULL)
-      break;
-    if (de->d_name[0] != '.') {
-      FILE *fp;
-      struct stat s;
-      snprintf(filename, sizeof(filename), "%s/%s", dirname, de->d_name);
-      if (stat(filename, &s) < 0) {
-        continue;
-      }
-      if (!(s.st_mode & S_IFREG)) {
-        logErr("%s 不是正常文件\n", filename);
-        continue;
-      }
-      fp = fopen(filename, "r");
-      if (fp == NULL) {
-        logErr("无法打开文件 %s %s\n", filename, strerror(errno));
-        continue;
-      }
-      {
-        char line[15000];
-        char data[15000];
-        if (fgets(line, sizeof(line), fp) == NULL)
-          break;
-        chop(line);
-        easyGetTokenFromBuf(line, "|", 1, data, sizeof(data));
-        fmsmemo.num = atoi(data);
-        easyGetTokenFromBuf(line, "|", 2, data, sizeof(data));
-        fmsmemo.fmsnowwritenum = atoi(data);
-        for (i = 0; i < fmsmemo.num; i++) {
-          easyGetTokenFromBuf(line, "|", 3 + i, data, sizeof(data));
-          strcpy(fmsmemo.memodata[i], data);
-        }
-      }
-      fclose(fp);
-    }
-  }
-  closedir(d);
+  fmsmemo = record;
   return 0;
 }
 
 // 将家族之间留言资料写入档案
 int writeFMSMemo(const char *dir) {
-  int i = 0;
-  FILE *fp;
-  sprintf(filename, "%s/db_fmsmemo", dir);
-  if (db_fmsmemoupdate == 0)
-    return 0;
-  else
-    logErr("已将更新资料db_fmsmemo写入文件.\n");
-  fp = fopen(filename, "w");
-  if (fp == NULL) {
-    logErr("无法打开文件: %s %s\n", filename, strerror(errno));
-    return -1;
+  int i; (void)dir;
+  if (!db_fmsmemoupdate) return 0;
+  if (sa_db_begin(sa_store_db())) return -1;
+  if (sa_store_put(&board_layout, "1", 0, &fmsmemo) < 0) goto failed;
+  for (i = 0; i < FMSMEMONUM; ++i) {
+    StoredMessage message;
+    memcpy(message.content, fmsmemo.memodata[i], sizeof(message.content));
+    if (sa_store_put(&public_layout, "1", i, &message) < 0) goto failed;
   }
-  fprintf(fp, "%d|%d", fmsmemo.num, fmsmemo.fmsnowwritenum);
-  for (i = 0; i < fmsmemo.num; i++) {
-    fprintf(fp, "|%s", fmsmemo.memodata[i]);
-    logErr("%s\n", fmsmemo.memodata[i]);
-  } // for
-  fprintf(fp, "\n");
-  fclose(fp);
+  if (sa_db_commit(sa_store_db())) goto failed;
   db_fmsmemoupdate = 0;
   return 0;
+failed:
+  sa_db_rollback(sa_store_db()); return -1;
 }
 
 // 取得未使用的 index
@@ -3790,33 +3658,28 @@ void FMPK_InitList(void) {
     memset(FMPK_List[i].Data, 0, sizeof(FMPK_List[i].Data));
   }
 }
-void FMPK_LoadList() {
-  int i;
-  snprintf(filename, sizeof(filename), "data/family/fm_pk_list.txt");
-  FILE *fp;
-  FMPK_InitList();
-  if (!(fp = fopen(filename, "r")))
-    return;
-  for (i = 0; i < FMPKLIST_MAXNUM; i++) {
-    if (fscanf(fp, "%s", buf) == EOF)
-      break;
-    buf[strlen(buf) + 1] = 0;
-    memcpy(FMPK_List[i].Data, buf, strlen(buf) + 1);
-    logErr("庄园PK列表[%d]:%d,%s\n", i, FMPK_List[i].pkflg, FMPK_List[i].Data);
+void FMPK_LoadList(void) {
+  int i; FMPK_InitList();
+  for (i = 0; i < FMPKLIST_MAXNUM; ++i) {
+    StoredSchedule record = {0};
+    if (sa_store_get(&schedule_layout, "schedule", i, &record) < 0 || strlen(record.data) >= sizeof(FMPK_List[i].Data)) {
+      logErr("Failed to load family PK schedule\n"); exit(1);
+    }
+    strcpy(FMPK_List[i].Data, record.data); FMPK_List[i].pkflg = record.flag;
   }
-  fclose(fp);
 }
-void FMPK_BackUpList() {
+void FMPK_BackUpList(void) {
   int i;
-  snprintf(filename, sizeof(filename), "data/family/fm_pk_list.txt");
-  FILE *fp;
-  if (!(fp = fopen(filename, "w")))
-    return;
-  for (i = 0; i < FMPKLIST_MAXNUM; i++) {
-    fprintf(fp, "%s\n", FMPK_List[i].Data);
-    printf("\n%s", FMPK_List[i].Data);
+  if (sa_db_begin(sa_store_db())) { logErr("Family PK transaction failed\n"); exit(1); }
+  for (i = 0; i < FMPKLIST_MAXNUM; ++i) {
+    StoredSchedule record = {0};
+    record.flag = FMPK_List[i].pkflg;
+    snprintf(record.data, sizeof(record.data), "%s", FMPK_List[i].Data);
+    if (sa_store_put(&schedule_layout, "schedule", i, &record) < 0) {
+      sa_db_rollback(sa_store_db()); logErr("Family PK save failed\n"); exit(1);
+    }
   }
-  fclose(fp);
+  if (sa_db_commit(sa_store_db())) { sa_db_rollback(sa_store_db()); logErr("Family PK commit failed\n"); exit(1); }
 }
 int FMPK_GetTypeFlg(int ti) {
   if (ti < 0 || ti >= FMPKLIST_MAXNUM)
@@ -3839,73 +3702,12 @@ int FMPK_SetData(int ti, int Pkflg, char *Data, int sizes) {
 #endif
 
 int readOneFamilyFromTi(int ti) {
-  struct stat s;
-  snprintf(filename, sizeof(filename), "%s/Family.%d", g_saac_config.familydir,
-           ti);
-  if (stat(filename, &s) < 0)
-    return 0;
-  if (!(s.st_mode & S_IFREG)) {
-    logErr("%s is not a regular file\n", filename);
-    return 0;
-  }
-  if (readOneFamily(filename, ti) != 1) {
-    logErr("cannot open file %s %s\n", filename, strerror(errno));
-    return 0;
-  }
-  return 1;
+  if (ti < 0 || ti >= MAX_FAMILY) return 0;
+  return family_read_record(ti) == 1;
 }
 
 // andy_add 2003/06/16
-int readOneFamily(char *filename, int i) {
-  static char line[40000], data[40000];
-  FILE *fp = NULL;
-  int j;
-  int m = 0, fmnum1 = 0, fmnum2 = 0;
-  if ((fp = fopen(filename, "r")) == NULL)
-    return 0;
-  if (fgets(line, sizeof(line), fp) == NULL)
-    return 0;
-  fclose(fp);
 
-  chop(line);
-  for (j = 1;
-       j <= familymaxint + familymaxchar + MAX_MEMBERNUM + FAMILY_MEMONUM;
-       j++) {
-    easyGetTokenFromBuf(line, "|", j, data, sizeof(data));
-    if (strcmp(data, "") == 0)
-      continue;
-    setFamilyFileDataToArg(i, data);
-  }
-  if (family[i].fmgold > FMMAXGOLD)
-    family[i].fmgold = FMMAXGOLD;
-  if (family[i].fmgold < 0)
-    family[i].fmgold = 0;
-  for (m = 0; m < MAX_MEMBERNUM; m++) {
-    if (family[i].fmmemberindex[m].charflag <= 0)
-      continue;
-    if (family[i].fmmemberindex[m].charflag != FMMEMBER_APPLY)
-      fmnum1 = fmnum1 + 1;
-    if (family[i].fmmemberindex[m].charflag > 0)
-      fmnum2 = fmnum2 + 1;
-  }
-  family[i].fmjoinnum = fmnum1;
-  family[i].fmnum = fmnum2;
-
-  if (family[i].fmjoinnum >= MIN_MEMBERNUM) {
-    family[i].fmsetupflag = 1;
-    family[i].predel_time = -1;
-    db_familyupdate[i] = 1;
-  } else if (family[i].fmjoinnum < MIN_MEMBERNUM) {
-    family[i].fmsetupflag = 0;
-    if (family[i].predel_time == -1) {
-      time_t t1;
-      time(&t1);
-      family[i].predel_time = t1 + PREDEL_TIME;
-      db_familyupdate[i] = 1;
-    }
-  }
-  return 1;
-}
 
 #ifdef _FAMILY_PAY_POINT
 void addFmPayPoint(int fmindex, char *fmname, int paypoint) {
@@ -3915,38 +3717,35 @@ void addFmPayPoint(int fmindex, char *fmname, int paypoint) {
     return;
   printf("家族[%s]充值积分为：%d\n", fmname, index);
   family[index].fmpaypoint += paypoint;
+  db_familyupdate[index] = 1;
   printf("家族[%s]充值积分为：%d\n", family[index].fmname,
          family[index].fmpaypoint);
 }
 #endif
 
 #ifdef _AC_SEND_FM_PK // WON ADD 庄园对战列表储存在AC
-void load_fm_pk_list() {
-  int i;
-  snprintf(filename, sizeof(filename), "data/family/fm_pk_list.txt");
-  FILE *fp;
-  if (!(fp = fopen(filename, "r"))) {
-    return;
+void load_fm_pk_list(void) {
+  int i; memset(fm_pk_list, 0, sizeof(fm_pk_list));
+  for (i = 0; i < FMPKLIST_MAXNUM; ++i) {
+    StoredSchedule record = {0};
+    if (sa_store_get(&schedule_layout, "legacy", i, &record) < 0 || strlen(record.data) >= sizeof(fm_pk_list[i])) {
+      logErr("Failed to load family PK schedule\n"); exit(1);
+    }
+    strcpy(fm_pk_list[i], record.data); 
   }
-  for (i = 0; i < FMPKLIST_MAXNUM; i++) {
-    if (fscanf(fp, "%s", buf) == EOF)
-      break;
-    buf[strlen(buf) + 1] = 0;
-    memcpy(fm_pk_list[i], buf, strlen(buf) + 1);
-  }
-  fclose(fp);
 }
 
-void save_fm_pk_list() {
+void save_fm_pk_list(void) {
   int i;
-  snprintf(filename, sizeof(filename), "data/family/fm_pk_list.txt");
-  FILE *fp;
-  if (!(fp = fopen(filename, "w"))) {
-    return;
+  if (sa_db_begin(sa_store_db())) { logErr("Family PK transaction failed\n"); exit(1); }
+  for (i = 0; i < FMPKLIST_MAXNUM; ++i) {
+    StoredSchedule record = {0};
+    record.flag = 0;
+    snprintf(record.data, sizeof(record.data), "%s", fm_pk_list[i]);
+    if (sa_store_put(&schedule_layout, "legacy", i, &record) < 0) {
+      sa_db_rollback(sa_store_db()); logErr("Family PK save failed\n"); exit(1);
+    }
   }
-  for (i = 0; i < FMPKLIST_MAXNUM; i++) {
-    fprintf(fp, "%s\n", fm_pk_list[i]);
-  }
-  fclose(fp);
+  if (sa_db_commit(sa_store_db())) { sa_db_rollback(sa_store_db()); logErr("Family PK commit failed\n"); exit(1); }
 }
 #endif

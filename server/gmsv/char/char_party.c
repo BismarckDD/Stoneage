@@ -454,15 +454,13 @@ static BOOL CHAR_DischargePartySub(int char_index, int msgflg) {
       // Arminius 7.9 Airplane
       if ((CHAR_getInt(toindex, CHAR_IMAGENUMBER) != 100355) &&
           (CHAR_getInt(toindex, CHAR_IMAGENUMBER) != 100461)) {
-        int bi, bbi, ii, category;
-
-        bbi = CHAR_getInt(char_index, CHAR_BASEIMAGENUMBER);
-        ii = CHAR_getItemIndex(char_index, CHAR_ARM);
-        if (!ITEM_CHECKINDEX(ii))
-          category = ITEM_FIST;
-        else
-          category = ITEM_getInt(ii, ITEM_TYPE);
-        bi = CHAR_getNewImagenumberFromEquip(char_index, bbi, category);
+        // 2026.09.26 参照 2026.09.21 重算人物形象
+        int bbi = CHAR_getInt(char_index, CHAR_BASEIMAGENUMBER);
+        int armIdx = CHAR_getItemIndex(char_index, CHAR_ARM);
+        int armType = ITEM_FIST;
+        if (ITEM_CHECKINDEX(armIdx))
+          armType = ITEM_getInt(armIdx, ITEM_TYPE);
+        int bi = CHAR_getNewImagenumberFromEquip(char_index, bbi, category);
         if (bi == -1)
           bi = bbi;
         CHAR_setInt(char_index, CHAR_IMAGENUMBER, bi);

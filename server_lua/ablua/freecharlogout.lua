@@ -39,7 +39,7 @@ function FreeCharLogout( charindex )
 	--	ret = sasql.query(token)
 	--end
 	
-	token = "SELECT * FROM `CSAinfo` "
+	token = "SELECT * FROM `character_info` "
 										.. " WHERE `cdkey` = '" .. char.getChar(charindex, "账号") .. "'"
 										.. " AND `saveindex` = '" .. char.getInt(charindex, "存档") .. "'"
 	ret = sasql.query(token)
@@ -48,7 +48,7 @@ function FreeCharLogout( charindex )
 		sasql.store_result()
 		num = sasql.num_rows()
 		if num > 0 then
-			token = "UPDATE `CSAinfo` SET "
+			token = "UPDATE `character_info` SET "
 						.. "`name` = '" .. char.getChar(charindex, "名字") .. "',"
 						.. "`famename` = '"  .. char.getChar(charindex, "家族") .. "', "
 						.. "`level` = '"  .. char.getInt(charindex, "等级") .. "',"
@@ -68,7 +68,7 @@ function FreeCharLogout( charindex )
 						.. " AND `saveindex` = '" .. char.getInt(charindex, "存档") .. "'"
 			ret = sasql.query(token)
 		else
-			token = "INSERT INTO `CSAinfo` ( "
+			token = "INSERT INTO `character_info` ( "
 							.. "`cdkey` ,"
 							.. "`saveindex` ,"
 							.. "`name` ,"
@@ -110,7 +110,7 @@ function FreeCharLogout( charindex )
 			ret = sasql.query(token)
 		end
 	end
-	token = "update `CSAlogin` set `Offline`=0 where `Name`='" .. char.getChar(charindex,"账号") .. "'"
+	token = "update `account` set `Offline`=0 where `username`='" .. char.getChar(charindex,"账号") .. "'"
 	sasql.query(token)
 	
 end

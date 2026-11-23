@@ -20,6 +20,7 @@ struct SA_DB_RESULT {
 
 struct SA_DB {
   int backend;
+  int transaction_depth;
   char error[512];
   char sqlite_path[512];
   sqlite3 *sqlite;
@@ -27,7 +28,7 @@ struct SA_DB {
   MYSQL mysql;
 };
 
-static int configured_backend = SA_DB_MYSQL;
+static int configured_backend = SA_DB_SQLITE;
 static char configured_sqlite_path[512] = "saac.sqlite3";
 
 static void sqlite_now(sqlite3_context *context, int argc,
@@ -225,6 +226,29 @@ void sa_db_free_result(SA_DB_RESULT *result) {
 }
 
 const char *sa_db_error(SA_DB *db) { return db ? db->error : "no database"; }
+int sa_db_backend(SA_DB *db) { return db ? db->backend : -1; }
+
+int sa_db_backup(SA_DB *db, const char *path) {
+  sqlite3 *destination = NULL;
+  sqlite3_backup *backup;
+  int rc;
+  if (!db || db->backend != SA_DB_SQLITE || db->transaction_depth || !path || strcmp(path, db->sqlite_path) == 0) return 1;
+  rc = sqlite3_open(path, &destination);
+  if (rc != SQLITE_OK) {
+    snprintf(db->error, sizeof(db->error), "Cannot open backup: %s", destination ? sqlite3_errmsg(destination) : "out of memory");
+    sqlite3_close(destination); return 1;
+  }
+  backup = sqlite3_backup_init(destination, "main", db->sqlite, "main");
+  if (!backup) {
+    snprintf(db->error, sizeof(db->error), "Cannot initialize backup: %s", sqlite3_errmsg(destination));
+    sqlite3_close(destination); return 1;
+  }
+  rc = sqlite3_backup_step(backup, -1);
+  if (sqlite3_backup_finish(backup) != SQLITE_OK) rc = SQLITE_ERROR;
+  if (rc != SQLITE_DONE) snprintf(db->error, sizeof(db->error), "Database backup failed: %s", sqlite3_errmsg(destination));
+  sqlite3_close(destination);
+  return rc == SQLITE_DONE ? 0 : 1;
+}
 
 void sa_db_close(SA_DB *db) {
   if (db == NULL) return;
@@ -237,4 +261,123 @@ void sa_db_close(SA_DB *db) {
   }
   mysql_close(&db->mysql);
   free(db);
+}
+
+int sa_db_run(SA_DB *db, const char *sql, const SA_DB_PARAM *params, int count,
+              SA_DB_VISITOR visitor, void *context) {
+  int i, status = 1;
+  if (!db || count < 0 || count > 128) return 1;
+  if (db->backend == SA_DB_SQLITE) {
+    sqlite3_stmt *stmt = NULL;
+    int rc, columns;
+    const char *values[128];
+    size_t sizes[128];
+    rc = sqlite3_prepare_v2(db->sqlite, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) goto sqlite_done;
+    if (sqlite3_bind_parameter_count(stmt) != count) goto sqlite_done;
+    for (i = 0; i < count; ++i) {
+      if (params[i].size > 2147483647U) goto sqlite_done;
+      rc = params[i].blob
+          ? sqlite3_bind_blob(stmt, i + 1, params[i].data, (int)params[i].size, SQLITE_TRANSIENT)
+          : sqlite3_bind_text(stmt, i + 1, params[i].data, (int)params[i].size, SQLITE_TRANSIENT);
+      if (rc != SQLITE_OK) goto sqlite_done;
+    }
+    columns = sqlite3_column_count(stmt);
+    if (columns > 128) goto sqlite_done;
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+      for (i = 0; i < columns; ++i) {
+        values[i] = (const char *)sqlite3_column_blob(stmt, i);
+        sizes[i] = (size_t)sqlite3_column_bytes(stmt, i);
+      }
+      if (visitor && visitor(context, columns, values, sizes)) goto sqlite_done;
+    }
+    status = rc == SQLITE_DONE ? 0 : 1;
+  sqlite_done:
+    if (status) snprintf(db->error, sizeof(db->error), "SQL execution or row validation failed: %s", sqlite3_errmsg(db->sqlite));
+    sqlite3_finalize(stmt);
+    return status;
+  } else {
+    MYSQL_STMT *stmt = mysql_stmt_init(&db->mysql);
+    MYSQL_BIND bindings[128], output[128];
+    unsigned long lengths[128], sizes_out[128];
+    const char *values[128] = {0};
+    size_t sizes[128];
+    unsigned int columns = 0;
+    int rc;
+    if (!stmt) return 1;
+    memset(bindings, 0, sizeof(bindings));
+    memset(output, 0, sizeof(output));
+    if (mysql_stmt_prepare(stmt, sql, (unsigned long)strlen(sql))) goto mysql_done;
+    if (mysql_stmt_param_count(stmt) != (unsigned long)count) goto mysql_done;
+    for (i = 0; i < count; ++i) {
+      lengths[i] = (unsigned long)params[i].size;
+      bindings[i].buffer_type = params[i].blob ? MYSQL_TYPE_BLOB : MYSQL_TYPE_STRING;
+      bindings[i].buffer = (void *)params[i].data;
+      bindings[i].buffer_length = lengths[i];
+      bindings[i].length = &lengths[i];
+    }
+    if (count && mysql_stmt_bind_param(stmt, bindings)) goto mysql_done;
+    if (mysql_stmt_execute(stmt)) goto mysql_done;
+    columns = mysql_stmt_field_count(stmt);
+    if (columns > 128) goto mysql_done;
+    if (!columns) { status = 0; goto mysql_done; }
+    for (i = 0; i < (int)columns; ++i) {
+      output[i].buffer_type = MYSQL_TYPE_BLOB;
+      output[i].length = &sizes_out[i];
+    }
+    if (mysql_stmt_bind_result(stmt, output) || mysql_stmt_store_result(stmt)) goto mysql_done;
+    while ((rc = mysql_stmt_fetch(stmt)) == 0 || rc == MYSQL_DATA_TRUNCATED) {
+      for (i = 0; i < (int)columns; ++i) {
+        MYSQL_BIND field;
+        char *data = malloc((size_t)sizes_out[i] + 1);
+        if (!data) goto mysql_done;
+        values[i] = data;
+        memset(&field, 0, sizeof(field));
+        field.buffer_type = MYSQL_TYPE_BLOB;
+        field.buffer = data;
+        field.buffer_length = sizes_out[i];
+        if (mysql_stmt_fetch_column(stmt, &field, (unsigned int)i, 0)) goto mysql_done;
+        data[sizes_out[i]] = 0;
+        sizes[i] = sizes_out[i];
+      }
+      if (visitor && visitor(context, (int)columns, values, sizes)) goto mysql_done;
+      for (i = 0; i < (int)columns; ++i) { free((void *)values[i]); values[i] = NULL; }
+    }
+    status = rc == MYSQL_NO_DATA ? 0 : 1;
+  mysql_done:
+    if (status) snprintf(db->error, sizeof(db->error), "SQL execution or row validation failed: %s", mysql_stmt_error(stmt));
+    for (i = 0; i < 128; ++i) free((void *)values[i]);
+    mysql_stmt_close(stmt);
+    return status;
+  }
+}
+
+int sa_db_begin(SA_DB *db) {
+  char sql[64];
+  if (!db) return 1;
+  if (db->transaction_depth) snprintf(sql, sizeof(sql), "SAVEPOINT sa_tx_%d", db->transaction_depth);
+  else snprintf(sql, sizeof(sql), "%s", db->backend == SA_DB_SQLITE ? "BEGIN IMMEDIATE" : "START TRANSACTION");
+  if (sa_db_run(db, sql, NULL, 0, NULL, NULL)) return 1;
+  ++db->transaction_depth;
+  return 0;
+}
+int sa_db_commit(SA_DB *db) {
+  char sql[64];
+  if (!db || !db->transaction_depth) return 1;
+  if (db->transaction_depth > 1) snprintf(sql, sizeof(sql), "RELEASE SAVEPOINT sa_tx_%d", db->transaction_depth - 1);
+  else strcpy(sql, "COMMIT");
+  if (sa_db_run(db, sql, NULL, 0, NULL, NULL)) return 1;
+  --db->transaction_depth;
+  return 0;
+}
+void sa_db_rollback(SA_DB *db) {
+  char sql[64];
+  if (!db || !db->transaction_depth) return;
+  if (db->transaction_depth > 1) {
+    snprintf(sql, sizeof(sql), "ROLLBACK TO SAVEPOINT sa_tx_%d", db->transaction_depth - 1);
+    sa_db_run(db, sql, NULL, 0, NULL, NULL);
+    snprintf(sql, sizeof(sql), "RELEASE SAVEPOINT sa_tx_%d", db->transaction_depth - 1);
+    sa_db_run(db, sql, NULL, 0, NULL, NULL);
+  } else sa_db_run(db, "ROLLBACK", NULL, 0, NULL, NULL);
+  --db->transaction_depth;
 }

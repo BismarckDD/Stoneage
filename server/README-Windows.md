@@ -83,7 +83,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 `D:/stoneage/runtime/data/map`；相对路径会以运行数据目录为基准。
 
 SAAC 可在 MySQL 和内嵌 SQLite 之间切换。在 `acserv.cf` 中设置
-`sql_backend mysql`（默认）或 `sql_backend sqlite`。SQLite 模式还需设置
+`sql_backend sqlite`（默认）或 `sql_backend mysql`。SQLite 模式还需设置
 `sql_sqlite_path saac.sqlite3`，并先用 `db/database.sqlite.sql` 初始化数据库。
 
 同一个 SAAC 可执行文件始终包含两个后端；修改 `acserv.cf` 后重启 SAAC
@@ -98,11 +98,11 @@ sql_IP          127.0.0.1
 sql_Port        3306
 sql_ID          root
 sql_PS          your_password
-sql_DataBase    CSA
-sql_Table       CSAlogin
-sql_NAME        Name
-sql_PASS        PassWord
-sql_LOCK        LOCK
+sql_DataBase    sa
+sql_Table       account
+sql_NAME        username
+sql_PASS        password
+sql_LOCK        account_lock
 AutoReg         0
 openbackground  1
 ```

@@ -8,6 +8,7 @@
 #include "log.h"
 #include "npc_transmigration.h"
 #include "npcutil.h"
+#include "event_flag.h"
 #include "object.h"
 #include "readmap.h"
 #include <math.h>
@@ -350,10 +351,10 @@ void NPC_TransmigrationWindowTalked(int meindex, int talkerindex, int seqno,
     if (select == WINDOW_BUTTONTYPE_OK) {
 #ifdef _FIX_SUPERPERSON_STRANS
       if (CHAR_getInt(talkerindex, CHAR_TRANSMIGRATION) == 5) {
-        if (NPC_EventCheckFlg(talkerindex, 63) == FALSE ||
-            NPC_EventCheckFlg(talkerindex, 136) == FALSE ||
-            NPC_EventCheckFlg(talkerindex, 175) == FALSE ||
-            NPC_EventCheckFlg(talkerindex, 176) == FALSE) {
+        if (NPC_EventCheckFlg(talkerindex, EV_HERO_BLESSING) == FALSE ||
+            NPC_EventCheckFlg(talkerindex, EV_TEAR_STONE) == FALSE ||
+            NPC_EventCheckFlg(talkerindex, EV_RELL_TASK_1) == FALSE ||
+            NPC_EventCheckFlg(talkerindex, EV_RELL_TASK_2) == FALSE) {
           print("\n非法进行6转生");
           return;
         }
@@ -612,19 +613,19 @@ static int NPC_TransmigrationCheck(int meindex, int talker) {
       return -1;
     }
 
-    if (NPC_EventCheckFlg(talker, 63) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_HERO_BLESSING) == FALSE) {
       print("\nerr63");
       return -1;
     }
-    if (NPC_EventCheckFlg(talker, 136) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_TEAR_STONE) == FALSE) {
       print("\nerr136");
       return -1;
     }
-    if (NPC_EventCheckFlg(talker, 175) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_RELL_TASK_1) == FALSE) {
       print("\nerr175");
       return -1;
     }
-    if (NPC_EventCheckFlg(talker, 176) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_RELL_TASK_2) == FALSE) {
       print("\nerr176");
       return -1;
     }
@@ -692,19 +693,19 @@ static int NPC_TransmigrationCheck(int meindex, int talker) {
       return -1;
     }
 
-    if (NPC_EventCheckFlg(talker, 63) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_HERO_BLESSING) == FALSE) {
       print("\nerr63");
       return -1;
     }
-    if (NPC_EventCheckFlg(talker, 136) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_TEAR_STONE) == FALSE) {
       print("\nerr136");
       return -1;
     }
-    if (NPC_EventCheckFlg(talker, 175) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_RELL_TASK_1) == FALSE) {
       print("\nerr175");
       return -1;
     }
-    if (NPC_EventCheckFlg(talker, 176) == FALSE) {
+    if (NPC_EventCheckFlg(talker, EV_RELL_TASK_2) == FALSE) {
       print("\nerr176");
       return -1;
     }
@@ -1270,10 +1271,10 @@ int NPC_TransmigrationFlg_CLS(int meindex, int toindex) {
   if (num == 6)
 #endif
   {
-    NPC_EventSetFlg(toindex, 63);  // 不给玩家解英雄的祝福
-    NPC_EventSetFlg(toindex, 136); // 不给玩家解泪之石
-    NPC_EventSetFlg(toindex, 175); // 雷尔任务
-    NPC_EventSetFlg(toindex, 176); // 雷尔任务
+    NPC_EventSetFlg(toindex, EV_HERO_BLESSING); // 不给玩家解英雄的祝福
+    NPC_EventSetFlg(toindex, EV_TEAR_STONE);    // 不给玩家解泪之石
+    NPC_EventSetFlg(toindex, EV_RELL_TASK_1);   // 雷尔任务
+    NPC_EventSetFlg(toindex, EV_RELL_TASK_2);   // 雷尔任务
   }
 #endif
 

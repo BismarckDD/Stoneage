@@ -35,7 +35,7 @@ function FreeLoginCheck(fd)
 		end
 	end
 
-	token = "SELECT count(*) FROM `CSAlogin` "
+	token = "SELECT count(*) FROM `account` "
 					.. " WHERE `MAC` = '" .. mac .. "' and `Online` > 0"
 	ret = sasql.query(token)
 	local totalnum = 1

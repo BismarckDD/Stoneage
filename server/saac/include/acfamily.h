@@ -127,7 +127,6 @@ void sortFamily(void); // Arminius: sort family
 int getFMsortedlist(char *buf, int bufsize, int bp, int ep);
 int readFamily(const char *dir);
 int readOneFamilyFromTi(int ti);
-int readOneFamily(char *filename, int i);
 int writeFamily(const char *dir);
 int readFMPoint(const char *dir);
 int writeFMPoint(const char *dir);

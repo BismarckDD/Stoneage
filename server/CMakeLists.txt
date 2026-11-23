@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.20)
 
 project(stoneage_server_windows LANGUAGES C)
 
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../db/database.sqlite.sql")
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/../db/database.sqlite.sql" SA_SQLITE_SCHEMA)
+string(REPLACE "\\" "\\\\" SA_SQLITE_SCHEMA "${SA_SQLITE_SCHEMA}")
+string(REPLACE "\"" "\\\"" SA_SQLITE_SCHEMA "${SA_SQLITE_SCHEMA}")
+string(REPLACE "\r" "" SA_SQLITE_SCHEMA "${SA_SQLITE_SCHEMA}")
+string(REPLACE "\n" "\\n\"\n\"" SA_SQLITE_SCHEMA "${SA_SQLITE_SCHEMA}")
+configure_file(cmake/sa_schema.h.in generated/saac/sa_schema.h @ONLY)
+
 if(NOT WIN32)
   message(FATAL_ERROR
     "This CMake entry point is for native Windows builds. Use the existing "
@@ -95,6 +103,7 @@ add_executable(saac
   saac/acfamily.c
   saac/lock.c
   saac/sa_db.c
+  saac/sa_store.c
   saac/sasql_cygwin.c
   third_party/sqlite/sqlite3.c
   ${COMMON_UTIL_SOURCES}
@@ -262,8 +271,10 @@ if(BUILD_TESTING)
   add_executable(sa_db_sqlite_test
     tests/sa_db_sqlite_test.c
     saac/sa_db.c
+    saac/sa_store.c
     third_party/sqlite/sqlite3.c)
   target_include_directories(sa_db_sqlite_test PRIVATE
+    "${CMAKE_BINARY_DIR}/generated/saac"
     "${CMAKE_CURRENT_SOURCE_DIR}/saac/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sqlite")
   target_compile_definitions(sa_db_sqlite_test PRIVATE
@@ -278,5 +289,29 @@ if(BUILD_TESTING)
     target_link_libraries(sa_db_sqlite_test PRIVATE mysqlclient)
   endif()
   target_compile_options(sa_db_sqlite_test PRIVATE ${STONEAGE_GNU_OPTIONS})
-  add_test(NAME sa_db_sqlite_test COMMAND sa_db_sqlite_test)
+  add_test(NAME sa_db_sqlite_test COMMAND sa_db_sqlite_test
+    "${CMAKE_CURRENT_SOURCE_DIR}/../db/database.sqlite.sql")
+  if(WIN32)
+    get_filename_component(SAAC_TEST_RUNTIME_DIR "${CMAKE_C_COMPILER}" DIRECTORY)
+    string(REPLACE ";" "\\;" SAAC_TEST_PATH "${SAAC_TEST_RUNTIME_DIR};$ENV{PATH}")
+    set_tests_properties(sa_db_sqlite_test PROPERTIES
+      ENVIRONMENT "PATH=${SAAC_TEST_PATH}")
+  endif()
+
+
+  get_target_property(SAAC_TEST_SOURCES saac SOURCES)
+  list(REMOVE_ITEM SAAC_TEST_SOURCES saac/main.c saac/acfamily.c)
+  add_executable(sa_persistence_test tests/sa_persistence_test.c
+    tests/sa_main_for_test.c ${SAAC_TEST_SOURCES})
+  get_target_property(SAAC_TEST_INCLUDES saac INCLUDE_DIRECTORIES)
+  get_target_property(SAAC_TEST_DEFINITIONS saac COMPILE_DEFINITIONS)
+  get_target_property(SAAC_TEST_LIBRARIES saac LINK_LIBRARIES)
+  target_include_directories(sa_persistence_test PRIVATE ${SAAC_TEST_INCLUDES})
+  target_compile_definitions(sa_persistence_test PRIVATE ${SAAC_TEST_DEFINITIONS})
+  target_compile_options(sa_persistence_test PRIVATE ${STONEAGE_GNU_OPTIONS})
+  target_link_libraries(sa_persistence_test PRIVATE ${SAAC_TEST_LIBRARIES})
+  add_test(NAME sa_persistence_test COMMAND sa_persistence_test)
+  if(WIN32)
+    set_tests_properties(sa_persistence_test PROPERTIES ENVIRONMENT "PATH=${SAAC_TEST_PATH}")
+  endif()
 endif()

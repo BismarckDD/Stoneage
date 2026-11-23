@@ -1,0 +1,2 @@
+/* Generated from db/database.sqlite.sql. Do not edit. */
+static const char SA_SQLITE_SCHEMA[] = "@SA_SQLITE_SCHEMA@";

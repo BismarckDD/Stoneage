@@ -68,10 +68,10 @@ function FreeCharLogin( charindex )
 		end
 	end
 
-	token = "UPDATE CSAlogin set Offline = 0 , MAC = '" .. char.getWorkChar(charindex, "MAC") .. "', ServerName = '" .. config.getGameservername() .. "', ServerId = " .. char.getWorkInt(charindex, "服务器ID") + 1 .. " WHERE Name=BINARY'" .. char.getChar(charindex, "账号") .. "'"
+	token = "UPDATE account set Offline = 0 , MAC = '" .. char.getWorkChar(charindex, "MAC") .. "', ServerName = '" .. config.getGameservername() .. "', ServerId = " .. char.getWorkInt(charindex, "服务器ID") + 1 .. " WHERE username=BINARY'" .. char.getChar(charindex, "账号") .. "'"
 
 	ret = sasql.query(token)
-	token = "SELECT `newsafe`, `flg` FROM `safedata` "
+	token = "SELECT `newsafe`, `flg` FROM `safe_data` "
 				.. " WHERE `cdkey` = '" .. char.getChar(charindex, "账号") .. "'"
 	ret = sasql.query(token)
 	if ret == 1 then
@@ -84,7 +84,7 @@ function FreeCharLogin( charindex )
 				if sasql.data(2) == "0" then
 					char.setInt(charindex, "安全锁", 2)
 				end
-				token = "UPDATE `safedata` SET "
+				token = "UPDATE `safe_data` SET "
 							.. "`newsafe` = '" .. char.getWorkChar(charindex, "MAC2") .. "',"
 							.. "`oldsafe` = '" .. sasql.data(1) .. "',"
 							.. "`FixTime` = NOW()"
@@ -92,7 +92,7 @@ function FreeCharLogin( charindex )
 				ret = sasql.query(token)
 			end
 		else
-			token = "INSERT INTO `safedata` ( "
+			token = "INSERT INTO `safe_data` ( "
 							.. "`cdkey` ,"
 							.. "`newsafe` ,"
 							.. "`oldsafe` ,"

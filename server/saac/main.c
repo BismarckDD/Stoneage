@@ -12,6 +12,7 @@
 #include "lock.h"
 #include "mail.h"
 #include "saac_config.h"
+#include "sa_store.h"
 #include "saac_server.h"
 #include "tcp_struct.h"
 #include "tcp_transport.h"
@@ -515,20 +516,20 @@ int main(int argc, char **argv) {
   dbRead(g_saac_config.dbdir);
 #ifdef _FAMILY
   logErr("读取家族庄园\n");
-  readFMSMemo(g_saac_config.fmsmemodir);
+  if (readFMSMemo(g_saac_config.fmsmemodir) < 0) { logErr("Family message load failed\n"); exit(1); }
   logErr("读取家族留言\n");
-  readFMPoint(g_saac_config.fmpointdir);
+  if (readFMPoint(g_saac_config.fmpointdir) < 0) { logErr("Family manor load failed\n"); exit(1); }
   logErr("读取家族目录\n");
-  readFamily(g_saac_config.familydir);
+  if (readFamily(g_saac_config.familydir) < 0) { logErr("Family load failed\n"); exit(1); }
 #endif
   logErr("准备档案目录\n");
-  PrepareDirectories(g_saac_config.chardir);
+  /* Character records are stored in SQL. */
   logErr("准备日志目录\n");
   PrepareDirectories(g_saac_config.logdir);
   logErr("准备邮件目录\n");
   PrepareDirectories(g_saac_config.maildir);
 #ifdef _SLEEP_CHAR
-  PrepareDirectories(g_saac_config.sleepchardir);
+  /* No separate sleep-character directory in database mode. */
   logErr("准备睡眠档案目录\n");
 #endif
   if (Mail_read(g_saac_config.maildir) < 0) {
@@ -727,7 +728,18 @@ int main(int argc, char **argv) {
             logFileToday("[SAAC] recv ti=%d n=%d line=%.180s\n", i, read_bytes, sTcpBuf);
           }
         }
+        /* Send() only appends to tcpstruct's output buffer. Commit before the
+         * next socket poll can send success or family broadcasts to a GMSV. */
+        if (sa_db_begin(sa_store_db())) {
+          logErr("Database transaction failed: %s\n", sa_db_error(sa_store_db()));
+          exit(1);
+        }
         int rc = SaacServer_ServerDispatchMessage(i, sTcpBuf, sDebugFun);
+        if (writeFamily(NULL) < 0 || writeFMPoint(NULL) < 0 || writeFMSMemo(NULL) < 0 || sa_db_commit(sa_store_db())) {
+          logErr("Database commit failed; pending replies discarded: %s\n", sa_db_error(sa_store_db()));
+          sa_db_rollback(sa_store_db());
+          exit(1);
+        }
         // print("rc: %d\n", rc);
         if (rc < 0) {
           logOut("line :%s;%ld\n", sTcpBuf, strlen(sTcpBuf));
@@ -1208,23 +1220,30 @@ void savezipfile(void) {
   char command[768];
   sprintf(command, "%d-%d-%d.zip", y, m, d);
   if (access(command, W_OK) == 0)
-    return; // 文件存在
+    return;
+  if (sa_db_backend(sa_store_db()) == SA_DB_SQLITE) {
+    if (writeFamily(NULL) < 0 || writeFMPoint(NULL) < 0 || writeFMSMemo(NULL) < 0 || sa_db_backup(sa_store_db(), "saac-backup.sqlite3")) {
+      logErr("Database backup failed; archive not created\n"); return;
+    }
+  } else {
+    logErr("Automatic database backup requires SQLite; use MySQL backup tooling\n"); return;
+  }
 #ifdef _WIN32
   snprintf(command, sizeof(command),
            "powershell.exe -NoProfile -NonInteractive -Command \""
-           "$p=@('char','char_sleep','data','db','lock','log','mail','pklist',"
+           "$p=@('saac-backup.sqlite3','data','db','lock','log','mail','pklist',"
            "'race') | Where-Object { Test-Path $_ }; "
            "Compress-Archive -Path $p -DestinationPath '%d-%d-%d.zip' "
            "-Force\"",
            y, m, d);
 #else
   snprintf(command, sizeof(command),
-           "zip -q -r %d-%d-%d.zip char char_sleep data db "
-           "lock log mail pklist race&",
+           "zip -q -r %d-%d-%d.zip saac-backup.sqlite3 data db "
+           "lock log mail pklist race",
            y, m, d);
 #endif
   logErr("备份档案......");
-  system(command); // 执行shell命令.
+  if (system(command) != 0) { logErr("Archive creation failed\n"); return; }
   logErr("成功!\n");
   return;
 }

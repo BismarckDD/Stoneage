@@ -14,16 +14,6 @@ typedef enum {
 #ifndef _VERSION_NEW
   STREET_VENDOR_AMPOINT,
 #endif
-/*
-#ifdef _NEW_MANOR_LAW
-        STREET_VENDOR_MOMENTUM,
-#endif
-
-        STREET_VENDOR_DP,
-#ifdef _CAMEO_MONEY
-        STREET_VENDOR_CAMEO,
-#endif
-*/
 #ifdef _ACTIVE_GAME
   STREET_VENDOR_ACTIVE,
 #endif
